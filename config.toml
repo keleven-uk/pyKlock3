@@ -1,0 +1,10 @@
+#   Configure file for pyKlock.py 
+#   (c) Kevin Scott   Written Sunday 03 November 2024  20:45:29
+#
+#   true and false are lower case 
+#
+[INFO]
+myVERSION = "2025.1"
+myNAME = "pyKlock"
+
+

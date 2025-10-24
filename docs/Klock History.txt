@@ -1,0 +1,10 @@
+Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and Free Basic - and may again.
+
+Current version of pyKlock is written in Python using different GUI frameworks
+
+	pyKlock 0 - pygubu & pySimpleGUI - finaly settled on pySimpleGUI.  
+	pyKlock 1 - CustomTkinter [Most complete].
+	pyKlock 2 - Flet.
+	pyKlock 3 - QT.
+
+Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
