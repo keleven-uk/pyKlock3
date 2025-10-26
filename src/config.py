@@ -70,10 +70,37 @@ class Config():
         """
         return self.config["INFO"]["myVERSION"]
 
+    @property
+    def FOREGROUND(self):
+        """  Returns the window foreground colour.
+        """
+        value = self.config["DISPLAY"].get("foreground", "#00ff00")
+        return value
+
+    @FOREGROUND.setter
+    def FOREGROUND(self, value):
+        """  Sets the window foreground colour.
+        """
+        self.config["DISPLAY"]["foreground"] = value
+
+    @property
+    def BACKGROUND(self):
+        """  Returns the window background colour.
+        """
+        value = self.config["DISPLAY"].get("background", "#000000")
+        return value
+
+    @BACKGROUND.setter
+    def BACKGROUND(self, value):
+        """  Sets the window background colour.
+        """
+        self.config["DISPLAY"]["background"] = value
+
 
     def writeConfig(self):
         """ Write the current config file.
         """
+        self.logger.debug("Writing configure file.")
         strNow  = datetime.datetime.now()
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         st_toml = toml.dumps(self.config)
@@ -96,8 +123,11 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.1",
+        config["INFO"] = {"myVERSION": "2025.2",
                           "myNAME"   : "pyKlock"}
+
+        config["DISPLAY"] = {"foreground": "#00ff00",
+                             "background": "#000000"}
 
 
         st_toml = toml.dumps(config)

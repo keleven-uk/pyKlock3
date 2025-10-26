@@ -27,7 +27,7 @@ import win32con
 import ctypes
 
 
-def get_state():
+def getState():
     """  Checks the current state of Caps Lock, Insert, Scroll Lock & Num Lock.
          The results are returned as a sting.
          A Upper case indicates the lock is on, lower case indicates the lock is off.
@@ -66,7 +66,7 @@ class LASTINPUTINFO(ctypes.Structure):
         ("dwTime", ctypes.c_uint),
     ]
 
-def get_idle_duration():
+def getIdleDuration():
     """  Returns the number of seconds the PC has been idle.
          Uses the class LASTINPUTINFO above.
 

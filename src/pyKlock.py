@@ -18,67 +18,144 @@
 #                                                                                                             #
 ###############################################################################################################
 
-from PyQt6.QtWidgets import (QMainWindow, QWidget, QLabel, QLCDNumber, QVBoxLayout)
-from PyQt6.QtCore import Qt, QTimer, QDateTime
+from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QVBoxLayout, QColorDialog)
+from PyQt6.QtGui     import QAction, QColor
+from PyQt6.QtCore    import Qt, QTimer, QDateTime
 
-import src.utils.klock_utils as utils             #  Need to install pywin32
+import src.utils.klock_utils as utils                                 #  Need to install pywin32
 
 
 class KlockWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, myConfig):
         super().__init__()
 
+        self.config = myConfig
         self.setWindowTitle("pyKlock")
         self.setGeometry(100, 100, 400, 200)
 
-        # Create a central widget
-        central_widget = QWidget()
-        central_widget.setStyleSheet("margin:0px; border:0px")
-        self.setCentralWidget(central_widget)
+        self.foregroundColour = self.config.FOREGROUND
+        self.backgroundColour = self.config.BACKGROUND
 
-        # Create a layout
-        layout = QVBoxLayout()
-        central_widget.setLayout(layout)
+        #  Build GUI
+        self.buildGUI()
+        self.buildStatusbar()
+        self.buildMenu()
 
-        # Create an LCD Number display
-        self.lcd = QLCDNumber()
-        self.lcd.setDigitCount(8)  # Display 8 digits
-        self.lcd.display("12:34:56")  # Show some initial value
-        self.lcd.setSegmentStyle(QLCDNumber.SegmentStyle.Filled)  # Use filled segment style
+        #  Initialize state
+        self.updateColour()
+        self.updateTime()
 
-        # Add LCD to the layout
-        layout.addWidget(self.lcd)
+    def buildGUI(self):
+        """  Set up the GUI widgets.
+        """
+        #  Create a central widget
+        self.centralWidget = QFrame()
+        self.centralWidget.setStyleSheet("margin:0px; border:0px")
+        self.setCentralWidget(self.centralWidget)
 
-        # Create a status bar
-        self.status_bar = self.statusBar()
+        #  Create a layout
+        lytCentral = QVBoxLayout()
+        self.centralWidget.setLayout(lytCentral)
 
-        self.stsDate   = QLabel("Thursday 23 October 2025")
-        self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        #  Create an lcd Number display
+        self.lcdTime = QLCDNumber()
+        self.lcdTime.setDigitCount(8)                                 # Display 8 digits
+        self.lcdTime.display("12:34:56")                              # Show some initial value
+        self.lcdTime.setSegmentStyle(QLCDNumber.SegmentStyle.Filled)  # Use filled segment style
+
+        # Add lcdTime to the layout
+        lytCentral.addWidget(self.lcdTime)
+
+        #  Set up timer to update the clock
+        timer = QTimer(self)
+        timer.timeout.connect(self.updateTime)
+        timer.start(1000)                                             # Update every second
+
+    def buildStatusbar(self):
+        """  Create a status bar
+        """
+        self.statusBar = self.statusBar()
+
+        self.stsDate  = QLabel("Thursday 23 October 2025")
         self.stsState = QLabel("cisN")
+        self.stsIdle  = QLabel("idle : 7s")
+
+        self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.stsState.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.stsIdle   = QLabel("idle : 7s")
         self.stsIdle.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-        self.status_bar.addPermanentWidget(self.stsDate, 1)
-        self.status_bar.addPermanentWidget(self.stsState, 1)
-        self.status_bar.addPermanentWidget(self.stsIdle, 2)
+        self.statusBar.addPermanentWidget(self.stsDate,  1)
+        self.statusBar.addPermanentWidget(self.stsState, 1)
+        self.statusBar.addPermanentWidget(self.stsIdle,  2)
 
-        # Set up timer to update the clock
-        timer = QTimer(self)
-        timer.timeout.connect(self.update_time)
-        timer.start(1000)  # Update every second
+    def buildMenu(self):
+        """  Set up menu actions.
+        """
+        actExit = QAction("Exit", self)
+        actExit.triggered.connect(self.close)
 
-        # Initialize with current time
-        self.update_time()
+        actForeColour = QAction("Foreground Colour", self)
+        actForeColour.triggered.connect(self.getForeColour)
 
-    def update_time(self):
-        current_time = QDateTime.currentDateTime()
-        time_text = current_time.toString("hh:mm:ss")
-        date_text = current_time.toString("dddd MMMM yyyy")
-        self.lcd.display(time_text)
-        self.stsDate.setText(date_text)
-        self.stsState.setText(f"{utils.get_state()}")
-        self.stsIdle.setText(utils.get_idle_duration())
+        actBackColour = QAction("Background Colour", self)
+        actBackColour.triggered.connect(self.getBackColour)
+
+        # Set up main menu
+        self.menu = self.menuBar()
+
+        mnuFile    = self.menu.addMenu("&File")
+        mnuDisplay = self.menu.addMenu("&Display")
+
+        mnuFile.addAction(actExit)
+        mnuDisplay.addAction(actForeColour)
+        mnuDisplay.addAction(actBackColour)
+
+    # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
+    def updateTime(self):
+        """  Update the time and status bar.
+        """
+        dtCentral = QDateTime.currentDateTime()
+        txtTime   = dtCentral.toString("hh:mm:ss")
+        txtDate   = dtCentral.toString("dddd MMMM yyyy")
+
+        self.lcdTime.display(txtTime)
+        self.stsDate.setText(txtDate)
+        self.stsState.setText(f"{utils.getState()}")
+        self.stsIdle.setText(utils.getIdleDuration())
+    # ----------------------------------------------------------------------------------------------------------------------- getForeColour() -------
+    def getForeColour(self):
+        """  launch the colour input dialog and obtain the new foreground colour.
+        """
+        self.current_color = QColor(self.foregroundColour)
+        colour = QColorDialog.getColor(self.current_color, self, "Choose Foreground Colour")
+        if colour.isValid():
+            self.foregroundColour = colour.name()
+            self.updateColour()
+    # ----------------------------------------------------------------------------------------------------------------------- getBackColour() -------
+    def getBackColour(self):
+        """  launch the colour input dialog and obtain the new background colour.
+        """
+        self.current_color = QColor(self.backgroundColour)
+        colour = QColorDialog.getColor(self.current_color, self, "Choose Background Colour")
+        if colour.isValid():
+            self.backgroundColour = colour.name()
+            self.updateColour()
+    # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
+    def updateColour(self):
+        """  Update the foreground and background colour of both the main form and the statusbar.
+             Set the config values and re-write the config file.
+        """
+        self.centralWidget.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
+        self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        self.menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+
+        self.config.FOREGROUND = self.foregroundColour
+        self.config.BACKGROUND = self.backgroundColour
+        self.config.writeConfig()
+
+
+
+
 
 
 

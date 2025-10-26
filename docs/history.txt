@@ -22,16 +22,17 @@ Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and F
 
 Current version of pyKlock is written in Python using different GUI frameworks
 
-	pyKlock 0 - pygubu & pySimpleGUI - finally settled on pySimpleGUI.  Most complete.
-	pyKlock 1 - CustomTkinter  [this]
+	pyKlock 0 - pygubu & pySimpleGUI - finally settled on pySimpleGUI.
+	pyKlock 1 - CustomTkinter.
 	pyKlock 2 - Flet.
-	pyKlock 3 - QT.
+	pyKlock 3 - QT.  [this]
 
 	Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 If no branch indicated, assume main branch.
+
 
 V2025.1		[24 October 2025]
 
@@ -41,4 +42,17 @@ V2025.1		[24 October 2025]
 	The app consists of the following -
 		Current time
 		Status Bar [Date - Status - Idle Time].
-            Status - shows the status of Caps Lock, Inseret, Scroll Lock & Num Lock.
+            Status - shows the status of Caps Lock, Insert, Scroll Lock & Num Lock.
+
+
+V2025.1		[26 October 2025]
+
+	Added menu's.
+		File - close.
+		Display - Foreground Colour
+		Display - Background Colour.
+
+	For both the display options, a colour picker is launched and the new colour can be selected.
+	The colours of the main form and the status bar are then updated.
+	The new colours are then saved in the config file.
+	These config values are used to set the Klock colours on start up.

@@ -1,6 +1,6 @@
 pyKlock3 - [QT].
 
-
+A klock built using QT framework.
 
 To install dependencies pip install -r requirements.txt
 

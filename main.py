@@ -26,11 +26,11 @@
 import sys
 import platform
 
-from PyQt6.QtWidgets import (QApplication)
+from PyQt6.QtWidgets import QApplication
 
 import src.pyKlock as pyKlock
-import src.config as Config
-import src.logger as Logger
+import src.config  as Config
+import src.logger  as Logger
 
 from src.projectPaths import LOGGER_PATH, CONFIG_PATH
 
@@ -38,25 +38,26 @@ from src.projectPaths import LOGGER_PATH, CONFIG_PATH
 
 if __name__ == "__main__":
 
-    my_logger  = Logger.get_logger(str(LOGGER_PATH))    # Create the logger.
+    myLogger  = Logger.get_logger(str(LOGGER_PATH))    # Create the logger.
 
-    my_logger.info("-" * 100)
+    myLogger.info("-" * 100)
 
-    my_config  = Config.Config(CONFIG_PATH, my_logger)  # Create the config.
+    myConfig  = Config.Config(CONFIG_PATH, myLogger)  # Create the config.
 
-    my_logger.info(f"  Running {my_config.NAME} Version {my_config.VERSION} ")
-    my_logger.debug(f" {platform.uname()}")
-    my_logger.debug(f" Python Version {platform.python_version()}")
-    my_logger.debug("")
+    myLogger.info(f"  Running {myConfig.NAME} Version {myConfig.VERSION} ")
+    myLogger.debug(f" {platform.uname()}")
+    myLogger.debug(f" Python Version {platform.python_version()}")
+    myLogger.debug("")
 
-    my_logger.info(f"  Config path {CONFIG_PATH}")
-    my_logger.info(f"  Logger path {LOGGER_PATH}")
+    myLogger.info(f"  Config path {CONFIG_PATH}")
+    myLogger.info(f"  Logger path {LOGGER_PATH}")
 
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
-    window = pyKlock.KlockWindow()
+    window = pyKlock.KlockWindow(myConfig)
     window.show()
-    sys.exit(app.exec())
 
-    my_logger.info(f"  Ending {my_config.NAME} Version {my_config.VERSION} ")
-    my_logger.info("=" * 100)
+    myLogger.info(f"  Ending {myConfig.NAME} Version {myConfig.VERSION} ")
+    myLogger.info("=" * 100)
+
+    sys.exit(app.exec())
