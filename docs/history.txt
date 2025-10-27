@@ -34,6 +34,27 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.3		[27 October 2025]
+
+	Added properties for x_pos, y_pos, width & height of the main form.
+		These are saved in the config file and restored when Klock is re-run.
+
+	Klock now asks "Are you sure you want to close the application?" on closure.
+
+
+V2025.2		[26 October 2025]
+
+	Added menu's.
+		File - close.
+		Display - Foreground Colour.
+		Display - Background Colour.
+
+	For both the display options, a colour picker is launched and the new colour can be selected.
+	The colours of the main form and the statusbar are then updated.
+	The new colours are then saved in the config file.
+	These config values are used to set the Klock colours on start up.
+
+
 V2025.1		[24 October 2025]
 
 	Basic implementation of pyKlock.
@@ -41,18 +62,8 @@ V2025.1		[24 October 2025]
 	The app displays the current time in the format HH:MM:SS.
 	The app consists of the following -
 		Current time
-		Status Bar [Date - Status - Idle Time].
+		Statusbar [Date - Status - Idle Time].
             Status - shows the status of Caps Lock, Insert, Scroll Lock & Num Lock.
 
 
-V2025.1		[26 October 2025]
 
-	Added menu's.
-		File - close.
-		Display - Foreground Colour
-		Display - Background Colour.
-
-	For both the display options, a colour picker is launched and the new colour can be selected.
-	The colours of the main form and the status bar are then updated.
-	The new colours are then saved in the config file.
-	These config values are used to set the Klock colours on start up.

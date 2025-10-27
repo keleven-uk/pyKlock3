@@ -18,7 +18,7 @@
 #                                                                                                             #
 ###############################################################################################################
 
-from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QVBoxLayout, QColorDialog)
+from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QVBoxLayout, QColorDialog, QMessageBox)
 from PyQt6.QtGui     import QAction, QColor
 from PyQt6.QtCore    import Qt, QTimer, QDateTime
 
@@ -31,7 +31,7 @@ class KlockWindow(QMainWindow):
 
         self.config = myConfig
         self.setWindowTitle("pyKlock")
-        self.setGeometry(100, 100, 400, 200)
+        self.setGeometry(self.config.X_POS, self.config.Y_POS, self.config.WIDTH, self.config.HEIGHT)
 
         self.foregroundColour = self.config.FOREGROUND
         self.backgroundColour = self.config.BACKGROUND
@@ -152,6 +152,24 @@ class KlockWindow(QMainWindow):
         self.config.FOREGROUND = self.foregroundColour
         self.config.BACKGROUND = self.backgroundColour
         self.config.writeConfig()
+
+
+    def closeEvent(self, event):
+        # Ask for confirmation before closing
+        confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?")
+
+        if confirmation == QMessageBox.StandardButton.Yes:
+            event.accept()  # Close the app
+            self.config.X_POS  = self.x()
+            self.config.Y_POS  = self.y()
+            self.config.WIDTH  = self.width()
+            self.config.HEIGHT = self.height()
+            self.updateColour()
+        else:
+            event.ignore()  # Don't close the app
+
+
+
 
 
 

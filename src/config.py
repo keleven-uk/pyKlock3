@@ -96,6 +96,54 @@ class Config():
         """
         self.config["DISPLAY"]["background"] = value
 
+    @property
+    def X_POS(self):
+        """  Returns the X co-ordinate of the top right hand corner of the window.
+        """
+        return self.config["APPLICATION"].get("x_pos", "0")
+
+    @X_POS.setter
+    def X_POS(self, value):
+        """  Sets the X co-ordinate of the top right hand corner of the window.
+        """
+        self.config["APPLICATION"]["x_pos"] = value
+
+    @property
+    def Y_POS(self):
+        """  Returns the Y co-ordinate of the top right hand corner of the window.
+        """
+        return self.config["APPLICATION"].get("y_pos", "0")
+
+    @Y_POS.setter
+    def Y_POS(self, value):
+        """  Sets the Y co-ordinate of the top right hand corner of the window.
+        """
+        self.config["APPLICATION"]["y_pos"] = value
+
+    @property
+    def WIDTH(self):
+        """  Returns the window width.
+        """
+        return self.config["APPLICATION"].get("width", "400")
+
+    @WIDTH.setter
+    def WIDTH(self, value):
+        """  Sets the window width.
+        """
+        self.config["APPLICATION"]["width"] = value
+
+    @property
+    def HEIGHT(self):
+        """  Returns the window height.
+        """
+        return self.config["APPLICATION"].get("height", "200")
+
+    @HEIGHT.setter
+    def HEIGHT(self, value):
+        """  Sets the window height.
+        """
+        self.config["APPLICATION"]["height"] = value
+
 
     def writeConfig(self):
         """ Write the current config file.
@@ -123,8 +171,13 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.2",
+        config["INFO"] = {"myVERSION": "2025.3",
                           "myNAME"   : "pyKlock"}
+
+        config["APPLICATION"] = {"x_pos" : 100,
+                                 "y_pos" : 100,
+                                 "width" : 400,
+                                 "height": 200}
 
         config["DISPLAY"] = {"foreground": "#00ff00",
                              "background": "#000000"}
