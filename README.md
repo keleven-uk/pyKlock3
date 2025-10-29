@@ -23,6 +23,9 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 pyKlock displays the time [local], date, key status and the computers idle time.
 Key status is the status of Caps Lock, Insert, Scroll lock and Num lock.
 
+The time can be displays as either a LED Klock or as The Famous Fuzzy Time.
+The Famous Fuzzy Time displays the time in words rounded to the nearest five minutes.
+
 The foreground and background colours can be selected.
 
 
@@ -31,4 +34,4 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025 :: pyKlock3 V2025.3
+Kevin Scott (C) 2025 :: pyKlock3 V2025.4

@@ -33,6 +33,14 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 If no branch indicated, assume main branch.
 
+V2025.4		[29 October 2025]
+
+	The time can be displays as either a LED Klock or as The Famous Fuzzy Time.
+		This is achieved via a Stacked layout.
+	The Famous Fuzzy Time displays the time in words rounded to the nearest five minutes.
+		Added a new properties - TIMR_MODE - can be either Digital or Text.
+	Added icons for LED Klock or text KLOCK options [both menu's and toolbar].
+
 
 V2025.3		[27 October 2025]
 

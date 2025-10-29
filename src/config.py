@@ -144,6 +144,20 @@ class Config():
         """
         self.config["APPLICATION"]["height"] = value
 
+    @property
+    def TIME_MODE(self):
+        """  Returns the Time mode.
+             Either Digital of Text
+        """
+        return self.config["TIME"].get("mode", "Digital")
+
+    @TIME_MODE.setter
+    def TIME_MODE(self, value):
+        """  Sets the Time mode.
+             Either Digital of Text
+        """
+        self.config["TIME"]["mode"] = value
+
 
     def writeConfig(self):
         """ Write the current config file.
@@ -171,7 +185,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.3",
+        config["INFO"] = {"myVERSION": "2025.4",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos" : 100,
@@ -181,6 +195,8 @@ class Config():
 
         config["DISPLAY"] = {"foreground": "#00ff00",
                              "background": "#000000"}
+
+        config["TIME"] = {"mode": "Digital"}
 
 
         st_toml = toml.dumps(config)
