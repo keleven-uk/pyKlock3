@@ -145,6 +145,18 @@ class Config():
         self.config["APPLICATION"]["height"] = value
 
     @property
+    def CONFIRM_EXIT(self):
+        """  Returns the window height.
+        """
+        return self.config["APPLICATION"].get("confirmExit", False)
+
+    @CONFIRM_EXIT.setter
+    def CONFIRM_EXIT(self, value):
+        """  Sets the window height.
+        """
+        self.config["APPLICATION"]["confirmExit"] = value
+
+    @property
     def TIME_MODE(self):
         """  Returns the Time mode.
              Either Digital of Text
@@ -157,6 +169,20 @@ class Config():
              Either Digital of Text
         """
         self.config["TIME"]["mode"] = value
+
+    @property
+    def TIME_FORMAT(self):
+        """  Returns the Time mode.
+             Either Digital of Text
+        """
+        return self.config["TIME"].get("format", "Fuzzy Time")
+
+    @TIME_FORMAT.setter
+    def TIME_FORMAT(self, value):
+        """  Sets the Time mode.
+             Either Digital of Text
+        """
+        self.config["TIME"]["format"] = value
 
 
     def writeConfig(self):
@@ -185,18 +211,20 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.4",
+        config["INFO"] = {"myVERSION": "2025.5",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos" : 100,
                                  "y_pos" : 100,
                                  "width" : 400,
-                                 "height": 200}
+                                 "height": 200,
+                                 "confirmExit": false}
 
         config["DISPLAY"] = {"foreground": "#00ff00",
                              "background": "#000000"}
 
-        config["TIME"] = {"mode": "Digital"}
+        config["TIME"] = {"mode"  : "Digital",
+                          "format": "Fuzzy Time"}
 
 
         st_toml = toml.dumps(config)

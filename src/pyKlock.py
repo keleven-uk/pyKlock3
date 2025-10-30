@@ -19,6 +19,7 @@
 ###############################################################################################################
 
 import pathlib
+import functools
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout,
                              QColorDialog, QMessageBox)
@@ -44,6 +45,7 @@ class KlockWindow(QMainWindow):
         self.foregroundColour = self.config.FOREGROUND
         self.backgroundColour = self.config.BACKGROUND
         self.timeMode         = self.config.TIME_MODE
+        self.timeFormat       = self.config.TIME_FORMAT
 
         #  Build GUI
         self.buildGUI()
@@ -98,14 +100,17 @@ class KlockWindow(QMainWindow):
 
         self.stsDate  = QLabel("Thursday 23 October 2025")
         self.stsState = QLabel("cisN")
+        self.stsFrmt  = QLabel("L.E.D.")
         self.stsIdle  = QLabel("idle : 7s")
 
         self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.stsState.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsFrmt.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsIdle.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         self.statusBar.addPermanentWidget(self.stsDate,  1)
         self.statusBar.addPermanentWidget(self.stsState, 1)
+        self.statusBar.addPermanentWidget(self.stsFrmt, 1)
         self.statusBar.addPermanentWidget(self.stsIdle,  2)
 
     def buildMenu(self):
@@ -144,6 +149,11 @@ class KlockWindow(QMainWindow):
         mnuDisplay.addAction(actBackColour)
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
+        mnuTime.addSeparator()
+
+        self.mnuTimeFormatTime = mnuTime.addMenu("Format")
+        for item in self.selectTime.timeTypes:
+            self.mnuTimeFormatTime.addAction(item, functools.partial(self.changeTimeFormat, item))
 
         #  Set up toolbar.
         self.toolbar = QToolBar("Time Toolbar")
@@ -155,21 +165,30 @@ class KlockWindow(QMainWindow):
         self.toolbar.addAction(self.actDigitalTime)
         self.toolbar.addAction(self.actTextTime)
 
-# --------------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
+    # ----------------------------------------------------------------------------------------------------------------------- changeTimeFormat ------
+    def changeTimeFormat(self, value):
+        """  Changes the format of the text time.
+             The value is received from the Format sub-menu under main menu Time
+        """
+        self.timeFormat = value
+        self.sender().setCheckable(True)
+    # ----------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
     def setDigitalTime(self):
         """  Bring forward the digital time display, hides the text time display.
         """
         self.stackedLayout.setCurrentIndex(0)
         self.actDigitalTime.setCheckable(True)
         self.actTextTime.setCheckable(False)
+        self.mnuTimeFormatTime.setEnabled(False)
         self.timeMode = "Digital"
-# --------------------------------------------------------------------------------------------------------------------------- setWordTime() ---------
+    # ----------------------------------------------------------------------------------------------------------------------- setWordTime() ---------
     def setTextTime(self):
         """  Bring forward the text time display, hides the digital time display.
         """
         self.stackedLayout.setCurrentIndex(1)
         self.actDigitalTime.setCheckable(False)
         self.actTextTime.setCheckable(True)
+        self.mnuTimeFormatTime.setEnabled(True)
         self.timeMode = "Text"
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
@@ -179,10 +198,12 @@ class KlockWindow(QMainWindow):
         txtTime   = dtCentral.toString("hh:mm:ss")
         txtDate   = dtCentral.toString("dddd MMMM yyyy")
 
-        if self.config.TIME_MODE == "Digital":
+        if self.timeMode == "Digital":
             self.lcdTime.display(txtTime)
+            self.stsFrmt.setText("L.E.D.")
         else:
-            self.txtTime.setText(self.selectTime.getTime("Fuzzy Time"))
+            self.txtTime.setText(self.selectTime.getTime(self.timeFormat))
+            self.stsFrmt.setText(f"{self.timeFormat}")
 
         self.stsDate.setText(txtDate)
         self.stsState.setText(f"{utils.getState()}")
@@ -224,19 +245,24 @@ class KlockWindow(QMainWindow):
 
              Save new config properties to file.
         """
-        confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?")
+        if self.config.CONFIRM_EXIT:
+            confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?")
 
-        if confirmation == QMessageBox.StandardButton.Yes:
-            self.config.X_POS     = self.x()
-            self.config.Y_POS     = self.y() + 31     #  This seems to move 32 upwards on closing - need to investigate.
-            self.config.WIDTH     = self.width()
-            self.config.HEIGHT    = self.height()
-            self.config.TIME_MODE = self.timeMode
-            self.config.writeConfig()
-
-            event.accept()  # Close the app
+            if confirmation == QMessageBox.StandardButton.Yes:
+                self.saveConfig()
+                event.accept()  # Close the app
+            else:
+                event.ignore()  # Don't close the app
         else:
-            event.ignore()  # Don't close the app
+            self.saveConfig()
+    # ----------------------------------------------------------------------------------------------------------------------- saveConfig() ----------
+    def saveConfig(self):
+        self.config.X_POS     = self.x()
+        self.config.Y_POS     = self.y() + 31     #  This seems to move 32 upwards on closing - need to investigate.
+        self.config.WIDTH     = self.width()
+        self.config.HEIGHT    = self.height()
+        self.config.TIME_MODE = self.timeMode
+        self.config.writeConfig()
 
 
 
