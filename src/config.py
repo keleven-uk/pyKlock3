@@ -184,6 +184,20 @@ class Config():
         """
         self.config["TIME"]["format"] = value
 
+    @property
+    def TIME_FONT(self):
+        """  Returns the Time mode.
+             Either Digital of Text
+        """
+        return self.config["TIME"].get("font", "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular")
+
+    @TIME_FONT.setter
+    def TIME_FONT(self, value):
+        """  Sets the Time mode.
+             Either Digital of Text
+        """
+        self.config["TIME"]["font"] = value
+
 
     def writeConfig(self):
         """ Write the current config file.
@@ -211,7 +225,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.5",
+        config["INFO"] = {"myVERSION": "2025.6",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos" : 100,
@@ -224,7 +238,8 @@ class Config():
                              "background": "#000000"}
 
         config["TIME"] = {"mode"  : "Digital",
-                          "format": "Fuzzy Time"}
+                          "format": "Fuzzy Time",
+                          "font"  :  "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"}
 
 
         st_toml = toml.dumps(config)

@@ -22,8 +22,8 @@ import pathlib
 import functools
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout,
-                             QColorDialog, QMessageBox)
-from PyQt6.QtGui     import QAction, QColor, QIcon
+                             QColorDialog, QMessageBox, QFontDialog)
+from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
 from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize
 
 import src.selectTime as st
@@ -37,7 +37,7 @@ class KlockWindow(QMainWindow):
 
         self.config     = myConfig
         self.selectTime = st.SelectTime()
-
+        self.timeFont   = QFont()
 
         self.setWindowTitle("pyKlock")
         self.setGeometry(self.config.X_POS, self.config.Y_POS, self.config.WIDTH, self.config.HEIGHT)
@@ -46,6 +46,8 @@ class KlockWindow(QMainWindow):
         self.backgroundColour = self.config.BACKGROUND
         self.timeMode         = self.config.TIME_MODE
         self.timeFormat       = self.config.TIME_FORMAT
+        #  dummy is the Boolean result of the conversion, True = success and False = error.
+        dummy                 = QFont.fromString(self.timeFont, self.config.TIME_FONT)
 
         #  Build GUI
         self.buildGUI()
@@ -75,7 +77,7 @@ class KlockWindow(QMainWindow):
 
         self.txtTime = QLabel("00:00:00")
         self.txtTime.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.txtTime.setStyleSheet("font-size: 24pt")
+        self.txtTime.setFont(self.timeFont)
 
         # Add pages to the stacked layout
         self.stackedLayout.addWidget(self.lcdTime)                    #  Index 0
@@ -136,6 +138,8 @@ class KlockWindow(QMainWindow):
         self.actTextTime.triggered.connect(self.setTextTime)
         self.actTextTime.setCheckable(False)
 
+        self.actTimeFormat = QAction("Time Font", self)
+        self.actTimeFormat.triggered.connect(self.openFontDialog)
         # Set up main menu
         self.menu = self.menuBar()
 
@@ -155,6 +159,10 @@ class KlockWindow(QMainWindow):
         for item in self.selectTime.timeTypes:
             self.mnuTimeFormatTime.addAction(item, functools.partial(self.changeTimeFormat, item))
 
+        mnuTime.addSeparator()
+        mnuTime.addAction(self.actTimeFormat)
+
+
         #  Set up toolbar.
         self.toolbar = QToolBar("Time Toolbar")
         self.toolbar.setIconSize(QSize(16, 16))
@@ -165,6 +173,14 @@ class KlockWindow(QMainWindow):
         self.toolbar.addAction(self.actDigitalTime)
         self.toolbar.addAction(self.actTextTime)
 
+    # ----------------------------------------------------------------------------------------------------------------------- openFontDialog ------
+    def openFontDialog(self):
+        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Fomt for Time.")
+
+        # If user clicked OK, update the label's font
+        if ok:
+            self.txtTime.setFont(font)
+            self.timeFont = font
     # ----------------------------------------------------------------------------------------------------------------------- changeTimeFormat ------
     def changeTimeFormat(self, value):
         """  Changes the format of the text time.
@@ -262,6 +278,7 @@ class KlockWindow(QMainWindow):
         self.config.WIDTH     = self.width()
         self.config.HEIGHT    = self.height()
         self.config.TIME_MODE = self.timeMode
+        self.config.TIME_FONT = self.timeFont.toString()
         self.config.writeConfig()
 
 

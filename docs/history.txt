@@ -33,11 +33,16 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 If no branch indicated, assume main branch.
 
+V2025.6		[2 November 2025]
+
+	Added a time font option to the time menu.
+
+
 V2025.5		[30 October 2025]
 
 	Added an option to make the confirm exit message optional.
 	Added a time format entry to the time menu.
-		This opens a sun many containing all the time formats cu8rrently available.
+		This opens a sub manu containing all the time formats cu8rrently available.
 		The te4xt time will now displayed in the time in this format.
 		The time format is displayed in the statusbar.
 		The time format sub menu is only available when in test time mode.
