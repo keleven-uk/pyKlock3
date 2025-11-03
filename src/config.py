@@ -225,14 +225,14 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.6",
+        config["INFO"] = {"myVERSION": "2025.7",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos" : 100,
                                  "y_pos" : 100,
                                  "width" : 400,
                                  "height": 200,
-                                 "confirmExit": false}
+                                 "confirmExit": False}
 
         config["DISPLAY"] = {"foreground": "#00ff00",
                              "background": "#000000"}

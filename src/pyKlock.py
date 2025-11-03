@@ -128,12 +128,12 @@ class KlockWindow(QMainWindow):
         actBackColour = QAction("Background Colour", self)
         actBackColour.triggered.connect(self.getBackColour)
 
-        path = str(RESOURCE_PATH / "digital-clock.png")
+        path = f"{RESOURCE_PATH}/digital-clock.png"
         self.actDigitalTime = QAction(QIcon(path),"Digital Time", self)
         self.actDigitalTime.triggered.connect(self.setDigitalTime)
         self.actDigitalTime.setCheckable(True)
 
-        path = str(RESOURCE_PATH / "time-text.png")
+        path = f"{RESOURCE_PATH}/time-text.png"
         self.actTextTime = QAction(QIcon(path),"Time in words", self)
         self.actTextTime.triggered.connect(self.setTextTime)
         self.actTextTime.setCheckable(False)

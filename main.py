@@ -27,12 +27,13 @@ import sys
 import platform
 
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui     import QIcon
 
 import src.pyKlock as pyKlock
 import src.config  as Config
 import src.logger  as Logger
 
-from src.projectPaths import LOGGER_PATH, CONFIG_PATH
+from src.projectPaths import LOGGER_PATH, CONFIG_PATH, RESOURCE_PATH, FROZEN
 
 ############################################################################################### __main__ ######
 
@@ -52,8 +53,21 @@ if __name__ == "__main__":
     myLogger.info(f"  Config path {CONFIG_PATH}")
     myLogger.info(f"  Logger path {LOGGER_PATH}")
 
+    if FROZEN:
+        myLogger.info(f"uk.co.keleven.{myConfig.NAME}.{myConfig.VERSION}")
+
+    #  So Windows will use the correct icon in the task bar.
+    try:
+        from ctypes import windll # Only exists on Windows.
+        myappid = "Py"
+        windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    except ImportError:
+        pass
+
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
+    path = f"{RESOURCE_PATH}/tea.ico"
+    app.setWindowIcon(QIcon(path))
     window = pyKlock.KlockWindow(myConfig)
     window.show()
 

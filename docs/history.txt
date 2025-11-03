@@ -33,6 +33,16 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 If no branch indicated, assume main branch.
 
+
+V2025.7		[3 November 2025]
+	Produced a stand alone executable using pyInstaller.
+		Extra file - main.json - config file for pyInstaller.
+		extra file - copyStuff.bay - copy needed file to the distribution directory
+		if running as a executable [frozen] file, not noted on log file.
+
+	Added tea.icon as the main app icon.
+
+
 V2025.6		[2 November 2025]
 
 	Added a time font option to the time menu.

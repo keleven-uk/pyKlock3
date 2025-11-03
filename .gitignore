@@ -34,6 +34,7 @@ wheels/
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+output/
 
 # Installer logs
 pip-log.txt
@@ -92,6 +93,8 @@ venv/
 ENV/
 env/
 env_3.13/
+env_3.14/
+
 
 # Spyder project settings
 .spyderproject
