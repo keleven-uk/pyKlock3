@@ -34,6 +34,14 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.8		[6 November 2025]
+
+	Finally got the transparent window to work.
+		Apparently, if transparent - you can't then set the background colour.
+	Introduced a new config option TRANSPARENT.
+	Needs to implemented and tested.
+
+
 V2025.7		[3 November 2025]
 	Produced a stand alone executable using pyInstaller.
 		Extra file - main.json - config file for pyInstaller.

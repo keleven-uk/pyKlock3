@@ -28,6 +28,7 @@ import platform
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui     import QIcon
+from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize
 
 import src.pyKlock as pyKlock
 import src.config  as Config
@@ -59,7 +60,7 @@ if __name__ == "__main__":
     #  So Windows will use the correct icon in the task bar.
     try:
         from ctypes import windll # Only exists on Windows.
-        myappid = "Py"
+        myappid = "pyKlock"
         windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except ImportError:
         pass

@@ -97,6 +97,18 @@ class Config():
         self.config["DISPLAY"]["background"] = value
 
     @property
+    def TRANSPARENT(self):
+        """  Returns if the window should be transparent.
+        """
+        return self.config["DISPLAY"].get("transparent", True)
+
+    @TRANSPARENT.setter
+    def TRANSPARENT(self, value):
+        """  Sets if the window should be transparent.
+        """
+        self.config["DISPLAY"]["transparent"] = value
+
+    @property
     def X_POS(self):
         """  Returns the X co-ordinate of the top right hand corner of the window.
         """
@@ -146,13 +158,13 @@ class Config():
 
     @property
     def CONFIRM_EXIT(self):
-        """  Returns the window height.
+        """  Returns if confirmation is needed on exit.
         """
         return self.config["APPLICATION"].get("confirmExit", False)
 
     @CONFIRM_EXIT.setter
     def CONFIRM_EXIT(self, value):
-        """  Sets the window height.
+        """  Sets if confirmation is needed on exit.
         """
         self.config["APPLICATION"]["confirmExit"] = value
 
@@ -172,31 +184,28 @@ class Config():
 
     @property
     def TIME_FORMAT(self):
-        """  Returns the Time mode.
-             Either Digital of Text
+        """  Returns the Time format.
         """
         return self.config["TIME"].get("format", "Fuzzy Time")
 
     @TIME_FORMAT.setter
     def TIME_FORMAT(self, value):
-        """  Sets the Time mode.
-             Either Digital of Text
+        """  Sets the Time format
         """
         self.config["TIME"]["format"] = value
 
     @property
     def TIME_FONT(self):
-        """  Returns the Time mode.
-             Either Digital of Text
+        """  Returns the Time font
         """
         return self.config["TIME"].get("font", "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular")
 
     @TIME_FONT.setter
     def TIME_FONT(self, value):
-        """  Sets the Time mode.
-             Either Digital of Text
+        """  Sets the Time font
         """
         self.config["TIME"]["font"] = value
+
 
 
     def writeConfig(self):
@@ -225,17 +234,18 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.7",
+        config["INFO"] = {"myVERSION": "2025.8",
                           "myNAME"   : "pyKlock"}
 
-        config["APPLICATION"] = {"x_pos" : 100,
-                                 "y_pos" : 100,
-                                 "width" : 400,
-                                 "height": 200,
+        config["APPLICATION"] = {"x_pos"      : 100,
+                                 "y_pos"      : 100,
+                                 "width"      : 400,
+                                 "height"     : 200,
                                  "confirmExit": False}
 
-        config["DISPLAY"] = {"foreground": "#00ff00",
-                             "background": "#000000"}
+        config["DISPLAY"] = {"foreground" : "#00ff00",
+                             "background" : "#000000",
+                             "transparent": True}
 
         config["TIME"] = {"mode"  : "Digital",
                           "format": "Fuzzy Time",
