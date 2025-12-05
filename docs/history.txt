@@ -34,6 +34,12 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.9		[5 December 2025]
+
+	Added the methods to the frame, so it can be moved by left clicking in the frame and moving the mouse.
+		Needed when showing frameless i.e. no title bar.
+	Added a close button to the toolbar.
+
 V2025.8		[6 November 2025]
 
 	Finally got the transparent window to work.

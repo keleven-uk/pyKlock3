@@ -8,15 +8,18 @@ Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and F
 
 Current version of pyKlock is written in Python using different GUI frameworks
 
-    pyKlock 0 - pygubu & pySimpleGUI - finally settled on pySimpleGUI.  Most complete.
-    pyKlock 1 - CustomTkinter.
-    pyKlock 2 - Flet.
-    pyKlock 3 - QT - this one.
+	pyKlock 0 - pygubu & pySimpleGUI - finaly settled on pySimpleGUI.  
+	pyKlock 1 - CustomTkinter [Most complete].
+	pyKlock 2 - Flet. - font dialog.
+	pyKlock 3 - QT.
+	pyKlock 4 - wxPython. - problems with frame transparency, effects all child widgets.
+
+Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
     
 A klock built using Python and QT6 GUI Framework.
 
-Using python 3.14.0 and QT 6.10.0.
+Using python 3.14.0 and QT 6.10.1.
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
@@ -25,7 +28,7 @@ Key status is the status of Caps Lock, Insert, Scroll lock and Num lock.
 
 The time can be displays as either a LED Klock or as The Famous Fuzzy Time.
 The Famous Fuzzy Time displays the time in words rounded to the nearest five minutes.
-The te4xt time can also be displayed in a number of other formats [Binary, Roman Time, Hex Time etc.]
+The text time can also be displayed in a number of other formats [Binary, Roman Time, Hex Time etc.]
 
 The foreground and background colours can be selected.
 
@@ -35,5 +38,5 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025 :: pyKlock3 V2025.5
+Kevin Scott (C) 2025 :: pyKlock3 V2025.9
 

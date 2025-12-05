@@ -28,7 +28,6 @@ import platform
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui     import QIcon
-from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize
 
 import src.pyKlock as pyKlock
 import src.config  as Config
