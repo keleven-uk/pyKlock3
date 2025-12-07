@@ -30,6 +30,7 @@ The time can be displays as either a LED Klock or as The Famous Fuzzy Time.
 The Famous Fuzzy Time displays the time in words rounded to the nearest five minutes.
 The text time can also be displayed in a number of other formats [Binary, Roman Time, Hex Time etc.]
 
+Thew font of the time text can be selected.
 The foreground and background colours can be selected.
 
 
@@ -38,5 +39,5 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025 :: pyKlock3 V2025.9
+Kevin Scott (C) 2025 :: pyKlock3 V2025.10
 

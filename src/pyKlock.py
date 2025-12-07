@@ -19,8 +19,8 @@
 #                                                                                                             #
 ###############################################################################################################
 
-from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout,
-                             QColorDialog, QMessageBox, QFontDialog)
+from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout,QColorDialog,
+                             QMessageBox, QFontDialog, QComboBox)
 from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
 from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint
 
@@ -47,8 +47,8 @@ class KlockWindow(QMainWindow):
 
         self.foregroundColour = self.config.FOREGROUND
         self.backgroundColour = self.config.BACKGROUND
-        self.timeMode         = self.config.TIME_MODE
-        self.timeFormat       = self.config.TIME_FORMAT
+        self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
+        self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
         self.transparent      = self.config.TRANSPARENT
 
         #  dummy is the Boolean result of the conversion, True = success and False = error.
@@ -60,6 +60,7 @@ class KlockWindow(QMainWindow):
         #  Build GUI
         self.buildGUI()
         self.buildStatusbar()
+        self.buildCombox()
         self.buildMenu()
 
         #  Initialize state
@@ -68,12 +69,7 @@ class KlockWindow(QMainWindow):
         else:
             self.setTextTime()
 
-        if self.transparent:
-            self.setTransparent(True)
-        else:
-            self.setTransparent(False)
-            self.updateColour()
-
+        self.updateColour()
         self.updateTime()
 
     def buildGUI(self):
@@ -129,6 +125,21 @@ class KlockWindow(QMainWindow):
         self.statusBar.addPermanentWidget(self.stsFrmt, 1)
         self.statusBar.addPermanentWidget(self.stsIdle,  2)
 
+    def buildCombox(self):
+        self.combo = QComboBox()
+        #self.combo.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.combo.insertItems(1,self.selectTime.timeTypes)
+        index = self.combo.findText(self.timeFormat)
+        if index >= 0:
+            self.combo.setCurrentIndex(index)
+
+        self.combo.setStyleSheet("QComboBox"
+                                 "{"
+                                 "color           : self.foregroundColour;"
+                                 "background-color: transparent;"
+                                 "border-radius: 3px;"
+                                 "}")
+
     def buildMenu(self):
         """  Initialise the menu and add the actions.
         """
@@ -160,8 +171,16 @@ class KlockWindow(QMainWindow):
         self.actClose.triggered.connect(self.closeEvent)
         self.actClose.setCheckable(False)
 
-        self.actTimeFormat = QAction("Time Font", self)
-        self.actTimeFormat.triggered.connect(self.openFontDialog)
+        path = f"{RESOURCE_PATH}/font.png"
+        self.actFont = QAction(QIcon(path),"Change Font", self)
+        self.actFont.triggered.connect(self.openFontDialog)
+        self.actFont.setCheckable(False)
+
+        path = f"{RESOURCE_PATH}/colour.png"
+        self.actColour = QAction(QIcon(path),"Change Colour", self)
+        self.actColour.triggered.connect(self.openColourDialog)
+        self.actColour.setCheckable(False)
+
         # Set up main menu
         self.menu = self.menuBar()
 
@@ -174,6 +193,9 @@ class KlockWindow(QMainWindow):
 
         mnuDisplay.addAction(actForeColour)
         mnuDisplay.addAction(actBackColour)
+        mnuDisplay.addSeparator()
+        mnuDisplay.addAction(self.actFont)
+        mnuDisplay.addAction(self.actColour)
         mnuDisplay.addSeparator()
         mnuDisplay.addAction(self.actTransparent)
 
@@ -191,9 +213,21 @@ class KlockWindow(QMainWindow):
         self.toolbar.addAction(self.actDigitalTime)
         self.toolbar.addAction(self.actTextTime)
         self.toolbar.addSeparator()
+        self.toolbar.addWidget(self.combo)
+        self.toolbar.addAction(self.actFont)
+        self.toolbar.addAction(self.actColour)
+        self.toolbar.addSeparator()
         self.toolbar.addAction(self.actClose)
 
+    # ----------------------------------------------------------------------------------------------------------------------- openColourDialog ------
+    def openColourDialog(self):
+        dlg = QColorDialog(self)
+        if self.foregroundColour:
+            dlg.setCurrentColor(QColor(self.foregroundColour))
 
+        if dlg.exec():
+            self.foregroundColour = dlg.currentColor().name()
+            print(dlg.currentColor().name())
     # ----------------------------------------------------------------------------------------------------------------------- openFontDialog --------
     def openFontDialog(self):
         font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Fomt for Time.")
@@ -202,13 +236,6 @@ class KlockWindow(QMainWindow):
         if ok:
             self.txtTime.setFont(font)
             self.timeFont = font
-        # ----------------------------------------------------------------------------------------------------------------------- changeTimeFormat --
-    def changeTimeFormat(self, value):
-        """  Changes the format of the text time.
-             The value is received from the Format sub-menu under main menu Time
-        """
-        self.timeFormat = value
-        self.sender().setCheckable(True)
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
         """  Update the time and status bar.            self.selectTime.getTime(self.myConfig.TIME_TYPE)
@@ -221,6 +248,7 @@ class KlockWindow(QMainWindow):
             self.lcdTime.display(txtTime)
             self.stsFrmt.setText("L.E.D.")
         else:
+            self.timeFormat = self.combo.currentText()
             self.txtTime.setText(self.selectTime.getTime(self.timeFormat))
             self.stsFrmt.setText(f"{self.timeFormat}")
 
@@ -233,13 +261,32 @@ class KlockWindow(QMainWindow):
              Set the config values and re-write the config file.
         """
         #  Just in case it is called in TRANSPARENT mode - spoils the display.
+        #  So, just update the foreground colour of the timer and statusbar.
         if self.transparent:
+            self.txtTime.setStyleSheet(f"color: {self.foregroundColour}")
+            self.statusBar.setStyleSheet(f"color: {self.foregroundColour}")
+            self.menu.setStyleSheet(f"color: {self.foregroundColour}")
+            self.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
             return
 
         self.centralWidget.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
         self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+
+        self.setTransparent()
+    # ----------------------------------------------------------------------------------------------------------------------- setTransparent --------
+    def setTransparent(self):
+        """  Sets the app transparency.
+        """
+        self.actTransparent.setCheckable(self.transparent)
+
+        if self.config.TRANSPARENT:
+            print("Transparent")
+            self.transparent = True
+        else:
+            print("Non Transparent")
+            self.transparent = False
     # ----------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
     def setDigitalTime(self):
         """  Bring forward the digital time display, hides the text time display.
@@ -276,17 +323,6 @@ class KlockWindow(QMainWindow):
         if colour.isValid():
             self.backgroundColour = colour.name()
             self.updateColour()
-    # ----------------------------------------------------------------------------------------------------------------------- setTransparent --------
-    def setTransparent(self, s):
-        """  Sets the app transparency.
-        """
-        self.transparent = s
-        self.actTransparent.setCheckable(self.transparent)
-
-        if self.transparent:
-            print("Transparent")
-        else:
-            print("Non Transparent")
     # ----------------------------------------------------------------------------------------------------------------------- mousePressEvent -------
     #  The three following methods are in place of the default mouse events - so pyKlocvk can be dragged
     #  by holding the left mouse button [anywhere in pyKlock] and moving the mouse.
@@ -322,11 +358,12 @@ class KlockWindow(QMainWindow):
         """  Save stuff to the config file, in case any has changed.
         """
         self.config.X_POS       = self.x()
-        self.config.Y_POS       = self.y() + 31     #  This seems to move 32 upwards on closing - need to investigate.
+        self.config.Y_POS       = self.y()
         self.config.WIDTH       = self.width()
         self.config.HEIGHT      = self.height()
         self.config.TIME_MODE   = self.timeMode
         self.config.TIME_FONT   = self.timeFont.toString()
+        self.config.TIME_FORMAT = self.timeFormat
         self.config.TRANSPARENT = self.transparent
         self.config.FOREGROUND  = self.foregroundColour
         self.config.BACKGROUND  = self.backgroundColour

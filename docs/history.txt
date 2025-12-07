@@ -34,6 +34,15 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.10		[7 December 2025]
+
+	Added the ability to change the font to the Display menu and Toolbar - The gingerbread icon [I know, needs changing].
+	Added the ability to change the foreground colour to the Display menu and Toolbar - the coloured swirly circle.
+		Both above affect all the text.
+	Added the ability to change the format of the time text from a combo box in the toolbar.
+		The combo box seems to ignore the transparent flag.
+
+
 V2025.9		[5 December 2025]
 
 	Added the methods to the frame, so it can be moved by left clicking in the frame and moving the mouse.
