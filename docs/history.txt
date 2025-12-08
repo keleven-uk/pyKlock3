@@ -34,6 +34,15 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.11		[8 December 2025]
+
+	I had problems with transparency, it seems that once it is set - you should't change it.
+	So, the transparency flag is set in the config file and if it needs to change, a pyKlock reset is needed [for now].
+	Sorted out the frameless and the stay on top flags - then need to be set at the same time using "|"
+	Removed the size grep from the status bar.
+	The combo box is not semi-transparent, using a style sheet.
+
+
 V2025.10		[7 December 2025]
 
 	Added the ability to change the font to the Display menu and Toolbar - The gingerbread icon [I know, needs changing].

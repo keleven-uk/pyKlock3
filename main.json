@@ -7,7 +7,7 @@
   },
   {
    "optionDest": "filenames",
-   "value": "C:/usr/shed/Projects/python/pyKlock3/main.py"
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/main.py"
   },
   {
    "optionDest": "onefile",
@@ -19,7 +19,7 @@
   },
   {
    "optionDest": "icon_file",
-   "value": "C:/usr/shed/Projects/python/pyKlock3/resources/tea.ico"
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/resources/tea.ico"
   },
   {
    "optionDest": "name",

@@ -9,10 +9,10 @@ Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and F
 Current version of pyKlock is written in Python using different GUI frameworks
 
 	pyKlock 0 - pygubu & pySimpleGUI - finaly settled on pySimpleGUI.  
-	pyKlock 1 - CustomTkinter [Most complete].
-	pyKlock 2 - Flet. - font dialog.
-	pyKlock 3 - QT.
-	pyKlock 4 - wxPython. - problems with frame transparency, effects all child widgets.
+	pyKlock 1 - CustomTkinter        - Most complete.
+	pyKlock 2 - Flet.                - font dialog.
+	pyKlock 3 - QT.                  - problems with frame transparency, canot be toggled programable.
+	pyKlock 4 - wxPython.            - problems with frame transparency, effects all child widgets.
 
 Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
@@ -32,6 +32,7 @@ The text time can also be displayed in a number of other formats [Binary, Roman 
 
 Thew font of the time text can be selected.
 The foreground and background colours can be selected.
+The background can also be set to transparent.
 
 
 To install dependencies pip install -r requirements.txt
@@ -39,5 +40,5 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025 :: pyKlock3 V2025.10
+Kevin Scott (C) 2025 :: pyKlock3 V2025.11
 

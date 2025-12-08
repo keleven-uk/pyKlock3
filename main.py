@@ -68,7 +68,7 @@ if __name__ == "__main__":
     app.setStyle("Fusion")
     path = f"{RESOURCE_PATH}/tea.ico"
     app.setWindowIcon(QIcon(path))
-    window = pyKlock.KlockWindow(myConfig)
+    window = pyKlock.KlockWindow(myConfig, myLogger)
     window.show()
 
     myLogger.info(f"  Ending {myConfig.NAME} Version {myConfig.VERSION} ")
