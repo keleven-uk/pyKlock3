@@ -148,16 +148,8 @@ class KlockWindow(QMainWindow):
         """  Initialise the menu and add the actions.
         """
         self.logger.info("Building Menu")
+
         #  Set up actions.
-        actExit = QAction("Exit", self)
-        actExit.triggered.connect(self.close)
-
-        actForeColour = QAction("Foreground Colour", self)
-        actForeColour.triggered.connect(self.getForeColour)
-
-        actBackColour = QAction("Background Colour", self)
-        actBackColour.triggered.connect(self.getBackColour)
-
         path = f"{RESOURCE_PATH}/digital-clock.png"
         self.actDigitalTime = QAction(QIcon(path),"Digital Time", self)
         self.actDigitalTime.triggered.connect(self.setDigitalTime)
@@ -167,20 +159,27 @@ class KlockWindow(QMainWindow):
         self.actTextTime.triggered.connect(self.setTextTime)
         self.actTextTime.setCheckable(False)
 
-        path = f"{RESOURCE_PATH}/cross.png"
-        self.actClose = QAction(QIcon(path),"Close", self)
-        self.actClose.triggered.connect(self.closeEvent)
-        self.actClose.setCheckable(False)
-
         path = f"{RESOURCE_PATH}/font.png"
         self.actFont = QAction(QIcon(path),"Change Font", self)
         self.actFont.triggered.connect(self.openFontDialog)
         self.actFont.setCheckable(False)
 
+        path = f"{RESOURCE_PATH}/colour-swatch.png"
+        self.actBackColour = QAction(QIcon(path),"Change Background Colour", self)
+        self.actBackColour.triggered.connect(self.getBackColour)
+        self.actBackColour.setCheckable(False)
+        flag = False if self.transparent else True
+        self.actBackColour.setEnabled(flag)
+
         path = f"{RESOURCE_PATH}/colour.png"
-        self.actColour = QAction(QIcon(path),"Change Colour", self)
-        self.actColour.triggered.connect(self.openColourDialog)
-        self.actColour.setCheckable(False)
+        self.actForeColour = QAction(QIcon(path),"Change Foreground Colour", self)
+        self.actForeColour.triggered.connect(self.getForeColour)
+        self.actForeColour.setCheckable(False)
+
+        path = f"{RESOURCE_PATH}/cross.png"
+        self.actClose = QAction(QIcon(path),"Close", self)
+        self.actClose.triggered.connect(self.closeEvent)
+        self.actClose.setCheckable(False)
 
         # Set up main menu
         self.menu = self.menuBar()
@@ -190,13 +189,12 @@ class KlockWindow(QMainWindow):
         mnuDisplay = self.menu.addMenu("&Display")
 
         #  Set up menu actions.
-        mnuFile.addAction(actExit)
+        mnuFile.addAction(self.actClose)
 
-        mnuDisplay.addAction(actForeColour)
-        mnuDisplay.addAction(actBackColour)
+        mnuDisplay.addAction(self.actBackColour)
+        mnuDisplay.addAction(self.actForeColour)
         mnuDisplay.addSeparator()
         mnuDisplay.addAction(self.actFont)
-        mnuDisplay.addAction(self.actColour)
 
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
@@ -215,20 +213,12 @@ class KlockWindow(QMainWindow):
         self.toolbar.addWidget(self.combo)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.actFont)
-        self.toolbar.addAction(self.actColour)
+        self.toolbar.addAction(self.actBackColour)
+        self.toolbar.addAction(self.actForeColour)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.actClose)
 
-    # ----------------------------------------------------------------------------------------------------------------------- openColourDialog ------
-    def openColourDialog(self):
-        dlg = QColorDialog(self)
-        if self.foregroundColour:
-            dlg.setCurrentColor(QColor(self.foregroundColour))
-
-        if dlg.exec():
-            self.foregroundColour = dlg.currentColor().name()
-            print(dlg.currentColor().name())
-    # ----------------------------------------------------------------------------------------------------------------------- openFontDialog --------
+    #  -------------------------------------------------------------------------------------------------------------------- openFontDialog ----------
     def openFontDialog(self):
         font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Fomt for Time.")
 

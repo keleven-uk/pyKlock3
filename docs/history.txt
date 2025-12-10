@@ -43,6 +43,15 @@ V2025.11		[8 December 2025]
 	The combo box is not semi-transparent, using a style sheet.
 
 
+V2025.11		[10 December 2025]
+
+	Changed the toolbar font icon to something ore descrive - https://www.freeiconspng.com/images/font-icon.
+		All other icons come from fugue-icons-3.5.6 @ http://p.yusukekamiyamane.com/.
+	Added the ability to change the background colour, only applied if transparency set to False.
+	Removed duplicate menu actions for foreground and background colours.
+	Tidied up the toolbar and Display menu - so, they look similar.
+
+
 V2025.10		[7 December 2025]
 
 	Added the ability to change the font to the Display menu and Toolbar - The gingerbread icon [I know, needs changing].
