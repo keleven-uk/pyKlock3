@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    pyKlock1_utils   Copyright (C) <2024>  <Kevin Scott>                                                     #
+#    pyKlock1_utils   Copyright (C) <2024-25>  <Kevin Scott>                                                  #
 #                                                                                                             #
-#    Contains utility functions for pyKlock.                                                                    #
+#    Contains utility functions for pyKlock.                                                                  #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -83,18 +83,49 @@ def getIdleDuration():
     else:
         return "                "
 
-def formatSeconds(seconds):
+def formatSeconds(secs):
     """  Formats number of seconds into a human readable form i.e. hours:minutes:seconds
     """
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes   = divmod(minutes, 60)
+    # variable (which stores total time in seconds)
+    minutes, seconds  = divmod(secs, 60)
+    hours, minutes    = divmod(minutes, 60)
+    days, hours       = divmod(hours, 24)
 
-    if hours:
-        return f"{hours}h:{minutes}m:{seconds}s"
+    if days:
+        return f"{days:0.0f}d:{hours:02.0f}h:{minutes:02.0f}m:{seconds:02.1f}s"
+    elif hours:
+        return f"{hours:02.0f}h:{minutes:02.0f}m:{seconds:02.1f}s"
     elif minutes:
-        return f"{minutes}m:{seconds}s"
+        return f"{minutes:02.0f}m:{seconds:02.1f}s"
     else:
-        return f"{seconds}s"
+        return f"{seconds:02.1f}s"
+
+def getBootTime():
+    """  Returns the number of seconds since system boot up.
+
+         https://www.geeksforgeeks.org/python/getting-the-time-since-os-startup-using-python/
+    """
+    # getting the library in which GetTickCount64() resides
+    lib = ctypes.windll.kernel32
+
+    # calling the function and storing the return value
+    t = lib.GetTickCount64()
+
+    # since the time is in milliseconds i.e. 1000 * seconds
+    # therefore truncating the value
+    t = int(str(t)[:-3])
+
+    # extracting hours, minutes, seconds & days from t
+    # variable (which stores total time in seconds)
+    mins, sec = divmod(t, 60)
+    hour, mins = divmod(mins, 60)
+    days, hour = divmod(hour, 24)
+
+    # formatting the time in readable form
+    # (format = x days, HH:MM:SS)
+    #print(f"{days} days, {hour:02}:{mins:02}:{sec:02}")
+
+    return t
 
 
 

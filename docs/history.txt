@@ -34,18 +34,23 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
-V2025.11		[8 December 2025]
+V2025.12		[11 December 2025]
+
+	Added an about screen.  It display information about pyKlock, The PC environment and running time.
+
+
+V2025.12		[10 December 2025]
 
 	I had problems with transparency, it seems that once it is set - you should't change it.
 	So, the transparency flag is set in the config file and if it needs to change, a pyKlock reset is needed [for now].
 	Sorted out the frameless and the stay on top flags - then need to be set at the same time using "|"
 	Removed the size grep from the status bar.
-	The combo box is not semi-transparent, using a style sheet.
+	The combo box is now semi-transparent, using a style sheet.
 
 
 V2025.11		[10 December 2025]
 
-	Changed the toolbar font icon to something ore descrive - https://www.freeiconspng.com/images/font-icon.
+	Changed the toolbar font icon to something ore descriptive - https://www.freeiconspng.com/images/font-icon.
 		All other icons come from fugue-icons-3.5.6 @ http://p.yusukekamiyamane.com/.
 	Added the ability to change the background colour, only applied if transparency set to False.
 	Removed duplicate menu actions for foreground and background colours.

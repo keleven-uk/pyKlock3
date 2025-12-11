@@ -1,6 +1,6 @@
 ###############################################################################################################
 #    pyKlock3   Copyright (C) <2025>  <Kevin Scott>                                                           #
-#    A klock built using QT framework.                              .                                         #
+#    A klock built using QT framework.                                                                        #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -18,14 +18,18 @@
 #    If not, see <http://www.gnu.org/licenses/>.                                                              #
 #                                                                                                             #
 ###############################################################################################################
+# -*- coding: utf-8 -*-
 
-from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout,QColorDialog,
+import time
+
+from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
                              QMessageBox, QFontDialog, QComboBox)
 from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
 from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint
 
 import src.selectTime as st
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
+import src.classes.about as About
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -47,6 +51,7 @@ class KlockWindow(QMainWindow):
         self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
         self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
         self.transparent      = self.config.TRANSPARENT
+        self.startTime       = time.perf_counter()
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         if self.transparent:
@@ -181,12 +186,19 @@ class KlockWindow(QMainWindow):
         self.actClose.triggered.connect(self.closeEvent)
         self.actClose.setCheckable(False)
 
+        self.actLicence = QAction("License", self)
+        self.actLicence.triggered.connect(self.openLicense)
+
+        self.actAbout = QAction("About", self)
+        self.actAbout.triggered.connect(self.openAbout)
+
         # Set up main menu
         self.menu = self.menuBar()
 
         mnuFile    = self.menu.addMenu("&File")
         mnuTime    = self.menu.addMenu("&Time")
         mnuDisplay = self.menu.addMenu("&Display")
+        mnuHelp    = self.menu.addMenu("&Help")
 
         #  Set up menu actions.
         mnuFile.addAction(self.actClose)
@@ -198,7 +210,10 @@ class KlockWindow(QMainWindow):
 
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
-        mnuTime.addSeparator()
+
+        mnuHelp.addAction(self.actLicence)
+        mnuHelp.addSeparator()
+        mnuHelp.addAction(self.actAbout)
 
         #  Set up toolbar.
         self.toolbar = QToolBar("Time Toolbar")
@@ -230,9 +245,8 @@ class KlockWindow(QMainWindow):
     def updateTime(self):
         """  Update the time and status bar.            self.selectTime.getTime(self.myConfig.TIME_TYPE)
         """
-        dtCentral = QDateTime.currentDateTime()
-        txtTime   = dtCentral.toString("hh:mm:ss")
-        txtDate   = dtCentral.toString("dddd MMMM yyyy")
+        dtCurrent = QDateTime.currentDateTime()
+        txtDate   = dtCurrent.toString("dddd MMMM yyyy")
 
         if self.timeMode == "Digital":
             self.lcdTime.display(txtTime)
@@ -312,6 +326,13 @@ class KlockWindow(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- mouseReleaseEvent -----
     def mouseReleaseEvent(self, event):
         self.oldPos = event.position().toPoint()
+    # ----------------------------------------------------------------------------------------------------------------------- openLicense ------------
+    def openLicense(self, event):
+        pass
+    # ----------------------------------------------------------------------------------------------------------------------- openAbout -------------
+    def openAbout(self, event):
+        dlg = About.About(self, self.config, self.logger, self.startTime)
+        dlg.exec()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  Ask for confirmation before closing, if required.
