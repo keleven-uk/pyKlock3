@@ -23,8 +23,8 @@ hours = ("twelve", "one", "two", "three", "four", "five", "six", "seven", "eight
 units = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve")
 tens = ("zero", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty")
 
-minsText = {0: "", 5: "five past", 10: "ten past", 15: "quarter past", 20: "twenty past", 25: "twenty-five past", 30: "half past",
-           35: "twenty-five to", 40: "twenty to", 45: "quarter to", 50: "ten to", 55: "five to", 60: ""}
+minsText = {0: "", 5: "five past", 10: "ten past", 15: "a quarter past", 20: "twenty past", 25: "twenty-five past", 30: "half past",
+           35: "twenty-five to", 40: "twenty to", 45: "a quarter to", 50: "ten to", 55: "five to", 60: ""}
 
 
 romanNumerals = { 0: ".",

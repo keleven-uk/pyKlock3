@@ -58,9 +58,7 @@ class About(QDialog):
         layout.addWidget(self.midGroup)
         layout.addWidget(self.botGroup)
 
-        QBtn = (
-            QDialogButtonBox.StandardButton.Ok
-        )
+        QBtn = QDialogButtonBox.StandardButton.Ok
 
         buttonBox = QDialogButtonBox(QBtn)
         buttonBox.accepted.connect(self.close)

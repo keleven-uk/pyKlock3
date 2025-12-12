@@ -17,6 +17,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.                                                              #
 #                                                                                                             #
 ###############################################################################################################
+# -*- coding: utf-8 -*-
 
 from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QPlainTextEdit
 

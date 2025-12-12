@@ -34,6 +34,15 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.15		[12 December 2025]
+
+	The main window will now resize itself according to the size of the time text.
+	Added the ability for the windows to attach to either the left or right hand of the screen [or none].
+		This is specified via the config file.
+
+	Produced an stand alone executable using pyInstaller.
+
+
 V2025.14		[12 December 2025]
 
 	Added the ability to display the licence and log text files.
@@ -49,7 +58,7 @@ V2025.13		[11 December 2025]
 
 V2025.12		[10 December 2025]
 
-	I had problems with transparency, it seems that once it is set - you should't change it.
+	I had problems with transparency, it seems that once it is set - you shouldn't change it.
 	So, the transparency flag is set in the config file and if it needs to change, a pyKlock reset is needed [for now].
 	Sorted out the frameless and the stay on top flags - then need to be set at the same time using "|"
 	Removed the size grep from the status bar.
@@ -58,7 +67,7 @@ V2025.12		[10 December 2025]
 
 V2025.11		[10 December 2025]
 
-	Changed the toolbar font icon to something ore descriptive - https://www.freeiconspng.com/images/font-icon.
+	Changed the toolbar font icon to something more descriptive - https://www.freeiconspng.com/images/font-icon.
 		All other icons come from fugue-icons-3.5.6 @ http://p.yusukekamiyamane.com/.
 	Added the ability to change the background colour, only applied if transparency set to False.
 	Removed duplicate menu actions for foreground and background colours.

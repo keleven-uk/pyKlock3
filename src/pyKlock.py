@@ -23,7 +23,7 @@
 import time
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
-                             QMessageBox, QFontDialog, QComboBox)
+                             QMessageBox, QFontDialog, QComboBox, QApplication)
 from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
 from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint, pyqtSlot
 
@@ -38,12 +38,15 @@ class KlockWindow(QMainWindow):
     def __init__(self, myConfig, myLogger):
         super().__init__()
 
-        self.config     = myConfig
-        self.logger     = myLogger
+        self.config = myConfig
+        self.logger = myLogger
+        self.Xpos   = self.config.X_POS
+        self.Ypos   = self.config.Y_POS
+        self.width  = self.config.WIDTH
+        self.height = self.config.HEIGHT
 
         self.setWindowTitle("pyKlock")
-        self.setGeometry(self.config.X_POS, self.config.Y_POS, self.config.WIDTH, self.config.HEIGHT)
-        self.setFixedSize(self.config.WIDTH, self.config.HEIGHT)
+        self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
 
         self.selectTime       = st.SelectTime()
         self.timeFont         = QFont()
@@ -53,7 +56,9 @@ class KlockWindow(QMainWindow):
         self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
         self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
         self.transparent      = self.config.TRANSPARENT
-        self.startTime       = time.perf_counter()
+        self.startTime        = time.perf_counter()
+        self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
+        self.lblHeight        = 0
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         if self.transparent:
@@ -70,6 +75,7 @@ class KlockWindow(QMainWindow):
         self.buildStatusBar()
         self.buildComboBox()
         self.buildMenu()
+        self.buildToolBar()
 
         #  Initialize state
         if self.config.TIME_MODE == "Digital":
@@ -221,7 +227,10 @@ class KlockWindow(QMainWindow):
         mnuHelp.addSeparator()
         mnuHelp.addAction(self.actAbout)
 
-        #  Set up toolbar.
+    def buildToolBar(self):
+        """  Set up toolbar.
+             Uses the menu actions.
+        """
         self.toolbar = QToolBar("Time Toolbar")
         self.toolbar.setIconSize(QSize(16, 16))
         self.toolbar.toggleViewAction().setEnabled(False)               #  to prevent this toolbar being removed.
@@ -262,12 +271,45 @@ class KlockWindow(QMainWindow):
             self.stsFrmt.setText("L.E.D.")
         else:
             self.timeFormat = self.combo.currentText()
-            self.txtTime.setText(self.selectTime.getTime(self.timeFormat))
+            self.updateTextTime()
             self.stsFrmt.setText(f"{self.timeFormat}")
 
         self.stsDate.setText(txtDate)
         self.stsState.setText(f"{utils.getState()}")
         self.stsIdle.setText(utils.getIdleDuration())
+    # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
+    def updateTextTime(self):
+        """  Updates the time text and is needed calls resizeWindow.
+        """
+        self.txtTime.setText(self.selectTime.getTime(self.timeFormat))
+
+        self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
+        self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
+
+        if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
+            self.resizeWindow()
+    # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
+    def resizeWindow(self):
+        """  Resizes the main window.
+             Will align to the side of the screen if required.
+             Will only align to the primary screen, I think - I only have one screen
+        """
+        self.lblWidth  = self.txtWidth
+        self.lblHeight = self.txtHeight
+        self.width     = self.lblWidth  + 20
+        self.height    = self.lblHeight + 40
+        screenSize     = QApplication.primaryScreen().availableGeometry()
+
+        if self.config.TIME_ALIGNMENT:
+            match self.config.TIME_ALIGNMENT:
+                case "Left":                                                                        #  align to left hand of the screen.
+                    self.setGeometry(0, self.Ypos, self.width, self.height)
+                case "Right":                                                                       #  align to right hand of the screen.
+                    self.setGeometry(screenSize.width()-self.width, self.Ypos, self.width, self.height)
+        else:
+            self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
+
+        screenSize = QApplication.primaryScreen().availableGeometry()
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
     def updateColour(self):
         """  Update the foreground and background colour of both the main form and the statusbar.
@@ -335,6 +377,8 @@ class KlockWindow(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- mouseReleaseEvent -----
     def mouseReleaseEvent(self, event):
         self.oldPos = event.position().toPoint()
+        self.Xpos = self.x()
+        self.Ypos = self.y()
     # ----------------------------------------------------------------------------------------------------------------------- openTextFile ----------
     @pyqtSlot()
     def openTextFile(self):
@@ -381,10 +425,10 @@ class KlockWindow(QMainWindow):
     def saveConfig(self):
         """  Save stuff to the config file, in case any has changed.
         """
-        self.config.X_POS       = self.x()
-        self.config.Y_POS       = self.y()
-        self.config.WIDTH       = self.width()
-        self.config.HEIGHT      = self.height()
+        self.config.X_POS       = self.Xpos
+        self.config.Y_POS       = self.Ypos
+        self.config.WIDTH       = self.width
+        self.config.HEIGHT      = self.height
         self.config.TIME_MODE   = self.timeMode
         self.config.TIME_FONT   = self.timeFont.toString()
         self.config.TIME_FORMAT = self.timeFormat

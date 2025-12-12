@@ -31,6 +31,7 @@ MAIN_PATH     = pathlib.Path(__file__).parent.parent
 FROZEN        = False
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):   #  Running as a stand alone executable.
+    FROZEN        = True
     CONFIG_PATH   = "config.toml"
     LOGGER_PATH   = "pyKlock.log"
     RESOURCE_PATH = "resources"

@@ -22,6 +22,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.                                                              #
 #                                                                                                             #
 ###############################################################################################################
+# -*- coding: utf-8 -*-
 
 import sys
 import platform
@@ -51,12 +52,13 @@ if __name__ == "__main__":
     myLogger.debug(f" Python Version {platform.python_version()}  QT Version {PYQT_VERSION_STR}")
     myLogger.debug("")
 
+    if FROZEN:
+        myLogger.info(f"Running as a frozen binary - probably be pyInstaller.")
+        #myLogger.info(f"uk.co.keleven.{myConfig.NAME}.{myConfig.VERSION}")
+
     myLogger.info(f" Config path   {CONFIG_PATH}")
     myLogger.info(f" Logger path   {LOGGER_PATH}")
     myLogger.info(f" Resource path {RESOURCE_PATH}")
-
-    if FROZEN:
-        myLogger.info(f"uk.co.keleven.{myConfig.NAME}.{myConfig.VERSION}")
 
     #  So Windows will use the correct icon in the task bar.
     try:

@@ -1,17 +1,17 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Friday 12 December 2025  19:40:36
+#   (c) Kevin Scott   Written Friday 12 December 2025  21:29:32
 #
 #   true and false are lower case 
 #
 [INFO]
-myVERSION = "2025.14"
+myVERSION = "2025.15"
 myNAME = "pyKlock"
 
 [APPLICATION]
-x_pos = 2534
-y_pos = 15
-width = 920
-height = 189
+x_pos = 2486
+y_pos = 7
+width = 753
+height = 154
 confirmExit = false
 
 [DISPLAY]
@@ -23,3 +23,4 @@ transparent = true
 mode = "Text"
 format = "Fuzzy Time"
 font = "Edwardian Script ITC,72,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
+alignment = "Right"

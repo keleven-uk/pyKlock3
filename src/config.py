@@ -19,6 +19,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.                                                              #
 #                                                                                                             #
 ###############################################################################################################
+# -*- coding: utf-8 -*-
 
 import datetime
 
@@ -171,14 +172,14 @@ class Config():
     @property
     def TIME_MODE(self):
         """  Returns the Time mode.
-             Either Digital of Text
+             Either Digital of Text.
         """
         return self.config["TIME"].get("mode", "Digital")
 
     @TIME_MODE.setter
     def TIME_MODE(self, value):
         """  Sets the Time mode.
-             Either Digital of Text
+             Either Digital of Text.
         """
         self.config["TIME"]["mode"] = value
 
@@ -190,22 +191,35 @@ class Config():
 
     @TIME_FORMAT.setter
     def TIME_FORMAT(self, value):
-        """  Sets the Time format
+        """  Sets the Time format.
         """
         self.config["TIME"]["format"] = value
 
     @property
     def TIME_FONT(self):
-        """  Returns the Time font
+        """  Returns the Time font.
         """
         return self.config["TIME"].get("font", "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular")
 
     @TIME_FONT.setter
     def TIME_FONT(self, value):
-        """  Sets the Time font
+        """  Sets the Time font.
         """
         self.config["TIME"]["font"] = value
 
+    @property
+    def TIME_ALIGNMENT(self):
+        """  Returns the Time alignment.
+        Aligns the text with the side of the screen - either Right, Left or None.
+        """
+        return self.config["TIME"].get("alignment", "Right")
+
+    @TIME_ALIGNMENT.setter
+    def TIME_ALIGNMENT(self, value):
+        """  Sets the Time alignment.
+             Aligns the text with the side of the screen - either Right, Left or None.
+        """
+        self.config["TIME"]["alignment"] = value
 
 
     def writeConfig(self):
@@ -234,7 +248,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.14",
+        config["INFO"] = {"myVERSION": "2025.15",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -247,9 +261,10 @@ class Config():
                              "background" : "#000000",
                              "transparent": True}
 
-        config["TIME"] = {"mode"  : "Digital",
-                          "format": "Fuzzy Time",
-                          "font"  :  "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"}
+        config["TIME"] = {"mode"     : "Digital",
+                          "format"   : "Fuzzy Time",
+                          "font"     :  "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular",
+                          "alignment": "Right"}
 
 
         st_toml = toml.dumps(config)
