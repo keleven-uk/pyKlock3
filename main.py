@@ -28,6 +28,7 @@ import platform
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui     import QIcon
+from PyQt6.QtCore    import PYQT_VERSION_STR
 
 import src.pyKlock as pyKlock
 import src.config  as Config
@@ -45,13 +46,14 @@ if __name__ == "__main__":
 
     myConfig  = Config.Config(CONFIG_PATH, myLogger)  # Create the config.
 
-    myLogger.info(f"  Running {myConfig.NAME} Version {myConfig.VERSION} ")
+    myLogger.info(f" Running {myConfig.NAME} Version {myConfig.VERSION} ")
     myLogger.debug(f" {platform.uname()}")
-    myLogger.debug(f" Python Version {platform.python_version()}")
+    myLogger.debug(f" Python Version {platform.python_version()}  QT Version {PYQT_VERSION_STR}")
     myLogger.debug("")
 
-    myLogger.info(f"  Config path {CONFIG_PATH}")
-    myLogger.info(f"  Logger path {LOGGER_PATH}")
+    myLogger.info(f" Config path   {CONFIG_PATH}")
+    myLogger.info(f" Logger path   {LOGGER_PATH}")
+    myLogger.info(f" Resource path {RESOURCE_PATH}")
 
     if FROZEN:
         myLogger.info(f"uk.co.keleven.{myConfig.NAME}.{myConfig.VERSION}")
@@ -70,8 +72,5 @@ if __name__ == "__main__":
     app.setWindowIcon(QIcon(path))
     window = pyKlock.KlockWindow(myConfig, myLogger)
     window.show()
-
-    myLogger.info(f"  Ending {myConfig.NAME} Version {myConfig.VERSION} ")
-    myLogger.info("=" * 100)
 
     sys.exit(app.exec())

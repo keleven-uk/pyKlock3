@@ -25,11 +25,12 @@ import time
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
                              QMessageBox, QFontDialog, QComboBox)
 from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
-from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint
+from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint, pyqtSlot
 
 import src.selectTime as st
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 import src.classes.about as About
+import src.classes.textViewer as tw
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -39,13 +40,14 @@ class KlockWindow(QMainWindow):
 
         self.config     = myConfig
         self.logger     = myLogger
-        self.selectTime = st.SelectTime()
-        self.timeFont   = QFont()
 
         self.setWindowTitle("pyKlock")
         self.setGeometry(self.config.X_POS, self.config.Y_POS, self.config.WIDTH, self.config.HEIGHT)
         self.setFixedSize(self.config.WIDTH, self.config.HEIGHT)
 
+        self.selectTime       = st.SelectTime()
+        self.timeFont         = QFont()
+        self.textWindow       = None                        # No text external window yet.
         self.foregroundColour = self.config.FOREGROUND
         self.backgroundColour = self.config.BACKGROUND
         self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
@@ -81,7 +83,7 @@ class KlockWindow(QMainWindow):
     def buildGUI(self):
         """  Set up the GUI widgets.
         """
-        self.logger.info("Building GUI")
+        self.logger.info(" Building GUI")
         #  Create a layout
         self.stackedLayout = QStackedLayout()
 
@@ -108,12 +110,12 @@ class KlockWindow(QMainWindow):
 
 
         #  Set up timer to update the clock
-        timer = QTimer(self)
-        timer.timeout.connect(self.updateTime)
-        timer.start(1000)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.updateTime)
+        self.timer.start(1000)
 
     def buildStatusBar(self):
-        self.logger.info("Building Statusbar")
+        self.logger.info(" Building Statusbar")
         """  Create a status bar
         """
         self.statusBar = self.statusBar()
@@ -135,7 +137,7 @@ class KlockWindow(QMainWindow):
         self.statusBar.addPermanentWidget(self.stsIdle,  2)
 
     def buildComboBox(self):
-        self.logger.info("Building Combobox")
+        self.logger.info(" Building Combobox")
         self.combo = QComboBox()
         self.combo.insertItems(1,self.selectTime.timeTypes)
         index = self.combo.findText(self.timeFormat)
@@ -152,7 +154,7 @@ class KlockWindow(QMainWindow):
     def buildMenu(self):
         """  Initialise the menu and add the actions.
         """
-        self.logger.info("Building Menu")
+        self.logger.info(" Building Menu")
 
         #  Set up actions.
         path = f"{RESOURCE_PATH}/digital-clock.png"
@@ -183,11 +185,14 @@ class KlockWindow(QMainWindow):
 
         path = f"{RESOURCE_PATH}/cross.png"
         self.actClose = QAction(QIcon(path),"Close", self)
-        self.actClose.triggered.connect(self.closeEvent)
+        self.actClose.triggered.connect(self.close)         #  Close the app, which call the closeEvent (overridden)
         self.actClose.setCheckable(False)
 
-        self.actLicence = QAction("License", self)
-        self.actLicence.triggered.connect(self.openLicense)
+        self.actLicence = QAction("Licence", self)
+        self.actLicence.triggered.connect(self.openTextFile)
+
+        self.actLogFile = QAction("Log File", self)
+        self.actLogFile.triggered.connect(self.openTextFile)
 
         self.actAbout = QAction("About", self)
         self.actAbout.triggered.connect(self.openAbout)
@@ -212,6 +217,7 @@ class KlockWindow(QMainWindow):
         mnuTime.addAction(self.actTextTime)
 
         mnuHelp.addAction(self.actLicence)
+        mnuHelp.addAction(self.actLogFile)
         mnuHelp.addSeparator()
         mnuHelp.addAction(self.actAbout)
 
@@ -235,6 +241,8 @@ class KlockWindow(QMainWindow):
 
     #  -------------------------------------------------------------------------------------------------------------------- openFontDialog ----------
     def openFontDialog(self):
+        """  Open the font dialog.
+        """
         font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Fomt for Time.")
 
         # If user clicked OK, update the label's font
@@ -246,6 +254,7 @@ class KlockWindow(QMainWindow):
         """  Update the time and status bar.            self.selectTime.getTime(self.myConfig.TIME_TYPE)
         """
         dtCurrent = QDateTime.currentDateTime()
+        txtTime   = dtCurrent.toString("HH:MM:SS")
         txtDate   = dtCurrent.toString("dddd MMMM yyyy")
 
         if self.timeMode == "Digital":
@@ -326,11 +335,20 @@ class KlockWindow(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- mouseReleaseEvent -----
     def mouseReleaseEvent(self, event):
         self.oldPos = event.position().toPoint()
-    # ----------------------------------------------------------------------------------------------------------------------- openLicense ------------
-    def openLicense(self, event):
-        pass
+    # ----------------------------------------------------------------------------------------------------------------------- openTextFile ----------
+    @pyqtSlot()
+    def openTextFile(self):
+        """  Open a text viewer.
+        """
+        action = self.sender()
+
+        if self.textWindow is None:
+            self.textWindow = tw.TextViewer(self, action.text(), self.logger)
+            self.textWindow.show()
     # ----------------------------------------------------------------------------------------------------------------------- openAbout -------------
     def openAbout(self, event):
+        """  Open an About window, which display application, system information and run times.
+        """
         dlg = About.About(self, self.config, self.logger, self.startTime)
         dlg.exec()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
@@ -343,13 +361,22 @@ class KlockWindow(QMainWindow):
             confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?")
 
             if confirmation == QMessageBox.StandardButton.Yes:
-                self.saveConfig()
-                event.accept()  # Close the app
+                self.endBit()
+                event.accept()      #  Close the app.
             else:
-                event.ignore()  # Don't close the app
+                event.ignore()      #  Continue the app.
         else:
-            self.saveConfig()
-            self.close()        # Close the app
+            self.endBit()
+            event.accept()          #  Close the app.
+    # ----------------------------------------------------------------------------------------------------------------------- endBit() --------------
+    def endBit(self):
+        """  Save config file, stop the timer and print Goodbye.
+        """
+        self.timer.stop()           #  Stop the time when the frame closes.
+        self.timer = None           #  Hopefully, stop any memory leaks - maybe only need close()
+        self.saveConfig()
+        self.logger.info(f"  Ending {self.config.NAME} Version {self.config.VERSION} ")
+        self.logger.info("=" * 100)
     # ----------------------------------------------------------------------------------------------------------------------- saveConfig() ----------
     def saveConfig(self):
         """  Save stuff to the config file, in case any has changed.

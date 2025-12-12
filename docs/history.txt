@@ -34,9 +34,17 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
-V2025.12		[11 December 2025]
+V2025.14		[12 December 2025]
+
+	Added the ability to display the licence and log text files.
+		The is shown in a separate window using a text viewer - from the Help menu.
+	Cleaned up the code in the closeEvent method.
+
+
+V2025.13		[11 December 2025]
 
 	Added an about screen.  It display information about pyKlock, The PC environment and running time.
+		This is launched from the help menu.
 
 
 V2025.12		[10 December 2025]

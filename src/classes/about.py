@@ -23,12 +23,10 @@
 
 import time
 import platform
-import datetime as dt
-
 
 from PyQt6.QtWidgets import QDialog, QGridLayout, QVBoxLayout, QDialogButtonBox, QGroupBox, QLabel
 from PyQt6.QtGui     import QPixmap
-from PyQt6.QtCore    import Qt, QTimer, QDateTime, PYQT_VERSION_STR
+from PyQt6.QtCore    import Qt, QTimer, PYQT_VERSION_STR
 
 import src.utils.klock_utils as utils
 
@@ -65,17 +63,17 @@ class About(QDialog):
         )
 
         buttonBox = QDialogButtonBox(QBtn)
-        buttonBox.accepted.connect(self.accept)
+        buttonBox.accepted.connect(self.close)
 
         layout.addWidget(buttonBox)
 
         self.setLayout(layout)
-        self.update
+        self.update()
 
         #  Set up timer to update the clock
-        timer = QTimer(self)
-        timer.timeout.connect(self.update)
-        timer.start(1000)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update)
+        self.timer.start(1000)
 
     def update(self):
         self.bootTime = utils.getBootTime()
@@ -142,6 +140,10 @@ class About(QDialog):
         self.botLayout.addWidget(self.appUpTime, 1, 1, Qt.AlignmentFlag.AlignLeft)
         self.botGroup.setLayout(self.botLayout)
 
-    def close(self):
-        print("Close")
+    def closeEvent(self, event):
+        print("About Close Event")
+        self.timer.stop()           #  Stop the time when the frame closes.
+        self.timer = None           #  Hopefully, stop any memory leaks - maybe only need close()
+        event.accept()
+
 
