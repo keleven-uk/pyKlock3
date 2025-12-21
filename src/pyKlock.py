@@ -31,6 +31,7 @@ import src.selectTime as st
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 import src.classes.about as About
 import src.classes.textViewer as tw
+import src.classes.settings as stngs
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -101,7 +102,7 @@ class KlockWindow(QMainWindow):
 
         #  Create the time text display.
         self.txtTime = QLabel("00:00:00")
-        self.txtTime.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #self.txtTime.setAlignment(Qt.AlignmentFlag.AlignCenter)      # Upsets pyKlock resizing.
         self.txtTime.setFont(self.timeFont)
 
         # Add pages to the stacked layout.
@@ -191,8 +192,13 @@ class KlockWindow(QMainWindow):
 
         path = f"{RESOURCE_PATH}/cross.png"
         self.actClose = QAction(QIcon(path),"Close", self)
-        self.actClose.triggered.connect(self.close)         #  Close the app, which call the closeEvent (overridden)
+        self.actClose.triggered.connect(self.close)             #  Close the app, which call the closeEvent (overridden).
         self.actClose.setCheckable(False)
+
+        path = f"{RESOURCE_PATH}/gear.png"
+        self.actSettings = QAction(QIcon(path),"Configue pyKlock", self)
+        self.actSettings.triggered.connect(self.openSettings)      #  Open the settings window.
+        self.actSettings.setCheckable(False)
 
         self.actLicence = QAction("Licence", self)
         self.actLicence.triggered.connect(self.openTextFile)
@@ -213,6 +219,8 @@ class KlockWindow(QMainWindow):
 
         #  Set up menu actions.
         mnuFile.addAction(self.actClose)
+        mnuFile.addSeparator()
+        mnuFile.addAction(self.actSettings)
 
         mnuDisplay.addAction(self.actBackColour)
         mnuDisplay.addAction(self.actForeColour)
@@ -246,7 +254,9 @@ class KlockWindow(QMainWindow):
         self.toolbar.addAction(self.actBackColour)
         self.toolbar.addAction(self.actForeColour)
         self.toolbar.addSeparator()
+        self.toolbar.addAction(self.actSettings)
         self.toolbar.addAction(self.actClose)
+
 
     #  -------------------------------------------------------------------------------------------------------------------- openFontDialog ----------
     def openFontDialog(self):
@@ -264,7 +274,7 @@ class KlockWindow(QMainWindow):
         """
         dtCurrent = QDateTime.currentDateTime()
         txtTime   = dtCurrent.toString("HH:MM:SS")
-        txtDate   = dtCurrent.toString("dddd MMMM yyyy")
+        txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
 
         if self.timeMode == "Digital":
             self.lcdTime.display(txtTime)
@@ -280,9 +290,16 @@ class KlockWindow(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
         """  Updates the time text and is needed calls resizeWindow.
-        """
-        self.txtTime.setText(self.selectTime.getTime(self.timeFormat))
 
+             The text time is bracketed with the prefix and postfix characters.  Mostly "".
+        """
+
+        textTime = f"{self.config.TIME_PREFIX}{self.selectTime.getTime(self.timeFormat)}{self.config.TIME_POSTFIX}"
+
+        if self.config.TIME_SPACE != " ":
+            textTime = textTime.replace(" ", self.config.TIME_SPACE)
+
+        self.txtTime.setText(textTime)
         self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
         self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
 
@@ -294,22 +311,22 @@ class KlockWindow(QMainWindow):
              Will align to the side of the screen if required.
              Will only align to the primary screen, I think - I only have one screen
         """
-        self.lblWidth  = self.txtWidth
-        self.lblHeight = self.txtHeight
-        self.width     = self.lblWidth  + 20
+        self.lblWidth  = self.txtWidth              #  Saved to be used in updateTextTime.
+        self.lblHeight = self.txtHeight             #  Saved to be used in updateTextTime.
+        self.width     = self.lblWidth
         self.height    = self.lblHeight + 40
         screenSize     = QApplication.primaryScreen().availableGeometry()
 
         if self.config.TIME_ALIGNMENT:
             match self.config.TIME_ALIGNMENT:
                 case "Left":                                                                        #  align to left hand of the screen.
-                    self.setGeometry(0, self.Ypos, self.width, self.height)
+                    self.setGeometry(5, self.Ypos, self.width, self.height)
                 case "Right":                                                                       #  align to right hand of the screen.
-                    self.setGeometry(screenSize.width()-self.width, self.Ypos, self.width, self.height)
+                    xpos = screenSize.width()-self.width
+                    self.setGeometry(xpos, self.Ypos, self.width, self.height)
+                    print(f"xpos = {xpos} :: screen width {screenSize.width()}")
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
-
-        screenSize = QApplication.primaryScreen().availableGeometry()
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
     def updateColour(self):
         """  Update the foreground and background colour of both the main form and the statusbar.
@@ -394,6 +411,10 @@ class KlockWindow(QMainWindow):
         """  Open an About window, which display application, system information and run times.
         """
         dlg = About.About(self, self.config, self.logger, self.startTime)
+        dlg.exec()
+    #  -------------------------------------------------------------------------------------------------------------------- openFontDialog ----------
+    def openSettings(self):
+        dlg = stngs.Settings(self, self.config, self.logger)
         dlg.exec()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):

@@ -221,6 +221,54 @@ class Config():
         """
         self.config["TIME"]["alignment"] = value
 
+    @property
+    def TIME_PREFIX(self):
+        """  Returns the Time prefix character.
+             Use to place a character at the start of the text time.
+             Used if the font type can display a special glyph at the start of the text.
+        """
+        return self.config["TIME"].get("prefix", "")
+
+    @TIME_PREFIX.setter
+    def TIME_PREFIX(self, value):
+        """  Sets the Time prefix character.
+             Use to place a character at the start of the text time.
+             Used if the font type can display a special glyph at the start of the text.
+        """
+        self.config["TIME"]["prefix"] = value
+
+    @property
+    def TIME_POSTFIX(self):
+        """  Returns the Time postfix character.
+             Use to place a character at the end of the text time.
+             Used if the font type can display a special glyph at the end of the text.
+        """
+        return self.config["TIME"].get("postfix", "")
+
+    @TIME_POSTFIX.setter
+    def TIME_POSTFIX(self, value):
+        """  Sets the Time prefix character.
+             Use to place a character at the end of the text time.
+             Used if the font type can display a special glyph at the end of the text.
+        """
+        self.config["TIME"]["postfix"] = value
+
+    @property
+    def TIME_SPACE(self):
+        """  Returns the Time space character.
+             Use to place a character in place of the space in text time.
+             Used if the font type can display a special glyph instead of space.
+        """
+        return self.config["TIME"].get("space", "")
+
+    @TIME_SPACE.setter
+    def TIME_SPACE(self, value):
+        """  Sets the Time space character.
+             Use to place a character in place of the space in text time.
+             Used if the font type can display a special glyph instead of space.
+        """
+        self.config["TIME"]["space"] = value
+
 
     def writeConfig(self):
         """ Write the current config file.
@@ -248,7 +296,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.15",
+        config["INFO"] = {"myVERSION": "2025.16",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -264,7 +312,10 @@ class Config():
         config["TIME"] = {"mode"     : "Digital",
                           "format"   : "Fuzzy Time",
                           "font"     :  "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular",
-                          "alignment": "Right"}
+                          "alignment": "Right",
+                          "prefix"   : "",
+                          "postfix"  : "",
+                          "space"    : " "}
 
 
         st_toml = toml.dumps(config)

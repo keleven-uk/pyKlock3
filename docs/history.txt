@@ -34,6 +34,17 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.16		[21 December 2025]
+
+	Added the ability to add a character to the start and end of the time text.
+	Added the ability to specify the character between the words in time text - defaults to space.
+		Used when the font includes special characters - i.e. Christmas fonts.
+
+	Tweaked the resizeWindow method.
+
+	Started the settings window.
+
+
 V2025.15		[12 December 2025]
 
 	The main window will now resize itself according to the size of the time text.

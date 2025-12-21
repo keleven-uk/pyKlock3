@@ -53,7 +53,7 @@ if __name__ == "__main__":
     myLogger.debug("")
 
     if FROZEN:
-        myLogger.info(f"Running as a frozen binary - probably be pyInstaller.")
+        myLogger.info("Running as a frozen binary - probably be pyInstaller.")
         #myLogger.info(f"uk.co.keleven.{myConfig.NAME}.{myConfig.VERSION}")
 
     myLogger.info(f" Config path   {CONFIG_PATH}")

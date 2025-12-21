@@ -24,7 +24,8 @@
 import time
 import platform
 
-from PyQt6.QtWidgets import QDialog, QGridLayout, QVBoxLayout, QDialogButtonBox, QGroupBox, QLabel
+from PyQt6.QtWidgets import (QDialog, QGridLayout, QVBoxLayout, QDialogButtonBox, QGroupBox, QLabel,
+                             QApplication)
 from PyQt6.QtGui     import QPixmap
 from PyQt6.QtCore    import Qt, QTimer, PYQT_VERSION_STR
 
@@ -41,11 +42,14 @@ class About(QDialog):
         self.startTime = startTime
         self.height    = 600
         self.width     = 400
+        screenSize     = QApplication.primaryScreen().availableGeometry()
+        xPos           = int((screenSize.width() / 2)  - (self.width / 2))
+        yPos           = int((screenSize.height() / 2) - (self.height / 2))
 
         self.logger.info("Launching About dialog")
 
         self.setWindowTitle(f"About {self.config.NAME}")
-        self.setGeometry(self.config.X_POS, self.config.Y_POS, self.width, self.height)
+        self.setGeometry(xPos, yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
 
         layout = QVBoxLayout()
@@ -139,7 +143,7 @@ class About(QDialog):
         self.botGroup.setLayout(self.botLayout)
 
     def closeEvent(self, event):
-        print("About Close Event")
+        self.logger.info("About Close Event")
         self.timer.stop()           #  Stop the time when the frame closes.
         self.timer = None           #  Hopefully, stop any memory leaks - maybe only need close()
         event.accept()
