@@ -63,7 +63,7 @@ class Config():
     def NAME(self):
         """  Returns the application name.
         """
-        return self.config["INFO"].get("myNAME", "pyDigitalKlock")
+        return self.config["INFO"].get("myNAME", "pyKlock")
 
     @property
     def VERSION(self):
@@ -296,7 +296,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.16",
+        config["INFO"] = {"myVERSION": "2025.17",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,

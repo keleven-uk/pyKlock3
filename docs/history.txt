@@ -34,6 +34,15 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.17		[22 December 2025]
+
+	Added PyKlock windows, hangs off the File menu.
+		This display the values of all the options in config.toml.
+		Need to add the update feature.
+
+	Corrected the default name in config.py.
+
+
 V2025.16		[21 December 2025]
 
 	Added the ability to add a character to the start and end of the time text.

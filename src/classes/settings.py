@@ -22,7 +22,12 @@
 # -*- coding: utf-8 -*-
 
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QDialogButtonBox, QTabWidget, QWidget, QFormLayout,
-                             QApplication)
+                             QApplication, QLineEdit, QPushButton, QColorDialog, QComboBox, QFontDialog)
+from PyQt6.QtGui     import QIcon, QColor, QFont
+
+from src.projectPaths import RESOURCE_PATH
+
+import src.selectTime as st
 
 
 class Page(QWidget):
@@ -50,6 +55,11 @@ class Settings(QDialog):
         self.setGeometry(xPos, yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
 
+        self.selectTime       = st.SelectTime()
+        self.timeFont         = QFont()
+        self.foregroundColour = self.config.FOREGROUND
+        self.backgroundColour = self.config.BACKGROUND
+
         layout = QVBoxLayout()
 
         QBtn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -57,33 +67,145 @@ class Settings(QDialog):
         self.buttonBox = QDialogButtonBox(QBtn)
         self.buttonBox.clicked.connect(self.buttonClicked)
 
-        twTab = QTabWidget()
+        self.twTab = QTabWidget()
 
-        tabs  = ["Info", "Application", "Display", "Time"]
         funcs = [self.Info, self.Application, self.Display, self.Time]
 
-        for pos, tab in enumerate(tabs):
-            page = Page()
-            twTab.addTab(page, tab)
-            funcs[pos]()
+        for func in funcs:
+            func()
 
-        layout.addWidget(twTab)
+        layout.addWidget(self.twTab)
         layout.addWidget(self.buttonBox)
 
         self.setLayout(layout)
-
+    # ----------------------------------------------------------------------------------------------------------------------- Info() ----------------
     def Info(self):
-        print("Info")
+        """  Display application Info.
+             Name can be amended, Version can not.
+        """
+        page   = QWidget(self.twTab)
+        layout = QFormLayout()
+        page.setLayout(layout)
 
+        layout.addRow("Name ", QLineEdit(self.config.NAME, self))
+        leVersion = QLineEdit(self.config.VERSION, self)
+        leVersion.setReadOnly(True)
+        layout.addRow("Version ", leVersion)                           #  Version is read only.
+
+        self.twTab.addTab(page, "Application Info")
+    # ----------------------------------------------------------------------------------------------------------------------- Application() ---------
     def Application(self):
-        print("Application")
+        """  Display application data.
+             Can be used to reset screen position.
+             Width and height are calculated by the app, so might be ignored.
 
+             NB : application x, y, width & hight - are stored as int, but display as strings.
+        """
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        page.setLayout(layout)
+
+        # create a push button.
+        path = f"{RESOURCE_PATH}/cross.png"
+        self.btnConfirmExit = QPushButton()
+        self.btnConfirmExit.setIcon(QIcon(path))
+        self.btnConfirmExit.setCheckable(True)
+        checked = True if self.config.CONFIRM_EXIT else False
+        self.btnConfirmExit.setDefault(checked)
+        self.btnConfirmExit.clicked.connect(self.toggleConfirmExit)
+
+        layout.addRow("X Position - Main Window ", QLineEdit(str(self.config.X_POS),  self))
+        layout.addRow("Y Position - Main Window ", QLineEdit(str(self.config.Y_POS),  self))
+        layout.addRow("Width - Main Window ", QLineEdit(str(self.config.WIDTH),  self))
+        layout.addRow("Height - Main Window ", QLineEdit(str(self.config.HEIGHT), self))
+        layout.addRow("Confirm Exit ", self.btnConfirmExit)
+
+        self.twTab.addTab(page, "Application Data")
+
+    def toggleConfirmExit(self, checked):
+        """  Toggles the checked state of the Confirm Exit button.
+        """
+        checked = not checked
+        self.btnConfirmExit.setDefault(checked)
+    # ----------------------------------------------------------------------------------------------------------------------- Display() -------------
     def Display(self):
-        print("Display")
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        page.setLayout(layout)
 
+        # create a button.
+        path = f"{RESOURCE_PATH}/colour.png"
+        self.btnForeColour = QPushButton()
+        self.btnForeColour.setIcon(QIcon(path))
+        self.btnForeColour.setStyleSheet(f"color: {self.foregroundColour}")
+        self.btnForeColour.clicked.connect(self.getForeColour)
+        path = f"{RESOURCE_PATH}/colour-swatch.png"
+        self.btnBackColour = QPushButton()
+        self.btnBackColour.setIcon(QIcon(path))
+        self.btnBackColour.setStyleSheet(f"background-color: {self.backgroundColour}")
+        self.btnBackColour.clicked.connect(self.getBackColour)
+
+        leTransparent = QLineEdit("Amend in config.toml and restart", self)
+        leTransparent.setReadOnly(True)
+
+        layout.addRow("Foreground Colour ", self.btnForeColour)
+        layout.addRow("Background Colour ", self.btnBackColour)
+        layout.addRow("Transparent Background ", leTransparent)
+
+        self.twTab.addTab(page, "Display")
+
+    def getForeColour(self):
+        """  launch the colour input dialog and obtain the new foreground colour.
+        """
+        self.current_color = QColor(self.foregroundColour)
+        colour = QColorDialog.getColor(self.current_color, self, "Choose Foreground Colour")
+        if colour.isValid():
+            self.foregroundColour = colour.name()
+
+    def getBackColour(self):
+        """  launch the colour input dialog and obtain the new background colour.
+        """
+        self.current_color = QColor(self.backgroundColour)
+        colour = QColorDialog.getColor(self.current_color, self, "Choose Background Colour")
+        if colour.isValid():
+            self.backgroundColour = colour.name()
+    # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
     def Time(self):
-        print("Time")
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        page.setLayout(layout)
 
+        self.cbTimeMode = QComboBox()
+        self.cbTimeMode.insertItems(1, ["Digital", "Text"])
+        self.cbTimeFmt = QComboBox()
+        self.cbTimeFmt.insertItems(1, self.selectTime.timeTypes)
+        self.cbTimeAllign = QComboBox()
+        self.cbTimeAllign.insertItems(1, ["Left", "Right", "None"])
+        # create a button.
+        path = f"{RESOURCE_PATH}/font.png"
+        self.btnFont = QPushButton()
+        self.btnFont.setIcon(QIcon(path))
+        self.btnFont.clicked.connect(self.openFontDialog)
+
+        layout.addRow("Foreground Colour ", self.cbTimeMode)
+        layout.addRow("Foreground Colour ", self.cbTimeFmt)
+        layout.addRow("Time Font ", self.btnFont)
+        layout.addRow("Foreground Colour ", self.cbTimeAllign)
+        layout.addRow("prefix Character ", QLineEdit(str(self.config.TIME_PREFIX), self))
+        layout.addRow("postfix Character ", QLineEdit(str(self.config.TIME_POSTFIX), self))
+        layout.addRow("space Character ", QLineEdit(str(self.config.TIME_SPACE), self))
+
+        self.twTab.addTab(page, "Time")
+
+    def openFontDialog(self):
+        """  Open the font dialog.
+        """
+        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Font for Time.")
+
+        # If user clicked OK, update the label's font
+        if ok:
+            self.timeFont = font
+    # ----------------------------------------------------------------------------------------------------------------------- buttonClicked() -------
     def buttonClicked(self, button):
         role = self.buttonBox.standardButton(button)
         if role == QDialogButtonBox.StandardButton.Cancel:
@@ -91,7 +213,7 @@ class Settings(QDialog):
         elif role == QDialogButtonBox.StandardButton.Ok:
             self.config.writeConfig()
             self.close()
-
+    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         self.logger.info("Settings Close Event")
         event.accept()

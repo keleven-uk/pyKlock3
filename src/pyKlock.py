@@ -146,7 +146,7 @@ class KlockWindow(QMainWindow):
     def buildComboBox(self):
         self.logger.info(" Building Combobox")
         self.combo = QComboBox()
-        self.combo.insertItems(1,self.selectTime.timeTypes)
+        self.combo.insertItems(1, self.selectTime.timeTypes)
         index = self.combo.findText(self.timeFormat)
         if index >= 0:
             self.combo.setCurrentIndex(index)
@@ -324,7 +324,6 @@ class KlockWindow(QMainWindow):
                 case "Right":                                                                       #  align to right hand of the screen.
                     xpos = screenSize.width()-self.width
                     self.setGeometry(xpos, self.Ypos, self.width, self.height)
-                    print(f"xpos = {xpos} :: screen width {screenSize.width()}")
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
