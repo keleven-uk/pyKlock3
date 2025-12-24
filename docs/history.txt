@@ -34,10 +34,17 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.18		[23 December 2025]
+
+	Added CPU, RAM, Disc Usage and net speed to the taskbar.
+		Uses the class systemInfo from pySystemInfo.
+		Heavily influenced by https://github.com/Littl3T/Minimalist-Windows-System-Monitor-Widget-PyQt6-
+
+
 V2025.17		[22 December 2025]
 
-	Added PyKlock windows, hangs off the File menu.
-		This display the values of all the options in config.toml.
+	Updated PyKlock settings window.
+		This display all the values of all the options in config.toml.
 		Need to add the update feature.
 
 	Corrected the default name in config.py.
@@ -51,7 +58,7 @@ V2025.16		[21 December 2025]
 
 	Tweaked the resizeWindow method.
 
-	Started the settings window.
+	Started the settings window, hangs off the File menu..
 
 
 V2025.15		[12 December 2025]

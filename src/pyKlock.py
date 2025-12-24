@@ -32,6 +32,7 @@ import src.utils.klock_utils as utils                                 #  Need to
 import src.classes.about as About
 import src.classes.textViewer as tw
 import src.classes.settings as stngs
+import src.classes.systemInfo as si
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -50,6 +51,7 @@ class KlockWindow(QMainWindow):
         self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
 
         self.selectTime       = st.SelectTime()
+        self.systemInfo       = si.SysInfo()
         self.timeFont         = QFont()
         self.textWindow       = None                        # No text external window yet.
         self.foregroundColour = self.config.FOREGROUND
@@ -60,6 +62,14 @@ class KlockWindow(QMainWindow):
         self.startTime        = time.perf_counter()
         self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
         self.lblHeight        = 0
+
+        self.nowTotalBytesReceived  = self.systemInfo.TotalRawBytesReceived        #  Use to measure network speed.
+        self.nowTotalBytesSent      = self.systemInfo.TotalRawBytesSent
+        self.lastTotalBytesReceived = self.nowTotalBytesReceived
+        self.lastTotalBytesSent     = self.nowTotalBytesSent
+        self.newTime                = time.time()
+        self.lastTime               = self.newTime
+
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         if self.transparent:
@@ -131,17 +141,29 @@ class KlockWindow(QMainWindow):
         self.stsDate  = QLabel("Thursday 23 October 2025")
         self.stsState = QLabel("cisN")
         self.stsFrmt  = QLabel("L.E.D.")
+        self.stsCPU   = QLabel("CPU : 0%")
+        self.stsRAM   = QLabel("RAM : 0%")
+        self.stsDisc  = QLabel("c: [          ]")
+        self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
         self.stsIdle  = QLabel("idle : 7s")
 
         self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.stsState.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsFrmt.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsIdle.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         self.statusBar.addPermanentWidget(self.stsDate,  1)
         self.statusBar.addPermanentWidget(self.stsState, 1)
         self.statusBar.addPermanentWidget(self.stsFrmt, 1)
-        self.statusBar.addPermanentWidget(self.stsIdle,  2)
+        self.statusBar.addPermanentWidget(self.stsCPU, 1)
+        self.statusBar.addPermanentWidget(self.stsRAM, 1)
+        self.statusBar.addPermanentWidget(self.stsDisc, 1)
+        self.statusBar.addPermanentWidget(self.stsSpeed, 1)
+        self.statusBar.addPermanentWidget(self.stsIdle,  1)
 
     def buildComboBox(self):
         self.logger.info(" Building Combobox")
@@ -276,6 +298,18 @@ class KlockWindow(QMainWindow):
         txtTime   = dtCurrent.toString("HH:MM:SS")
         txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
 
+        self.nowTotalBytesReceived = self.systemInfo.TotalRawBytesReceived
+        self.nowTotalBytesSent     = self.systemInfo.TotalRawBytesSent
+        self.newTime               = time.time()
+        deltaTime                  = self.newTime - self.lastTime
+
+        downloadSpeed = (self.nowTotalBytesReceived - self.lastTotalBytesReceived) * 8 / deltaTime
+        uploadSpeed   = (self.nowTotalBytesSent     - self.lastTotalBytesSent)     * 8 / deltaTime
+
+        self.lastTotalBytesReceived = self.nowTotalBytesReceived
+        self.lastTotalBytesSent     = self.nowTotalBytesSent
+        self.lastTime               = self.newTime
+
         if self.timeMode == "Digital":
             self.lcdTime.display(txtTime)
             self.stsFrmt.setText("L.E.D.")
@@ -286,7 +320,32 @@ class KlockWindow(QMainWindow):
 
         self.stsDate.setText(txtDate)
         self.stsState.setText(f"{utils.getState()}")
+        self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
+        self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
+        self.stsDisc.setText(f"c: {self.getDiscUsage()}")
+        self.stsSpeed.setText(f"↓ {self.formatSpeed(downloadSpeed)}  ↑ {self.formatSpeed(uploadSpeed)}")
         self.stsIdle.setText(utils.getIdleDuration())
+
+        self.getDiscUsage()
+
+    def formatSpeed(self, bitsPerSecond):
+        if bitsPerSecond > 1e6:
+            return f"{bitsPerSecond / 1e6:.2f} Mbit/s"
+        else:
+            return f"{bitsPerSecond / 1e3:.2f} Kbit/s"
+
+    def getDiscUsage(self):
+        disc         = self.systemInfo.diskUsage("c:\\")
+        totalSpace   = disc.total / 1e9
+        usedSpace    = disc.used / 1e9
+        percent      = disc.percent
+        barLength    = 10
+        filledBlocks = int((percent / 100) * barLength)
+        emptyBlocks  = barLength - filledBlocks
+        progressBar  = "[" + "█" * filledBlocks + " " * emptyBlocks + "]"
+        #return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
+        return f"{progressBar} {percent:.1f}%)"
+
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
         """  Updates the time text and is needed calls resizeWindow.

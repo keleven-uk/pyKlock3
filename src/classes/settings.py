@@ -43,7 +43,7 @@ class Settings(QDialog):
 
         self.config = myConfig
         self.logger = myLogger
-        self.height = 600
+        self.height = 400
         self.width  = 400
         screenSize  = QApplication.primaryScreen().availableGeometry()
         xPos        = int((screenSize.width() / 2)  - (self.width / 2))
@@ -59,6 +59,7 @@ class Settings(QDialog):
         self.timeFont         = QFont()
         self.foregroundColour = self.config.FOREGROUND
         self.backgroundColour = self.config.BACKGROUND
+        self.update           = False
 
         layout = QVBoxLayout()
 
@@ -81,16 +82,19 @@ class Settings(QDialog):
     # ----------------------------------------------------------------------------------------------------------------------- Info() ----------------
     def Info(self):
         """  Display application Info.
-             Name can be amended, Version can not.
+             Both name and Version are for display only.
         """
         page   = QWidget(self.twTab)
         layout = QFormLayout()
         page.setLayout(layout)
 
-        layout.addRow("Name ", QLineEdit(self.config.NAME, self))
-        leVersion = QLineEdit(self.config.VERSION, self)
-        leVersion.setReadOnly(True)
-        layout.addRow("Version ", leVersion)                           #  Version is read only.
+        lbName = QLineEdit(self.config.NAME, self)
+        lbName.setReadOnly(True)
+        lbVersion = QLineEdit(self.config.VERSION, self)
+        lbVersion.setReadOnly(True)
+
+        layout.addRow("Name ", lbName)                                 #  Name is read only.
+        layout.addRow("Version ", lbVersion)                           #  Version is read only.
 
         self.twTab.addTab(page, "Application Info")
     # ----------------------------------------------------------------------------------------------------------------------- Application() ---------
@@ -200,7 +204,7 @@ class Settings(QDialog):
     def openFontDialog(self):
         """  Open the font dialog.
         """
-        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Font for Time.")
+        font, ok = QFontDialog.getFont(self.timeFont, self, "Choose Font for Time.")
 
         # If user clicked OK, update the label's font
         if ok:
