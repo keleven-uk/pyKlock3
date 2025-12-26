@@ -110,6 +110,18 @@ class Config():
         self.config["DISPLAY"]["transparent"] = value
 
     @property
+    def INFO_LINE(self):
+        """  Returns if the window should be transparent.
+        """
+        return self.config["DISPLAY"].get("infoLine", True)
+
+    @INFO_LINE.setter
+    def INFO_LINE(self, value):
+        """  Sets if the window should be transparent.
+        """
+        self.config["DISPLAY"]["infoLine"] = value
+
+    @property
     def X_POS(self):
         """  Returns the X co-ordinate of the top right hand corner of the window.
         """
@@ -296,7 +308,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.18",
+        config["INFO"] = {"myVERSION": "2025.19",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -307,7 +319,8 @@ class Config():
 
         config["DISPLAY"] = {"foreground" : "#00ff00",
                              "background" : "#000000",
-                             "transparent": True}
+                             "transparent": True,
+                             "infoLine"   : True}
 
         config["TIME"] = {"mode"     : "Digital",
                           "format"   : "Fuzzy Time",

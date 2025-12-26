@@ -158,7 +158,7 @@ class SysInfo:
 
     @property
     def MACaddress(self):
-        return ':'.join(re.findall('..', '%012x' % uuid.getnode()))
+        return ":".join(re.findall("..", "%012x" % uuid.getnode()))
 
     @property
     def BootTime(self):
@@ -195,7 +195,7 @@ class SysInfo:
     def CPUusage(self):
         p = []           #  create empty list.
 
-        for i, percentage in enumerate(psutil.cpu_percent(percpu=True)):
+        for _, percentage in enumerate(psutil.cpu_percent(percpu=True)):
             p.append(percentage)
         return p
 
@@ -252,20 +252,20 @@ class SysInfo:
         p = {}           #  Create empty dictionary
 
         for partition in self.partitions:
-            l = []           #  create empty list.
+            lst = []           #  create empty list.
             try:
                 partition_usage = psutil.disk_usage(partition.mountpoint)
             except PermissionError:
                 #  This can be caught due to disk that isn't ready
                 continue
-            l.append(partition.mountpoint)
-            l.append(partition.fstype)
-            l.append(self.getSize(partition_usage.total))
-            l.append(self.getSize(partition_usage.used))
-            l.append(self.getSize(partition_usage.free))
-            l.append(f"{self.getSize(partition_usage.percent)}%")
+            lst.append(partition.mountpoint)
+            lst.append(partition.fstype)
+            lst.append(self.getSize(partition_usage.total))
+            lst.append(self.getSize(partition_usage.used))
+            lst.append(self.getSize(partition_usage.free))
+            lst.append(f"{self.getSize(partition_usage.percent)}%")
 
-            p[partition.device] = l
+            p[partition.device] = lst
         return p
 
     #  getIO statistics since bootTime
@@ -289,16 +289,16 @@ class SysInfo:
 
         for interfaceName, interfaceAddresses in self.ifAddrs.items():
             for address in interfaceAddresses:
-                l = []           #  create empty list.
+                lst = []           #  create empty list.
 
-                l.append(interfaceName)
-                l.append(str(address.family))
+                lst.append(interfaceName)
+                lst.append(str(address.family))
 
-                l.append(address.address)
-                l.append(address.netmask)
-                l.append(address.broadcast)
+                lst.append(address.address)
+                lst.append(address.netmask)
+                lst.append(address.broadcast)
 
-                p[n] = l
+                p[n] = lst
                 n += 1
 
         return p

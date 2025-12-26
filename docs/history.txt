@@ -34,9 +34,16 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.19		[26 December 2025]
+
+	The status bar was little congested with the extra information from the previous commit.
+	So, the extra information moved to their own line and this is then displayed below the time.
+	Added an option to switch the info line either on or off.
+
+
 V2025.18		[23 December 2025]
 
-	Added CPU, RAM, Disc Usage and net speed to the taskbar.
+	Added CPU, RAM, Disc Usage and Net speed to the taskbar.
 		Uses the class systemInfo from pySystemInfo.
 		Heavily influenced by https://github.com/Littl3T/Minimalist-Windows-System-Monitor-Widget-PyQt6-
 

@@ -31,7 +31,8 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 * The foreground and background colours can be selected.
 * The background can also be set to transparent.
 
-The status bar includes Date, Key Status, Time Type, CPU Usage, RAM Usage, Net Speed and Idle Time.  
+The status bar includes Date, Key Status, Time Type and Idle Time.  
+An info line can also be displayed showing CPU usage, RAM usage, Disc capacity and Net speed.  
 Key status is the status of Caps Lock, Insert, Scroll lock and Num lock.  
 
 
@@ -40,5 +41,5 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025 :: pyKlock3 V2025.18
+Kevin Scott (C) 2025 :: pyKlock3 V2025.19
 

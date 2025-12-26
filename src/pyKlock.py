@@ -23,7 +23,7 @@
 import time
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
-                             QMessageBox, QFontDialog, QComboBox, QApplication)
+                             QMessageBox, QFontDialog, QComboBox, QApplication, QHBoxLayout, QVBoxLayout)
 from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
 from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint, pyqtSlot
 
@@ -112,7 +112,6 @@ class KlockWindow(QMainWindow):
 
         #  Create the time text display.
         self.txtTime = QLabel("00:00:00")
-        #self.txtTime.setAlignment(Qt.AlignmentFlag.AlignCenter)      # Upsets pyKlock resizing.
         self.txtTime.setFont(self.timeFont)
 
         # Add pages to the stacked layout.
@@ -123,8 +122,31 @@ class KlockWindow(QMainWindow):
         self.centralWidget = QFrame()
         self.centralWidget.setStyleSheet("margin:0px; border:0px")
         self.setCentralWidget(self.centralWidget)
-        self.centralWidget.setLayout(self.stackedLayout)
+        self.centralLayout = QVBoxLayout()
 
+        self.centralLayout.addLayout(self.stackedLayout)
+        if self.config.INFO_LINE:
+            #  Create Info Widget
+            self.infoWidget = QFrame()
+            self.infoWidget.setStyleSheet("margin:0px; border:0px")
+
+            self.stsCPU   = QLabel("CPU : 0%")
+            self.stsRAM   = QLabel("RAM : 0%")
+            self.stsDisc  = QLabel("c: [          ]")
+            self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
+
+            self.infoLayout = QHBoxLayout()
+            self.infoLayout.addWidget(self.stsCPU)
+            self.infoLayout.addWidget(self.stsRAM)
+            self.infoLayout.addWidget(self.stsDisc)
+            self.infoLayout.addWidget(self.stsSpeed)
+
+            self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignRight)
+            self.centralLayout.addLayout(self.infoLayout)
+        self.centralWidget.setLayout(self.centralLayout)
 
         #  Set up timer to update the clock
         self.timer = QTimer(self)
@@ -141,28 +163,16 @@ class KlockWindow(QMainWindow):
         self.stsDate  = QLabel("Thursday 23 October 2025")
         self.stsState = QLabel("cisN")
         self.stsFrmt  = QLabel("L.E.D.")
-        self.stsCPU   = QLabel("CPU : 0%")
-        self.stsRAM   = QLabel("RAM : 0%")
-        self.stsDisc  = QLabel("c: [          ]")
-        self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
         self.stsIdle  = QLabel("idle : 7s")
 
         self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.stsState.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsFrmt.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsIdle.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         self.statusBar.addPermanentWidget(self.stsDate,  1)
         self.statusBar.addPermanentWidget(self.stsState, 1)
         self.statusBar.addPermanentWidget(self.stsFrmt, 1)
-        self.statusBar.addPermanentWidget(self.stsCPU, 1)
-        self.statusBar.addPermanentWidget(self.stsRAM, 1)
-        self.statusBar.addPermanentWidget(self.stsDisc, 1)
-        self.statusBar.addPermanentWidget(self.stsSpeed, 1)
         self.statusBar.addPermanentWidget(self.stsIdle,  1)
 
     def buildComboBox(self):
@@ -322,7 +332,7 @@ class KlockWindow(QMainWindow):
         self.stsState.setText(f"{utils.getState()}")
         self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
         self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
-        self.stsDisc.setText(f"c: {self.getDiscUsage()}")
+        self.stsDisc.setText(f"C: {self.getDiscUsage()}")
         self.stsSpeed.setText(f"↓ {self.formatSpeed(downloadSpeed)}  ↑ {self.formatSpeed(uploadSpeed)}")
         self.stsIdle.setText(utils.getIdleDuration())
 
@@ -343,8 +353,8 @@ class KlockWindow(QMainWindow):
         filledBlocks = int((percent / 100) * barLength)
         emptyBlocks  = barLength - filledBlocks
         progressBar  = "[" + "█" * filledBlocks + " " * emptyBlocks + "]"
-        #return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
-        return f"{progressBar} {percent:.1f}%)"
+        return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
+        #return f"{progressBar} {percent:.1f}%)"
 
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
@@ -397,9 +407,14 @@ class KlockWindow(QMainWindow):
             self.statusBar.setStyleSheet(f"color: {self.foregroundColour}")
             self.menu.setStyleSheet(f"color: {self.foregroundColour}")
             self.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
+            self.stsCPU.setStyleSheet(f"color: {self.foregroundColour}")
+            self.stsRAM.setStyleSheet(f"color: {self.foregroundColour}")
+            self.stsDisc.setStyleSheet(f"color: {self.foregroundColour}")
+            self.stsSpeed.setStyleSheet(f"color: {self.foregroundColour}")
             return
 
         self.centralWidget.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
+        self.infoLayout.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
         self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")

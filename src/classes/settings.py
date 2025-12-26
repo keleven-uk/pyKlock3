@@ -151,10 +151,15 @@ class Settings(QDialog):
 
         leTransparent = QLineEdit("Amend in config.toml and restart", self)
         leTransparent.setReadOnly(True)
+        btnInfoLine = QPushButton()
+        btnInfoLine.setCheckable(True)
+        checked = True if self.config.INFO_LINE else False
+        btnInfoLine.setDefault(checked)
 
         layout.addRow("Foreground Colour ", self.btnForeColour)
         layout.addRow("Background Colour ", self.btnBackColour)
         layout.addRow("Transparent Background ", leTransparent)
+        layout.addRow("Information Line ", btnInfoLine)
 
         self.twTab.addTab(page, "Display")
 
