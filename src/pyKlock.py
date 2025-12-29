@@ -27,9 +27,9 @@ from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, 
 from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
 from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint, pyqtSlot
 
-import src.selectTime as st
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 import src.classes.about as About
+import src.classes.selectTime as st
 import src.classes.textViewer as tw
 import src.classes.settings as stngs
 import src.classes.systemInfo as si
@@ -126,26 +126,8 @@ class KlockWindow(QMainWindow):
 
         self.centralLayout.addLayout(self.stackedLayout)
         if self.config.INFO_LINE:
-            #  Create Info Widget
-            self.infoWidget = QFrame()
-            self.infoWidget.setStyleSheet("margin:0px; border:0px")
+            self.buildInfoLine()
 
-            self.stsCPU   = QLabel("CPU : 0%")
-            self.stsRAM   = QLabel("RAM : 0%")
-            self.stsDisc  = QLabel("c: [          ]")
-            self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
-
-            self.infoLayout = QHBoxLayout()
-            self.infoLayout.addWidget(self.stsCPU)
-            self.infoLayout.addWidget(self.stsRAM)
-            self.infoLayout.addWidget(self.stsDisc)
-            self.infoLayout.addWidget(self.stsSpeed)
-
-            self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignLeft)
-            self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignRight)
-            self.centralLayout.addLayout(self.infoLayout)
         self.centralWidget.setLayout(self.centralLayout)
 
         #  Set up timer to update the clock
@@ -153,10 +135,34 @@ class KlockWindow(QMainWindow):
         self.timer.timeout.connect(self.updateTime)
         self.timer.start(1000)
 
+    def buildInfoLine(self):
+            """  Create Info Line
+            """
+            self.stsCPU   = QLabel("CPU : 0%")
+            self.stsRAM   = QLabel("RAM : 0%")
+            self.stsDisc  = QLabel("C: [          ]")
+            self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
+
+            self.infoLayout = QHBoxLayout()
+            self.infoLayout.addWidget(self.stsCPU)
+            self.infoLayout.addStretch()
+            self.infoLayout.addWidget(self.stsRAM)
+            self.infoLayout.addStretch()
+            self.infoLayout.addWidget(self.stsDisc)
+            self.infoLayout.addStretch()
+            self.infoLayout.addWidget(self.stsSpeed)
+            self.infoLayout.addStretch()
+
+            self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignLeft)
+            self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignRight)
+            self.centralLayout.addLayout(self.infoLayout)
+
     def buildStatusBar(self):
-        self.logger.info(" Building Statusbar")
         """  Create a status bar
         """
+        self.logger.info(" Building Statusbar")
         self.statusBar = self.statusBar()
         self.statusBar.setSizeGripEnabled(False)
 
@@ -228,7 +234,7 @@ class KlockWindow(QMainWindow):
         self.actClose.setCheckable(False)
 
         path = f"{RESOURCE_PATH}/gear.png"
-        self.actSettings = QAction(QIcon(path),"Configue pyKlock", self)
+        self.actSettings = QAction(QIcon(path),"Configure pyKlock", self)
         self.actSettings.triggered.connect(self.openSettings)      #  Open the settings window.
         self.actSettings.setCheckable(False)
 
@@ -374,7 +380,7 @@ class KlockWindow(QMainWindow):
 
         if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
             self.resizeWindow()
-    # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
+    # ----------------------------------------------------------------------------------------------------------------------- resizeWindow() --------
     def resizeWindow(self):
         """  Resizes the main window.
              Will align to the side of the screen if required.
@@ -391,7 +397,7 @@ class KlockWindow(QMainWindow):
                 case "Left":                                                                        #  align to left hand of the screen.
                     self.setGeometry(5, self.Ypos, self.width, self.height)
                 case "Right":                                                                       #  align to right hand of the screen.
-                    xpos = screenSize.width()-self.width
+                    xpos = screenSize.width()-self.width-5
                     self.setGeometry(xpos, self.Ypos, self.width, self.height)
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
@@ -485,8 +491,11 @@ class KlockWindow(QMainWindow):
         """
         dlg = About.About(self, self.config, self.logger, self.startTime)
         dlg.exec()
-    #  -------------------------------------------------------------------------------------------------------------------- openFontDialog ----------
+    #  ---------------------------------------------------------------------------------------------------------------------- openSettings ----------
     def openSettings(self):
+        """  Open an Setting window, which displays the settings available to pyKlock and allows them to be amended.
+        All button processing, settings saving and validation is handled withing the dialog.
+        """
         dlg = stngs.Settings(self, self.config, self.logger)
         dlg.exec()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
@@ -506,6 +515,7 @@ class KlockWindow(QMainWindow):
         else:
             self.endBit()
             event.accept()          #  Close the app.
+            self.close()
     # ----------------------------------------------------------------------------------------------------------------------- endBit() --------------
     def endBit(self):
         """  Save config file, stop the timer and print Goodbye.

@@ -22,16 +22,53 @@ Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and F
 
 Current version of pyKlock is written in Python using different GUI frameworks
 
-	pyKlock 0 - pygubu & pySimpleGUI - finally settled on pySimpleGUI.
-	pyKlock 1 - CustomTkinter.
-	pyKlock 2 - Flet.
-	pyKlock 3 - QT.  [this]
+<2017-2022>	pyKlock 0 - pygubu & pySimpleGUI - Finally settled on pySimpleGUI.
+<2024-2025>	pyKlock 1 - CustomTkinter        - Not currently maintained [Most complete].
+<2024>		pyKlock 2 - Flet.                - No font dialog.
+<2025>		pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programable.
+<2025>		pyKlock 4 - wxPython.            - problems with frame transparency, effects all child widgets.
 
-	Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
+
+Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 If no branch indicated, assume main branch.
+
+
+
+V2025.20		[29 December 2025]
+
+	The pyKlock settings window now saves all amended settings into a new settings dictionary.
+	The dictionary is checked on exit and warns if cancel is selected without saving.
+	The code for each settings tab has been refactored, so that their is only one update method.
+	the new settings dictionary not yet processed so that a new config can be written.
+
+	Moved selectTime.py into src.classes.
+
+
+---------------------------------------------------------------------------------------------
+File                                                      blank        comment           code
+---------------------------------------------------------------------------------------------
+pyKlock\pyKlock3\src\pyKlock.py                              74            112            355
+pyKlock\pyKlock3\src\selectTime.py                          132            155            235
+pyKlock\pyKlock3\src\classes\systemInfo.py                   74            110            173
+pyKlock\pyKlock3\src\config.py                               59            119            167
+pyKlock\pyKlock3\src\classes\settings.py                     40             54            142
+pyKlock\pyKlock3\src\classes\about.py                        28             23            100
+pyKlock\pyKlock3\src\utils\timeCodes.py                       5             20             78
+pyKlock\pyKlock3\main.json                                    0              0             65
+pyKlock\pyKlock3\src\utils\klock_utils.py                    29             45             62
+pyKlock\pyKlock3\main.py                                     15             28             35
+pyKlock\pyKlock3\src\classes\textViewer.py                   14             27             34
+pyKlock\pyKlock3\ruff.toml                                    7              8             31
+pyKlock\pyKlock3\config.toml                                  3              5             22
+pyKlock\pyKlock3\src\logger.py                               11             27             18
+pyKlock\pyKlock3\src\projectPaths.py                          4             24             14
+pyKlock\pyKlock3\copyStuff.bat                                5              0              8
+---------------------------------------------------------------------------------------------
+SUM:                                                        500            757           1539
+---------------------------------------------------------------------------------------------
 
 
 V2025.19		[26 December 2025]

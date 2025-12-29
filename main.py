@@ -41,6 +41,10 @@ from src.projectPaths import LOGGER_PATH, CONFIG_PATH, RESOURCE_PATH, FROZEN
 
 if __name__ == "__main__":
 
+    #  Print out any deprecation warnings for functions used in your code
+    import warnings
+    warnings.simplefilter("default", DeprecationWarning)
+
     myLogger  = Logger.get_logger(str(LOGGER_PATH))    # Create the logger.
 
     myLogger.info("-" * 100)
