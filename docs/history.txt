@@ -36,6 +36,12 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 If no branch indicated, assume main branch.
 
 
+V2025.21		[30 December 2025]
+
+	I had neglected to set the correct text on the comboboxes in the settings window - now added.
+	The config file is now updated - needs more testing.
+	Added changed to pyKlock, so that a new config file is re-read after the settings window is closed.
+
 
 V2025.20		[29 December 2025]
 

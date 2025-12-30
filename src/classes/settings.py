@@ -147,7 +147,7 @@ class Settings(QDialog):
         match name:
             case "X_POS" | "Y_POS" | "WIDTH" | "HEIGHT":        #  colour dialogs
                 action = self.sender()
-                self.newSettings[action.objectName()] = action.text()
+                self.newSettings[action.objectName()] = int(action.text())
             case "CONFIRM_EXIT":
                 checked = not checked
                 self.btnConfirmExit.setDefault(checked)
@@ -162,19 +162,22 @@ class Settings(QDialog):
         path = f"{RESOURCE_PATH}/colour.png"
         self.btnForeColour = QPushButton()
         self.btnForeColour.setIcon(QIcon(path))
-        self.btnForeColour.setStyleSheet(f"color: {self.displaySettingsUpdate}")
-        self.btnBackColour.clicked.connect(self.getForeColour)
+        self.btnForeColour.setStyleSheet(f"color: {self.foregroundColour}")
+        self.btnForeColour.clicked.connect(self.displaySettingsUpdate)
         self.btnForeColour.setObjectName("FOREGROUND")
         path = f"{RESOURCE_PATH}/colour-swatch.png"
         self.btnBackColour = QPushButton()
         self.btnBackColour.setIcon(QIcon(path))
-        self.btnBackColour.setStyleSheet(f"background-color: {self.displaySettingsUpdate}")
-        self.btnBackColour.clicked.connect(self.getBackColour)
+        self.btnBackColour.setStyleSheet(f"background-color: {self.backgroundColour}")
+        self.btnBackColour.clicked.connect(self.displaySettingsUpdate)
         self.btnBackColour.setObjectName("BACKGROUND")
 
         leTransparent = QLineEdit("Amend in config.toml and restart", self)
         leTransparent.setReadOnly(True)
+
+        path = f"{RESOURCE_PATH}/infoLine.png"
         self.btnInfoLine = QPushButton()
+        self.btnInfoLine.setIcon(QIcon(path))
         self.btnInfoLine.setCheckable(True)
         checked = True if self.config.INFO_LINE else False
         self.btnInfoLine.setDefault(checked)
@@ -195,13 +198,17 @@ class Settings(QDialog):
         name   = action.objectName()
 
         match name:
-            case "FOREGROUND" | "FOREGROUND":        #  colour dialogs
+            case "FOREGROUND" | "BACKGROUND":        #  colour dialogs
                 self.current_color = QColor(self.foregroundColour)
                 colour = QColorDialog.getColor(self.current_color, self, f"Choose {name} Colour")
 
                 if colour.isValid():
-                    self.foregroundColour = colour.name()
-                    self.newSettings[name] = self.foregroundColour
+                    if name == "FOREGROUND":
+                        self.foregroundColour = colour.name()
+                        self.newSettings[name] = self.foregroundColour
+                    else:
+                        self.backgroundColour = colour.name()
+                        self.newSettings[name] = self.backgroundColour
             case "INFO_LINE":
                 checked = not checked
                 self.btnInfoLine.setDefault(checked)
@@ -214,14 +221,17 @@ class Settings(QDialog):
 
         self.cbTimeMode = QComboBox()
         self.cbTimeMode.insertItems(1, ["Digital", "Text"])
+        self.setText(self.cbTimeMode,   self.config.TIME_MODE)
         self.cbTimeMode.currentTextChanged.connect(self.timeSettingsUpdate)
         self.cbTimeMode.setObjectName("TIME_MODE")
         self.cbTimeFmt = QComboBox()
         self.cbTimeFmt.insertItems(1, self.selectTime.timeTypes)
+        self.setText(self.cbTimeFmt,    self.config.TIME_FORMAT)
         self.cbTimeFmt.currentTextChanged.connect(self.timeSettingsUpdate)
         self.cbTimeFmt.setObjectName("TIME_FORMAT")
         self.cbTimeAllign = QComboBox()
         self.cbTimeAllign.insertItems(1, ["Left", "Right", "None"])
+        self.setText(self.cbTimeAllign, self.config.TIME_ALIGNMENT)
         self.cbTimeAllign.currentTextChanged.connect(self.timeSettingsUpdate)
         self.cbTimeAllign.setObjectName("TIME_ALIGNMENT")
 
@@ -232,10 +242,10 @@ class Settings(QDialog):
         self.btnFont.setObjectName("TIME_FONT")
         self.btnFont.clicked.connect(self.timeSettingsUpdate)
 
-        layout.addRow("Time Format ", self.cbTimeMode)
+        layout.addRow("Time Format ",      self.cbTimeMode)
         layout.addRow("Text Time Format ", self.cbTimeFmt)
-        layout.addRow("Time Font ", self.btnFont)
-        layout.addRow("Time Allignment ", self.cbTimeAllign)
+        layout.addRow("Time Font ",        self.btnFont)
+        layout.addRow("Time Allignment ",  self.cbTimeAllign)
 
         titles   = ["Prefix Character ", "Postfix Character ", "Space Character "]
         settings = ["TIME_PREFIX", "TIME_POSTFIX", "TIME_SPACE"]
@@ -253,9 +263,21 @@ class Settings(QDialog):
 
         self.twTab.addTab(page, "Time")
 
+    def setText(self, combo, text):
+        """  Sets the combo to display the given text.
+             The values of the combobox is searched for the index and this is used to set the text.
+             If the text is not found, the index is set to 1.
+        """
+        index = combo.findText(text)
+        if index < 0:                   #  If text not found, index will be -1.
+            index = 0
+
+        combo.setCurrentIndex(index)
+
     def timeSettingsUpdate(self):
         """  When a line edit or combo boxes are changed and looses focus, add amended value to new Settings dictionary.
         """
+        print("timeSettingsUpdate")
         action = self.sender()
         name   = action.objectName()
 
@@ -282,28 +304,29 @@ class Settings(QDialog):
         """
         role = self.buttonBox.standardButton(button)
         if role == QDialogButtonBox.StandardButton.Cancel:
-            if self.newSettings:                #  Settings have been amended.
+            if self.newSettings:                        #  Settings have been amended.
                 confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?")
 
                 if confirmation == QMessageBox.StandardButton.Yes:
-                    self.close()                #  Close the app, loosing any edits.
+                    self.close()                        #  Close the app, loosing any edits.
                 else:
-                    return                      #  Continue to the app.
-            else:                               #  No settings have been amended.
-                self.close()                    #  Close the app.
+                    return                              #  Continue to the app.
+            else:                                       #  No settings have been amended.
+                self.close()                            #  Close the app.
 
         elif role == QDialogButtonBox.StandardButton.Ok:
             self.saveSettings()
             self.close()
 
     def saveSettings(self):
-        """  Transfers the new settings dict to config values and writes new config file.
+        """  Transfers the new settings dictionary to config values and writes new config file.
         """
-        for key, val in self.newSettings.items():
-            print(f"key = {key} :: val = {val}")
+        for key, value in self.newSettings.items():
+            print(f"key = {key} :: val = {value}")
+            self.config.__setattr__(key, value)         #  Dirty way of setting the property value using a string.
 
-        self.newSettings = {}                   #  Clear new settings dict
-        self.config.writeConfig()               #  Save new settings.
+        self.newSettings = {}                           #  Clear new settings dict
+        self.config.writeConfig()                       #  Save new settings.
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         self.logger.info("Settings Close Event")

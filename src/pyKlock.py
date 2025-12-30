@@ -42,10 +42,8 @@ class KlockWindow(QMainWindow):
 
         self.config = myConfig
         self.logger = myLogger
-        self.Xpos   = self.config.X_POS
-        self.Ypos   = self.config.Y_POS
-        self.width  = self.config.WIDTH
-        self.height = self.config.HEIGHT
+
+        self.updateValues()
 
         self.setWindowTitle("pyKlock")
         self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
@@ -54,11 +52,6 @@ class KlockWindow(QMainWindow):
         self.systemInfo       = si.SysInfo()
         self.timeFont         = QFont()
         self.textWindow       = None                        # No text external window yet.
-        self.foregroundColour = self.config.FOREGROUND
-        self.backgroundColour = self.config.BACKGROUND
-        self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
-        self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
-        self.transparent      = self.config.TRANSPARENT
         self.startTime        = time.perf_counter()
         self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
         self.lblHeight        = 0
@@ -96,6 +89,20 @@ class KlockWindow(QMainWindow):
 
         self.updateColour()
         self.updateTime()
+
+    def updateValues(self):
+        """  Set up run time values from the config file.
+             Also called if the config file changes.
+        """
+        self.Xpos   = self.config.X_POS
+        self.Ypos   = self.config.Y_POS
+        self.width  = self.config.WIDTH
+        self.height = self.config.HEIGHT
+        self.foregroundColour = self.config.FOREGROUND
+        self.backgroundColour = self.config.BACKGROUND
+        self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
+        self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
+        self.transparent      = self.config.TRANSPARENT
 
     def buildGUI(self):
         """  Set up the GUI widgets.
@@ -498,6 +505,8 @@ class KlockWindow(QMainWindow):
         """
         dlg = stngs.Settings(self, self.config, self.logger)
         dlg.exec()
+
+        self.updateValues()         #  not sure if config has changes - so, update.
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  Ask for confirmation before closing, if required.
