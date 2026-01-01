@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    projectPaths.py   Copyright (C) <2025>  <Kevin Scott>                                                    #                                                                                                             #                                                                                                             #
+#    projectPaths.py   Copyright (C) <2025-26>  <Kevin Scott>                                                 #                                                                                                             #                                                                                                             #
 #    Holds common directory paths for the project.                                                            #
 #        Must sit in src directory                                                                            #
 #                                                                                                             #

@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    pyKlock3   Copyright (C) <2025>  <Kevin Scott>                                                           #
+#    pyKlock3   Copyright (C) <2025-26>  <Kevin Scott>                                                        #
 #    A klock built using QT framework.                                                                        #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
@@ -65,8 +65,10 @@ class KlockWindow(QMainWindow):
 
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         if self.transparent:
             self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+            self.setStyleSheet("background   : transparent;")
 
         #  result is the Boolean result of the conversion, True = success and False = error.
         result = QFont.fromString(self.timeFont, self.config.TIME_FONT)
@@ -79,7 +81,8 @@ class KlockWindow(QMainWindow):
         self.buildStatusBar()
         self.buildComboBox()
         self.buildMenu()
-        self.buildToolBar()
+        if self.config.TOOL_BAR:
+            self.buildToolBar()
 
         #  Initialize state
         if self.config.TIME_MODE == "Digital":
@@ -94,15 +97,15 @@ class KlockWindow(QMainWindow):
         """  Set up run time values from the config file.
              Also called if the config file changes.
         """
-        self.Xpos   = self.config.X_POS
-        self.Ypos   = self.config.Y_POS
-        self.width  = self.config.WIDTH
-        self.height = self.config.HEIGHT
-        self.foregroundColour = self.config.FOREGROUND
-        self.backgroundColour = self.config.BACKGROUND
+        self.Xpos             = self.config.X_POS
+        self.Ypos             = self.config.Y_POS
+        self.width            = self.config.WIDTH
+        self.height           = self.config.HEIGHT
         self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
         self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
         self.transparent      = self.config.TRANSPARENT
+        self.foregroundColour = self.config.FOREGROUND
+        self.backgroundColour = self.config.BACKGROUND
 
     def buildGUI(self):
         """  Set up the GUI widgets.
@@ -256,6 +259,7 @@ class KlockWindow(QMainWindow):
 
         # Set up main menu
         self.menu = self.menuBar()
+        self.menu.setStyleSheet("background   : transparent;")
 
         mnuFile    = self.menu.addMenu("&File")
         mnuTime    = self.menu.addMenu("&Time")
@@ -263,22 +267,26 @@ class KlockWindow(QMainWindow):
         mnuHelp    = self.menu.addMenu("&Help")
 
         #  Set up menu actions.
-        mnuFile.addAction(self.actClose)
-        mnuFile.addSeparator()
         mnuFile.addAction(self.actSettings)
+        mnuFile.addSeparator()
+        mnuFile.addAction(self.actClose)
+        mnuFile.setStyleSheet("background   : transparent;")
 
         mnuDisplay.addAction(self.actBackColour)
         mnuDisplay.addAction(self.actForeColour)
         mnuDisplay.addSeparator()
         mnuDisplay.addAction(self.actFont)
+        mnuDisplay.setStyleSheet("background   : transparent;")
 
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
+        mnuTime.setStyleSheet("background   : transparent;")
 
         mnuHelp.addAction(self.actLicence)
         mnuHelp.addAction(self.actLogFile)
         mnuHelp.addSeparator()
         mnuHelp.addAction(self.actAbout)
+        mnuHelp.setStyleSheet("background   : transparent;")
 
     def buildToolBar(self):
         """  Set up toolbar.
@@ -396,7 +404,10 @@ class KlockWindow(QMainWindow):
         self.lblWidth  = self.txtWidth              #  Saved to be used in updateTextTime.
         self.lblHeight = self.txtHeight             #  Saved to be used in updateTextTime.
         self.width     = self.lblWidth
-        self.height    = self.lblHeight + 40
+        self.height    = self.lblHeight
+        if self.config.TOOL_BAR:
+            self.height += 40
+
         screenSize     = QApplication.primaryScreen().availableGeometry()
 
         if self.config.TIME_ALIGNMENT:
@@ -419,11 +430,14 @@ class KlockWindow(QMainWindow):
             self.txtTime.setStyleSheet(f"color: {self.foregroundColour}")
             self.statusBar.setStyleSheet(f"color: {self.foregroundColour}")
             self.menu.setStyleSheet(f"color: {self.foregroundColour}")
-            self.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
             self.stsCPU.setStyleSheet(f"color: {self.foregroundColour}")
             self.stsRAM.setStyleSheet(f"color: {self.foregroundColour}")
             self.stsDisc.setStyleSheet(f"color: {self.foregroundColour}")
             self.stsSpeed.setStyleSheet(f"color: {self.foregroundColour}")
+
+            if self.config.TOOL_BAR:
+                self.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
+
             return
 
         self.centralWidget.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")

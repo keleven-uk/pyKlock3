@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    selectTime.py   Copyright (C) <2017-25>  <Kevin Scott>                                                   #
+#    selectTime.py   Copyright (C) <2017-26>  <Kevin Scott>                                                   #
 #                                                                                                             #
 #    A class which allows the current time to be displays in various formats.                                 #
 #                                                                                                             #

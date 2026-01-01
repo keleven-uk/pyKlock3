@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    pyKlock3   Copyright (C) <2025>  <Kevin Scott>                                                           #
+#    pyKlock3   Copyright (C) <2025-26>  <Kevin Scott>                                                        #
 #                                                                                                             #
 #    The Klock displays the time [local], date, key status  and the computers idle time.                      #
 #       Key status is the status of Caps Lock, Scroll lock and Num lock.                                      #

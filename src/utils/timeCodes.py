@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    timeCodes.py   Copyright (C) <2017-25>  <Kevin Scott>                                                    #
+#    timeCodes.py   Copyright (C) <2017-26>  <Kevin Scott>                                                    #
 #                                                                                                             #
 #    GLOBAL variables used in several functions                                                               #
 #                                                                                                             #

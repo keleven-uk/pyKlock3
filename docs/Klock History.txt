@@ -7,8 +7,8 @@ Current version of pyKlock is written in Python using different GUI frameworks
 
 <2017-2022>	pyKlock 0 - pygubu & pySimpleGUI - Finally settled on pySimpleGUI.  
 <2024-2025>	pyKlock 1 - CustomTkinter        - Not currently maintained [Most complete].                
-<2024>		pyKlock 2 - Flet.                - No font dialog.                    
-<2025>		pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programable.
-<2025>		pyKlock 4 - wxPython.            - problems with frame transparency, effects all child widgets.
+<2024>		pyKlock 2 - Flet.                - No font dialogue.                    
+<2025>		pyKlock 3 - QT.                  - Problems with frame transparency, cannot be toggled programmable
+<2025>		pyKlock 4 - wxPython.            - Problems with frame transparency, effects all child widgets.
 
 Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]

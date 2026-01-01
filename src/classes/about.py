@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    About   Copyright (C) <2025>  <Kevin Scott>                                                              #
+#    About   Copyright (C) <2025-26>  <Kevin Scott>                                                           #
 #                                                                                                             #
 #    Displays an about dialog.                                                                                #
 #                                                                                                             #

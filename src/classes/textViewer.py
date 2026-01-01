@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    TextViewer.py    Copyright (C) <2025>  <Kevin Scott>                                                     #
+#    TextViewer.py    Copyright (C) <2025-26>  <Kevin Scott>                                                  #
 #                                                                                                             #
 #    A class that displays a text file in a separate window.                                                  #
 #                                                                                                             #

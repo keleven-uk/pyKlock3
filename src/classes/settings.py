@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    Settings   Copyright (C) <2025>  <Kevin Scott>                                                           #
+#    Settings   Copyright (C) <2025-26>  <Kevin Scott>                                                        #
 #                                                                                                             #
 #    Displays an settings dialog.                                                                             #
 #                                                                                                             #
@@ -124,7 +124,16 @@ class Settings(QDialog):
 
             layout.addRow(title, lineEdit)
 
-        # create a push button.
+        # create a push buttons.
+        path = f"{RESOURCE_PATH}/toolbox.png"
+        self.btnToolBar = QPushButton()
+        self.btnToolBar.setIcon(QIcon(path))
+        self.btnToolBar.setCheckable(True)
+        checked = True if self.config.TOOL_BAR else False
+        self.btnToolBar.setDefault(checked)
+        self.btnToolBar.clicked.connect(self.appSettingsUpdate)
+        self.btnToolBar.setObjectName("TOOL_BAR")
+
         path = f"{RESOURCE_PATH}/cross.png"
         self.btnConfirmExit = QPushButton()
         self.btnConfirmExit.setIcon(QIcon(path))
@@ -134,6 +143,7 @@ class Settings(QDialog):
         self.btnConfirmExit.clicked.connect(self.appSettingsUpdate)
         self.btnConfirmExit.setObjectName("CONFIRM_EXIT")
 
+        layout.addRow("Display Tool Bar ", self.btnToolBar)
         layout.addRow("Confirm Exit ", self.btnConfirmExit)
 
         self.twTab.addTab(page, "Application Data")
@@ -147,11 +157,11 @@ class Settings(QDialog):
         match name:
             case "X_POS" | "Y_POS" | "WIDTH" | "HEIGHT":        #  colour dialogs
                 action = self.sender()
-                self.newSettings[action.objectName()] = int(action.text())
-            case "CONFIRM_EXIT":
+                self.newSettings[name] = int(action.text())
+            case "CONFIRM_EXIT", "TOOL_BAR":
                 checked = not checked
                 self.btnConfirmExit.setDefault(checked)
-                self.newSettings["CONFIRM_EXIT"] = checked
+                self.newSettings[name] = checked
     # ----------------------------------------------------------------------------------------------------------------------- Display() -------------
     def Display(self):
         page = QWidget(self.twTab)

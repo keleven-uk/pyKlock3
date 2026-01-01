@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    myConfig.py    Copyright (C) <2025>  <Kevin Scott>                                                       #
+#    myConfig.py    Copyright (C) <2025-26>  <Kevin Scott>                                                    #
 #                                                                                                             #
 #    A class that acts has a wrapper around the configure file - config.toml.                                 #
 #    The configure file is first read, then the properties are made available.                                #
@@ -182,6 +182,18 @@ class Config():
         self.config["APPLICATION"]["confirmExit"] = value
 
     @property
+    def TOOL_BAR(self):
+        """  Returns if the tool bar is displayed.
+        """
+        return self.config["APPLICATION"].get("toolBar", True)
+
+    @TOOL_BAR.setter
+    def TOOL_BAR(self, value):
+        """  Sets if the tool bar is displayed.
+        """
+        self.config["APPLICATION"]["toolBar"] = value
+
+    @property
     def TIME_MODE(self):
         """  Returns the Time mode.
              Either Digital of Text.
@@ -308,14 +320,15 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.21",
+        config["INFO"] = {"myVERSION": "2026.22",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
                                  "y_pos"      : 100,
                                  "width"      : 400,
-                                 "height"     : 200,
-                                 "confirmExit": False}
+                                 "height"     : 45,
+                                 "confirmExit": False,
+                                 "toolBar"    : True}
 
         config["DISPLAY"] = {"foreground" : "#00ff00",
                              "background" : "#000000",
