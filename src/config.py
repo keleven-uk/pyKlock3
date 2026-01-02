@@ -182,6 +182,18 @@ class Config():
         self.config["APPLICATION"]["confirmExit"] = value
 
     @property
+    def MENU_BAR(self):
+        """  Returns if the menu bar is displayed.
+        """
+        return self.config["APPLICATION"].get("menuBar", True)
+
+    @MENU_BAR.setter
+    def MENU_BAR(self, value):
+        """  Sets if the menu bar is displayed.
+        """
+        self.config["APPLICATION"]["menuBar"] = value
+
+    @property
     def TOOL_BAR(self):
         """  Returns if the tool bar is displayed.
         """
@@ -320,7 +332,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.22",
+        config["INFO"] = {"myVERSION": "2026.23",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -328,6 +340,7 @@ class Config():
                                  "width"      : 400,
                                  "height"     : 45,
                                  "confirmExit": False,
+                                 "menu"       : True,
                                  "toolBar"    : True}
 
         config["DISPLAY"] = {"foreground" : "#00ff00",

@@ -33,7 +33,13 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
-If no branch indicated, assume main branch.
+
+V2026.23		[1 January 2026]
+
+	Added a context menu, displayed by right clicking on the text.
+		The context displays three options - toggle menu bar, toggle tool bar and close.
+
+	Made the menu bar switchable.
 
 
 V2026.22		[1 January 2026]
@@ -42,7 +48,7 @@ V2026.22		[1 January 2026]
 	Made the menu bar transparent.
 	Now looks more like previous versions of pyKlock.
 
-	Amended copyrigt message top include the year 2026.
+	Amended copyright message to include the year 2026.
 
 
 V2025.21		[30 December 2025]
