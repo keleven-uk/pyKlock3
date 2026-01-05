@@ -24,6 +24,7 @@ import win32api
 import win32con
 import ctypes
 
+import src.classes.systemInfo as si
 
 def getState():
     """  Checks the current state of Caps Lock, Insert, Scroll Lock & Num Lock.
@@ -127,7 +128,28 @@ def getBootTime():
 
     return t
 
+def formatSpeed(bitsPerSecond):
+    """  Returns a more human readable internet speed.
+    """
+    if bitsPerSecond > 1e6:
+        return f"{bitsPerSecond / 1e6:.2f} Mbit/s"
+    else:
+        return f"{bitsPerSecond / 1e3:.2f} Kbit/s"
 
+def getDiscUsage():
+    """  Returns a more human readable Disc Usage.
+    """
+    systemInfo   = si.SysInfo()
+    disc         = systemInfo.diskUsage("c:\\")
+    totalSpace   = disc.total / 1e9
+    usedSpace    = disc.used / 1e9
+    percent      = disc.percent
+    barLength    = 10
+    filledBlocks = int((percent / 100) * barLength)
+    emptyBlocks  = barLength - filledBlocks
+    progressBar  = "[" + "█" * filledBlocks + " " * emptyBlocks + "]"
+    return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
+    #return f"{progressBar} {percent:.1f}%)"
 
 
 

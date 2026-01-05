@@ -283,7 +283,7 @@ class Settings(QDialog):
             index = 0
 
         combo.setCurrentIndex(index)
-
+    # ----------------------------------------------------------------------------------------------------------------------- timeSettingsUpdate() --
     def timeSettingsUpdate(self):
         """  When a line edit or combo boxes are changed and looses focus, add amended value to new Settings dictionary.
         """
@@ -327,7 +327,7 @@ class Settings(QDialog):
         elif role == QDialogButtonBox.StandardButton.Ok:
             self.saveSettings()
             self.close()
-
+    # ----------------------------------------------------------------------------------------------------------------------- saveSettings() --------
     def saveSettings(self):
         """  Transfers the new settings dictionary to config values and writes new config file.
         """

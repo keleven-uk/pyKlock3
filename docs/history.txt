@@ -34,7 +34,13 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
-V2026.23		[1 January 2026]
+V2026.24		[5 January 2026]
+
+	Refactored the menu into their own class, held in src.classes.menu.py.
+		Rolled the Tool Bar and the Context Menu also into the menu class.
+
+
+V2026.23		[2 January 2026]
 
 	Added a context menu, displayed by right clicking on the text.
 		The context displays three options - toggle menu bar, toggle tool bar and close.

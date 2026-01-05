@@ -22,20 +22,19 @@
 
 import time
 
-from PyQt6.QtWidgets import (QMainWindow, QFrame, QToolBar, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
-                             QMessageBox, QFontDialog, QComboBox, QApplication, QHBoxLayout, QVBoxLayout,
-                             QMenu)
-from PyQt6.QtGui     import QAction, QColor, QIcon, QFont
-from PyQt6.QtCore    import Qt, QTimer, QDateTime, QSize, QPoint, pyqtSlot
+from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
+                             QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout)
+from PyQt6.QtGui     import QColor, QFont
+from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
+import src.classes.menu as mu
 import src.classes.about as About
 import src.classes.selectTime as st
 import src.classes.textViewer as tw
 import src.classes.settings as stngs
 import src.classes.systemInfo as si
 
-from src.projectPaths import RESOURCE_PATH
 
 class KlockWindow(QMainWindow):
     def __init__(self, myConfig, myLogger):
@@ -64,6 +63,8 @@ class KlockWindow(QMainWindow):
         self.newTime                = time.time()
         self.lastTime               = self.newTime
 
+        self.menu   = mu.Menu(self.config, self.logger, self)
+        self.myMenu = self.menu.buildMenu()
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         if self.transparent:
@@ -79,13 +80,13 @@ class KlockWindow(QMainWindow):
         #  Build GUI
         self.buildGUI()
         self.buildStatusBar()
-        self.buildComboBox()
-        self.buildMenu()
-        self.buildToolBar()
-        self.buildContextMenu()
+        self.menu.buildComboBox()
+        self.setMenuBar(self.myMenu)
+        self.addToolBar(self.menu.buildToolBar())
+        self.menu.buildContextMenu()
 
-        self.menu.setVisible(self.menu_bar)
-        self.toolbar.setVisible(self.tool_bar)
+        self.myMenu.setVisible(self.menu_bar)
+        self.menu.toolbar.setVisible(self.tool_bar)
 
         #  Initialize state
         if self.config.TIME_MODE == "Digital":
@@ -115,7 +116,7 @@ class KlockWindow(QMainWindow):
     def buildGUI(self):
         """  Set up the GUI widgets.
         """
-        self.logger.info(" Building GUI")
+        self.logger.info(" Building GUI.")
         #  Create a layout
         self.stackedLayout = QStackedLayout()
 
@@ -151,33 +152,34 @@ class KlockWindow(QMainWindow):
         self.timer.start(1000)
 
     def buildInfoLine(self):
-            """  Create Info Line
-            """
-            self.stsCPU   = QLabel("CPU : 0%")
-            self.stsRAM   = QLabel("RAM : 0%")
-            self.stsDisc  = QLabel("C: [          ]")
-            self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
+        """  Create Info Line
+        """
+        self.logger.info(" Building Info Line.")
+        self.stsCPU   = QLabel("CPU : 0%")
+        self.stsRAM   = QLabel("RAM : 0%")
+        self.stsDisc  = QLabel("C: [          ]")
+        self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
 
-            self.infoLayout = QHBoxLayout()
-            self.infoLayout.addWidget(self.stsCPU)
-            self.infoLayout.addStretch()
-            self.infoLayout.addWidget(self.stsRAM)
-            self.infoLayout.addStretch()
-            self.infoLayout.addWidget(self.stsDisc)
-            self.infoLayout.addStretch()
-            self.infoLayout.addWidget(self.stsSpeed)
-            self.infoLayout.addStretch()
+        self.infoLayout = QHBoxLayout()
+        self.infoLayout.addWidget(self.stsCPU)
+        self.infoLayout.addStretch()
+        self.infoLayout.addWidget(self.stsRAM)
+        self.infoLayout.addStretch()
+        self.infoLayout.addWidget(self.stsDisc)
+        self.infoLayout.addStretch()
+        self.infoLayout.addWidget(self.stsSpeed)
+        self.infoLayout.addStretch()
 
-            self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignLeft)
-            self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignLeft)
-            self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignLeft)
-            self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignRight)
-            self.centralLayout.addLayout(self.infoLayout)
+        self.stsCPU.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.stsRAM.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.stsDisc.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.stsSpeed.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.centralLayout.addLayout(self.infoLayout)
 
     def buildStatusBar(self):
         """  Create a status bar
         """
-        self.logger.info(" Building Statusbar")
+        self.logger.info(" Building Statusbar.")
         self.statusBar = self.statusBar()
         self.statusBar.setSizeGripEnabled(False)
 
@@ -196,163 +198,20 @@ class KlockWindow(QMainWindow):
         self.statusBar.addPermanentWidget(self.stsFrmt, 1)
         self.statusBar.addPermanentWidget(self.stsIdle,  1)
 
-    def buildComboBox(self):
-        self.logger.info(" Building Combobox")
-        self.combo = QComboBox()
-        self.combo.insertItems(1, self.selectTime.timeTypes)
-        index = self.combo.findText(self.timeFormat)
-        if index >= 0:
-            self.combo.setCurrentIndex(index)
-
-        self.combo.setStyleSheet("QComboBox"
-                                 "{"
-                                 "color        : self.foregroundColour;"
-                                 "background   : transparent;"
-                                 "border-radius: 3px;"
-                                 "}")
-
-    def buildMenu(self):
-        """  Initialise the menu and add the actions.
-        """
-        self.logger.info(" Building Menu")
-
-        #  Set up actions.
-        path = f"{RESOURCE_PATH}/digital-clock.png"
-        self.actDigitalTime = QAction(QIcon(path),"Digital Time", self)
-        self.actDigitalTime.triggered.connect(self.setDigitalTime)
-
-        path = f"{RESOURCE_PATH}/time-text.png"
-        self.actTextTime = QAction(QIcon(path),"Time in words", self)
-        self.actTextTime.triggered.connect(self.setTextTime)
-        self.actTextTime.setCheckable(False)
-
-        path = f"{RESOURCE_PATH}/font.png"
-        self.actFont = QAction(QIcon(path),"Change Font", self)
-        self.actFont.triggered.connect(self.openFontDialog)
-        self.actFont.setCheckable(False)
-
-        path = f"{RESOURCE_PATH}/colour-swatch.png"
-        self.actBackColour = QAction(QIcon(path),"Change Background Colour", self)
-        self.actBackColour.triggered.connect(self.getBackColour)
-        self.actBackColour.setCheckable(False)
-        flag = False if self.transparent else True
-        self.actBackColour.setEnabled(flag)
-
-        path = f"{RESOURCE_PATH}/colour.png"
-        self.actForeColour = QAction(QIcon(path),"Change Foreground Colour", self)
-        self.actForeColour.triggered.connect(self.getForeColour)
-        self.actForeColour.setCheckable(False)
-
-        path = f"{RESOURCE_PATH}/cross.png"
-        self.actClose = QAction(QIcon(path),"Close", self)
-        self.actClose.triggered.connect(self.close)                #  Close the app, which call the closeEvent (overridden).
-        self.actClose.setCheckable(False)
-
-        path = f"{RESOURCE_PATH}/gear.png"
-        self.actSettings = QAction(QIcon(path),"Configure pyKlock", self)
-        self.actSettings.triggered.connect(self.openSettings)      #  Open the settings window.
-        self.actSettings.setCheckable(False)
-
-        self.actLicence = QAction("Licence", self)
-        self.actLicence.triggered.connect(self.openTextFile)
-
-        self.actLogFile = QAction("Log File", self)
-        self.actLogFile.triggered.connect(self.openTextFile)
-
-        self.actAbout = QAction("About", self)
-        self.actAbout.triggered.connect(self.openAbout)
-
-        # Set up main menu
-        self.menu = self.menuBar()
-        self.menu.setStyleSheet("background   : transparent;")
-
-        mnuFile    = self.menu.addMenu("&File")
-        mnuTime    = self.menu.addMenu("&Time")
-        mnuDisplay = self.menu.addMenu("&Display")
-        mnuHelp    = self.menu.addMenu("&Help")
-
-        #  Set up menu actions.
-        mnuFile.addAction(self.actSettings)
-        mnuFile.addSeparator()
-        mnuFile.addAction(self.actClose)
-        mnuFile.setStyleSheet("background   : transparent;")
-
-        mnuDisplay.addAction(self.actBackColour)
-        mnuDisplay.addAction(self.actForeColour)
-        mnuDisplay.addSeparator()
-        mnuDisplay.addAction(self.actFont)
-        mnuDisplay.setStyleSheet("background   : transparent;")
-
-        mnuTime.addAction(self.actDigitalTime)
-        mnuTime.addAction(self.actTextTime)
-        mnuTime.setStyleSheet("background   : transparent;")
-
-        mnuHelp.addAction(self.actLicence)
-        mnuHelp.addAction(self.actLogFile)
-        mnuHelp.addSeparator()
-        mnuHelp.addAction(self.actAbout)
-        mnuHelp.setStyleSheet("background   : transparent;")
-
-    def buildContextMenu(self):
-        # Create the context menu and add some actions
-        self.actToggleMenuBar = QAction("Toggle Menu Bar", self)
-        self.actToggleMenuBar.triggered.connect(self.toggleMenuBar)
-        self.actToggleMenuBar.setCheckable(True)
-
-        self.actToggleToolBar = QAction("Toggle Tool Bar", self)
-        self.actToggleToolBar.triggered.connect(self.toggleToolBar)
-        self.actToggleToolBar.setCheckable(True)
-
-        self.context_menu = QMenu(self)
-        self.context_menu.setStyleSheet("background   : transparent;")
-        self.context_menu.addAction(self.actToggleMenuBar)
-        self.context_menu.addAction(self.actToggleToolBar)
-        self.context_menu.addSeparator()
-        self.context_menu.addAction(self.actClose)
-
-        self.actToggleMenuBar.setChecked(self.menu_bar)
-        self.actToggleToolBar.setChecked(self.tool_bar)
-
-    def contextMenuEvent(self, event):
-        # Show the context menu
-        self.context_menu.exec(event.globalPos())
-
-    def buildToolBar(self):
-        """  Set up toolbar.
-             Uses the menu actions.
-        """
-        self.toolbar = QToolBar("Time Toolbar")
-        self.toolbar.setIconSize(QSize(16, 16))
-        self.toolbar.toggleViewAction().setEnabled(False)               #  to prevent this toolbar being removed.
-        self.addToolBar(self.toolbar)
-
-        #  Set up tool bar actions.
-        self.toolbar.addAction(self.actDigitalTime)
-        self.toolbar.addAction(self.actTextTime)
-        self.toolbar.addSeparator()
-        self.toolbar.addWidget(self.combo)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.actFont)
-        self.toolbar.addAction(self.actBackColour)
-        self.toolbar.addAction(self.actForeColour)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.actSettings)
-        self.toolbar.addAction(self.actClose)
-
     #  -------------------------------------------------------------------------------------------------------------------- toggleMenuBar -----------
     def toggleMenuBar(self):
         """  Toggles if the menu bar is displayed or not.
         """
         self.menu_bar = not self.menu_bar
-        self.menu.setVisible(self.menu_bar)
-        self.actToggleMenuBar.setChecked(self.menu_bar)
+        self.myMenu.setVisible(self.menu_bar)
+        self.menu.actToggleMenuBar.setChecked(self.menu_bar)
     #  -------------------------------------------------------------------------------------------------------------------- toggleToolBar -----------
     def toggleToolBar(self):
         """  Toggles if the tool bar is displayed or not.
         """
         self.tool_bar = not self.tool_bar
-        self.toolbar.setVisible(self.tool_bar)
-        self.actToggleToolBar.setChecked(self.tool_bar)
+        self.menu.toolbar.setVisible(self.tool_bar)
+        self.menu.actToggleToolBar.setChecked(self.tool_bar)
     #  -------------------------------------------------------------------------------------------------------------------- openFontDialog ----------
     def openFontDialog(self):
         """  Open the font dialog.
@@ -365,7 +224,7 @@ class KlockWindow(QMainWindow):
             self.timeFont = font
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
-        """  Update the time and status bar.            self.selectTime.getTime(self.myConfig.TIME_TYPE)
+        """  Update the time, info line  and status bar.
         """
         dtCurrent = QDateTime.currentDateTime()
         txtTime   = dtCurrent.toString("HH:MM:SS")
@@ -387,7 +246,7 @@ class KlockWindow(QMainWindow):
             self.lcdTime.display(txtTime)
             self.stsFrmt.setText("L.E.D.")
         else:
-            self.timeFormat = self.combo.currentText()
+            self.timeFormat = self.menu.combo.currentText()
             self.updateTextTime()
             self.stsFrmt.setText(f"{self.timeFormat}")
 
@@ -395,30 +254,9 @@ class KlockWindow(QMainWindow):
         self.stsState.setText(f"{utils.getState()}")
         self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
         self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
-        self.stsDisc.setText(f"C: {self.getDiscUsage()}")
-        self.stsSpeed.setText(f"↓ {self.formatSpeed(downloadSpeed)}  ↑ {self.formatSpeed(uploadSpeed)}")
+        self.stsDisc.setText(f"C: {utils.getDiscUsage()}")
+        self.stsSpeed.setText(f"↓ {utils.formatSpeed(downloadSpeed)}  ↑ {utils.formatSpeed(uploadSpeed)}")
         self.stsIdle.setText(utils.getIdleDuration())
-
-        self.getDiscUsage()
-
-    def formatSpeed(self, bitsPerSecond):
-        if bitsPerSecond > 1e6:
-            return f"{bitsPerSecond / 1e6:.2f} Mbit/s"
-        else:
-            return f"{bitsPerSecond / 1e3:.2f} Kbit/s"
-
-    def getDiscUsage(self):
-        disc         = self.systemInfo.diskUsage("c:\\")
-        totalSpace   = disc.total / 1e9
-        usedSpace    = disc.used / 1e9
-        percent      = disc.percent
-        barLength    = 10
-        filledBlocks = int((percent / 100) * barLength)
-        emptyBlocks  = barLength - filledBlocks
-        progressBar  = "[" + "█" * filledBlocks + " " * emptyBlocks + "]"
-        return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
-        #return f"{progressBar} {percent:.1f}%)"
-
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
         """  Updates the time text and is needed calls resizeWindow.
@@ -450,7 +288,7 @@ class KlockWindow(QMainWindow):
         if self.config.TOOL_BAR:
             self.height += 40
 
-        screenSize     = QApplication.primaryScreen().availableGeometry()
+        screenSize = QApplication.primaryScreen().availableGeometry()
 
         if self.config.TIME_ALIGNMENT:
             match self.config.TIME_ALIGNMENT:
@@ -476,8 +314,8 @@ class KlockWindow(QMainWindow):
             self.stsRAM.setStyleSheet(f"color: {self.foregroundColour}")
             self.stsDisc.setStyleSheet(f"color: {self.foregroundColour}")
             self.stsSpeed.setStyleSheet(f"color: {self.foregroundColour}")
-            self.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
-            self.context_menu.setStyleSheet(f"color: {self.foregroundColour}")
+            self.menu.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
+            self.menu.context_menu.setStyleSheet(f"color: {self.foregroundColour}")
 
             return
 
@@ -485,25 +323,19 @@ class KlockWindow(QMainWindow):
         self.infoLayout.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
         self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
-        self.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
-        self.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        self.menu.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        self.menu.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
     # ----------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
     def setDigitalTime(self):
         """  Bring forward the digital time display, hides the text time display.
         """
         self.stackedLayout.setCurrentIndex(0)
-        # self.actDigitalTime.setCheckable(True)
-        # self.actTextTime.setCheckable(False)
-        # self.mnuTimeFormatTime.setEnabled(False)
         self.timeMode = "Digital"
     # ----------------------------------------------------------------------------------------------------------------------- setWordTime() ---------
     def setTextTime(self):
         """  Bring forward the text time display, hides the digital time display.
         """
         self.stackedLayout.setCurrentIndex(1)
-        # self.actDigitalTime.setCheckable(False)
-        # self.actTextTime.setCheckable(True)
-        # self.mnuTimeFormatTime.setEnabled(True)
         self.timeMode = "Text"
     # ----------------------------------------------------------------------------------------------------------------------- getForeColour() -------
     def getForeColour(self):
@@ -524,7 +356,7 @@ class KlockWindow(QMainWindow):
             self.backgroundColour = colour.name()
             self.updateColour()
     # ----------------------------------------------------------------------------------------------------------------------- mousePressEvent -------
-    #  The three following methods are in place of the default mouse events - so pyKlocvk can be dragged
+    #  The three following methods are in place of the default mouse events - so pyKlock can be dragged
     #  by holding the left mouse button [anywhere in pyKlock] and moving the mouse.
     #  Stole from - https://stackoverflow.com/questions/37718329/pyqt5-draggable-frameless-window
     def mousePressEvent(self, event):
@@ -607,3 +439,11 @@ class KlockWindow(QMainWindow):
         self.config.FOREGROUND  = self.foregroundColour
         self.config.BACKGROUND  = self.backgroundColour
         self.config.writeConfig()
+    # ----------------------------------------------------------------------------------------------------------------------- contextMenuEvent() ----
+    def contextMenuEvent(self, event):
+        """  ** NEEDED for the context menu to work **
+
+             This overrides a system method, so the context menu is executed.
+        """
+        # Show the context menu
+        self.menu.context_menu.exec(event.globalPos())
