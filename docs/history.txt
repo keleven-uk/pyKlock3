@@ -34,6 +34,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.25		[6 January 2026]
+
+	Added Help files, generated using HelpNDoc 10.  Two help files, one .chm and one .pdf, live in the help directory.
+	Added a pdf viewer to display help.pdf.
+
+
 V2026.24		[5 January 2026]
 
 	Refactored the menu into their own class, held in src.classes.menu.py.

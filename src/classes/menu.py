@@ -95,6 +95,9 @@ class Menu(QMenuBar):
         self.actSettings.triggered.connect(self.parent.openSettings)      #  Open the settings window.
         self.actSettings.setCheckable(False)
 
+        self.actHelp = QAction("Help", self)
+        self.actHelp.triggered.connect(self.parent.openHelpFile)
+
         self.actLicence = QAction("Licence", self)
         self.actLicence.triggered.connect(self.parent.openTextFile)
 
@@ -140,6 +143,8 @@ class Menu(QMenuBar):
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
 
+        mnuHelp.addAction(self.actHelp)
+        mnuHelp.addSeparator()
         mnuHelp.addAction(self.actLicence)
         mnuHelp.addAction(self.actLogFile)
         mnuHelp.addSeparator()
@@ -177,6 +182,8 @@ class Menu(QMenuBar):
         self.context_menu.setStyleSheet("background   : transparent;")
         self.context_menu.addAction(self.actToggleMenuBar)
         self.context_menu.addAction(self.actToggleToolBar)
+        self.context_menu.addSeparator()
+        self.context_menu.addAction(self.actHelp)
         self.context_menu.addSeparator()
         self.context_menu.addAction(self.actClose)
 

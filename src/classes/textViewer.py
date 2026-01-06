@@ -30,7 +30,6 @@ class TextViewer(QWidget):
     def __init__(self, parent, action, logger):
         super().__init__()
 
-        self.setWindowTitle("pyKlock Licence")
         self.setGeometry(300, 300, 800, 400)
 
         self.parent = parent
@@ -60,8 +59,10 @@ class TextViewer(QWidget):
         """
         match self.action:
             case "Licence":
+                self.setWindowTitle("pyKlock Licence")
                 self.textFile = f"{MAIN_PATH}/LICENCE.txt"
             case "Log File":
+                self.setWindowTitle("pyKlock Log File")
                 self.textFile = f"{LOGGER_PATH}"
             case "_":
                 self.logger.error(" ERROR - Unknown text file type.")

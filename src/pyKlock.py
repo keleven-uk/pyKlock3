@@ -32,6 +32,7 @@ import src.classes.menu as mu
 import src.classes.about as About
 import src.classes.selectTime as st
 import src.classes.textViewer as tw
+import src.classes.helpViewer as hp
 import src.classes.settings as stngs
 import src.classes.systemInfo as si
 
@@ -52,6 +53,7 @@ class KlockWindow(QMainWindow):
         self.systemInfo       = si.SysInfo()
         self.timeFont         = QFont()
         self.textWindow       = None                        # No text external window yet.
+        self.helpWindow       = None
         self.startTime        = time.perf_counter()
         self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
         self.lblHeight        = 0
@@ -252,10 +254,11 @@ class KlockWindow(QMainWindow):
 
         self.stsDate.setText(txtDate)
         self.stsState.setText(f"{utils.getState()}")
-        self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
-        self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
-        self.stsDisc.setText(f"C: {utils.getDiscUsage()}")
-        self.stsSpeed.setText(f"↓ {utils.formatSpeed(downloadSpeed)}  ↑ {utils.formatSpeed(uploadSpeed)}")
+        if self.config.INFO_LINE:
+            self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
+            self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
+            self.stsDisc.setText(f"C: {utils.getDiscUsage()}")
+            self.stsSpeed.setText(f"↓ {utils.formatSpeed(downloadSpeed)}  ↑ {utils.formatSpeed(uploadSpeed)}")
         self.stsIdle.setText(utils.getIdleDuration())
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
@@ -310,21 +313,23 @@ class KlockWindow(QMainWindow):
             self.txtTime.setStyleSheet(f"color: {self.foregroundColour}")
             self.statusBar.setStyleSheet(f"color: {self.foregroundColour}")
             self.menu.setStyleSheet(f"color: {self.foregroundColour}")
-            self.stsCPU.setStyleSheet(f"color: {self.foregroundColour}")
-            self.stsRAM.setStyleSheet(f"color: {self.foregroundColour}")
-            self.stsDisc.setStyleSheet(f"color: {self.foregroundColour}")
-            self.stsSpeed.setStyleSheet(f"color: {self.foregroundColour}")
+            if self.config.INFO_LINE:
+                self.stsCPU.setStyleSheet(f"color: {self.foregroundColour}")
+                self.stsRAM.setStyleSheet(f"color: {self.foregroundColour}")
+                self.stsDisc.setStyleSheet(f"color: {self.foregroundColour}")
+                self.stsSpeed.setStyleSheet(f"color: {self.foregroundColour}")
             self.menu.toolbar.setStyleSheet(f"color: {self.foregroundColour}")
             self.menu.context_menu.setStyleSheet(f"color: {self.foregroundColour}")
 
             return
 
         self.centralWidget.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
-        self.infoLayout.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
+        if self.config.INFO_LINE:
+            self.infoLayout.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
         self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
-        self.menu.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        #self.menu.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
     # ----------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
     def setDigitalTime(self):
         """  Bring forward the digital time display, hides the text time display.
@@ -370,6 +375,13 @@ class KlockWindow(QMainWindow):
         self.oldPos = event.position().toPoint()
         self.Xpos = self.x()
         self.Ypos = self.y()
+    # ----------------------------------------------------------------------------------------------------------------------- openTextFile ----------
+    def openHelpFile(self):
+        """  Open a text viewer.
+        """
+        if self.helpWindow is None:
+            self.helpWindow = hp.HelpViewer(self)
+            self.helpWindow.show()
     # ----------------------------------------------------------------------------------------------------------------------- openTextFile ----------
     @pyqtSlot()
     def openTextFile(self):
