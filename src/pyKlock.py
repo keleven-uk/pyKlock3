@@ -24,17 +24,17 @@ import time
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
                              QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout)
-from PyQt6.QtGui     import QColor, QFont
+from PyQt6.QtGui     import QColor, QFont, QPixmap
 from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 import src.classes.menu as mu
-import src.classes.about as About
 import src.classes.selectTime as st
-import src.classes.textViewer as tw
-import src.classes.helpViewer as hp
-import src.classes.settings as stngs
 import src.classes.systemInfo as si
+import src.windows.about as About
+import src.windows.textViewer as tw
+import src.windows.helpViewer as hp
+import src.windows.settings as stngs
 
 
 class KlockWindow(QMainWindow):
@@ -185,17 +185,22 @@ class KlockWindow(QMainWindow):
         self.statusBar = self.statusBar()
         self.statusBar.setSizeGripEnabled(False)
 
-        self.stsDate  = QLabel("Thursday 23 October 2025")
-        self.stsState = QLabel("cisN")
-        self.stsFrmt  = QLabel("L.E.D.")
-        self.stsIdle  = QLabel("idle : 7s")
+        self.stsDate    = QLabel("Thursday 23 October 2025")
+        self.stsBattery = QLabel()
+        self.stsState   = QLabel("cisN")
+        self.stsFrmt    = QLabel("L.E.D.")
+        self.stsIdle    = QLabel("idle : 7s")
+
+        #self.stsBattery.setPixmap(self.battery_full)
 
         self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.stsBattery.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsState.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsFrmt.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stsIdle.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         self.statusBar.addPermanentWidget(self.stsDate,  1)
+        self.statusBar.addPermanentWidget(self.stsBattery,  1)
         self.statusBar.addPermanentWidget(self.stsState, 1)
         self.statusBar.addPermanentWidget(self.stsFrmt, 1)
         self.statusBar.addPermanentWidget(self.stsIdle,  1)
@@ -260,9 +265,28 @@ class KlockWindow(QMainWindow):
             self.stsDisc.setText(f"C: {utils.getDiscUsage()}")
             self.stsSpeed.setText(f"↓ {utils.formatSpeed(downloadSpeed)}  ↑ {utils.formatSpeed(uploadSpeed)}")
         self.stsIdle.setText(utils.getIdleDuration())
+
+        self.updateBattery()
+    # ----------------------------------------------------------------------------------------------------------------------- updateBattery() -------
+    def updateBattery(self):
+        """  Updates the battery icon in the status bar.
+        """
+        state  = self.systemInfo.onBattery
+        charge = self.systemInfo.batteryCharge
+
+        match state:
+            case True:
+                if charge == 100:
+                    self.stsBattery.setText("Full Battery")
+                else:
+                    self.stsBattery.setText(f"Charging : {charge}%")
+            case False:
+                self.stsBattery.setText(f"Battery : {charge}%")
+            case _:
+                self.stsBattery.setText("Running on A/c")
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
-        """  Updates the time text and is needed calls resizeWindow.
+        """  Updates the time text and if needed calls resizeWindow.
 
              The text time is bracketed with the prefix and postfix characters.  Mostly "".
         """
@@ -298,7 +322,7 @@ class KlockWindow(QMainWindow):
                 case "Left":                                                                        #  align to left hand of the screen.
                     self.setGeometry(5, self.Ypos, self.width, self.height)
                 case "Right":                                                                       #  align to right hand of the screen.
-                    xpos = screenSize.width()-self.width-5
+                    xpos = screenSize.width()-self.width-20
                     self.setGeometry(xpos, self.Ypos, self.width, self.height)
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
@@ -312,7 +336,7 @@ class KlockWindow(QMainWindow):
         if self.transparent:
             self.txtTime.setStyleSheet(f"color: {self.foregroundColour}")
             self.statusBar.setStyleSheet(f"color: {self.foregroundColour}")
-            self.menu.setStyleSheet(f"color: {self.foregroundColour}")
+            self.myMenu.setStyleSheet(f"color: {self.foregroundColour}")
             if self.config.INFO_LINE:
                 self.stsCPU.setStyleSheet(f"color: {self.foregroundColour}")
                 self.stsRAM.setStyleSheet(f"color: {self.foregroundColour}")
@@ -327,9 +351,9 @@ class KlockWindow(QMainWindow):
         if self.config.INFO_LINE:
             self.infoLayout.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}; margin:0px; border:0px")
         self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
-        self.menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        self.myMenu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
-        #self.menu.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        self.menu.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
     # ----------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
     def setDigitalTime(self):
         """  Bring forward the digital time display, hides the text time display.

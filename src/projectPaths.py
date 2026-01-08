@@ -36,9 +36,10 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):   #  Running as a
     LOGGER_PATH   = "pyKlock.log"
     RESOURCE_PATH = "resources"
     HELP_PATH     = "help"
+    FR_DATA_PATH  = "data/friends.txt"
 else:
      CONFIG_PATH   = MAIN_PATH / "config.toml"
      LOGGER_PATH   = MAIN_PATH / "logs/pyKlock.log"
      RESOURCE_PATH = MAIN_PATH / "resources"
      HELP_PATH     = MAIN_PATH / "help"
-
+     FR_DATA_PATH  = MAIN_PATH / "data/friends.txt"

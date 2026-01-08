@@ -37,14 +37,14 @@ class About(QDialog):
     def __init__(self, parent, myConfig, myLogger, startTime):
         super().__init__(parent)
 
-        self.config    = myConfig
-        self.logger    = myLogger
-        self.startTime = startTime
-        self.height    = 600
-        self.width     = 400
-        screenSize     = QApplication.primaryScreen().availableGeometry()
-        xPos           = int((screenSize.width() / 2)  - (self.width / 2))
-        yPos           = int((screenSize.height() / 2) - (self.height / 2))
+        self.config     = myConfig
+        self.logger     = myLogger
+        self.startTime  = startTime
+        self.height     = 600
+        self.width      = 400
+        screenSize      = QApplication.primaryScreen().availableGeometry()
+        xPos            = int((screenSize.width() / 2)  - (self.width / 2))
+        yPos            = int((screenSize.height() / 2) - (self.height / 2))
 
         self.logger.info("Launching About dialog")
 

@@ -3,7 +3,7 @@
 #                                                                                                             #
 #    Contains utility functions for pyKlock.                                                                  #
 #                                                                                                             #
-#    For changes see history.txt                                                                              #
+#    8 January 2026 - Changed the code in getIdleDuration()                                                   #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
@@ -59,12 +59,6 @@ def getState():
 
     return state
 
-class LASTINPUTINFO(ctypes.Structure):
-    _fields_ = [
-        ("cbSize", ctypes.c_uint),
-        ("dwTime", ctypes.c_uint),
-    ]
-
 def getIdleDuration():
     """  Returns the number of seconds the PC has been idle.
          Uses the class LASTINPUTINFO above.
@@ -72,12 +66,7 @@ def getIdleDuration():
          Stolen from -
          http://stackoverflow.com/questions/911856/detecting-idle-time-in-python
     """
-    lastInputInfo = LASTINPUTINFO()
-    lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)
-    ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo))
-    millis = ctypes.windll.kernel32.GetTickCount() - lastInputInfo.dwTime
-    idle   = millis / 1000.0
-    idle = int(idle)
+    idle = (win32api.GetTickCount() - win32api.GetLastInputInfo()) / 1000.0
 
     if idle > 5:  #  Only print idles time if greater then 5 seconds.
         return f"idle : {formatSeconds(idle)}"
@@ -126,7 +115,7 @@ def getBootTime():
     # (format = x days, HH:MM:SS)
     #print(f"{days} days, {hour:02}:{mins:02}:{sec:02}")
 
-    return t
+    return (t*-1)
 
 def formatSpeed(bitsPerSecond):
     """  Returns a more human readable internet speed.

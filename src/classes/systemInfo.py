@@ -5,13 +5,13 @@
 #                                                                               #
 #  https://www.thepythoncode.com/article/get-hardware-system-information-python #
 #                                                                               #
-#  Kevin Scott (C) 2020-2026                                                    #
-#                                                                               #
 #  NB : Needs psutil & pyinputplus, not in the Python Standard Library          #
 #                                                                               #
 #  23 December 2025 - Added TotalRawBytesReceived & TotalRawBytesSent           #
 #                     Returns the raw value - not formatted.                    #
 #                     Also uses the current values of netIO.                    #
+#                                                                               #
+#   8 January 2026 - Added battery information.                                 #
 #                                                                               #
 #################################################################################
 #                                                                               #
@@ -355,3 +355,29 @@ class SysInfo:
     @property
     def PythonVersion(self):
         return platform.python_version()
+
+    # ---------------------------------------------------------------------------------------------------------------------- battery ----------------
+    @property
+    def onBattery(self):
+        """  Returns is a battery is installed.
+
+             returns -
+               None  = no battery installed, probably running on A/c
+               True  = running on battery.
+               False = battery is charging.
+        """
+        return psutil.sensors_battery().power_plugged
+
+    @property
+    def batteryCharge(self):
+        """  Returns the current state of the battery charge on %
+        """
+        return round(psutil.sensors_battery().percent, 2)
+
+    @property
+    def batteryChargeLeft(self):
+        """     Returns the the remaining life in the battery in seconds.
+        """
+        return psutil.sensors_battery().secsleft
+
+
