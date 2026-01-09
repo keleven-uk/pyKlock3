@@ -46,6 +46,26 @@ V2026.26		[8 January 2026]
 	Moved some of the classes, which load into their own window, into a src.windows directory.
 
 
+	V2026.27		[9 January 2026]
+
+		Changed the status bar battery indicator to a progress bar instead of icons.
+			The colour of the bar changes depending upon the state of the battery.
+
+		The resizing of the window now only executes if the width of the text is greater then the width of the info line.
+
+
+	V2026.26		[8 January 2026]
+
+	Added the state of the battery to the status bar.
+		The current charge of the battery is displayed along with if the battery is currently charging.
+		If no battery is installed [i.e. a PC], running on a/c is displayed.
+		Added the required methods into systemInfo.py.
+
+	Simplified the code for boot time in klock_utils.py.  The old one seemed to have stopped working.
+
+	Moved some of the classes, which load into their own window, into a src.windows directory.
+
+
 V2026.25		[6 January 2026]
 
 	Added Help files, generated using HelpNDoc 10.  Two help files, one .chm and one .pdf, live in the help directory.

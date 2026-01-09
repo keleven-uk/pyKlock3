@@ -23,7 +23,8 @@
 import time
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
-                             QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout)
+                             QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout,
+                             QProgressBar)
 from PyQt6.QtGui     import QColor, QFont, QPixmap
 from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 
@@ -130,6 +131,7 @@ class KlockWindow(QMainWindow):
 
         #  Create the time text display.
         self.txtTime = QLabel("00:00:00")
+        self.txtTime.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.txtTime.setFont(self.timeFont)
 
         # Add pages to the stacked layout.
@@ -186,12 +188,10 @@ class KlockWindow(QMainWindow):
         self.statusBar.setSizeGripEnabled(False)
 
         self.stsDate    = QLabel("Thursday 23 October 2025")
-        self.stsBattery = QLabel()
+        self.stsBattery = QProgressBar()
         self.stsState   = QLabel("cisN")
         self.stsFrmt    = QLabel("L.E.D.")
         self.stsIdle    = QLabel("idle : 7s")
-
-        #self.stsBattery.setPixmap(self.battery_full)
 
         self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.stsBattery.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -204,6 +204,11 @@ class KlockWindow(QMainWindow):
         self.statusBar.addPermanentWidget(self.stsState, 1)
         self.statusBar.addPermanentWidget(self.stsFrmt, 1)
         self.statusBar.addPermanentWidget(self.stsIdle,  1)
+
+        #self.stsBattery.setGeometry(0, 0, 8, 1)
+        self.stsBattery.setFixedHeight(16)
+        self.stsBattery.setFixedWidth(100)
+        self.stsBattery.adjustSize()
 
     #  -------------------------------------------------------------------------------------------------------------------- toggleMenuBar -----------
     def toggleMenuBar(self):
@@ -271,19 +276,95 @@ class KlockWindow(QMainWindow):
     def updateBattery(self):
         """  Updates the battery icon in the status bar.
         """
+        RUNNING_ON_AC_STYLE = """
+        QProgressBar{
+            border: 2px solid grey;
+            border-radius: 5px;
+            text-align: center
+        }
+
+        QProgressBar::chunk {
+            background-color: lightblue;
+            width: 10px;
+            margin: 1px;
+        }
+        """
+
+        BATTERY_LOW_STYLE = """
+        QProgressBar{
+            border: 2px solid grey;
+            border-radius: 5px;
+            text-align: center
+        }
+
+        QProgressBar::chunk {
+            background-color: red;
+            width: 10px;
+            margin: 1px;
+        }
+        """
+
+        RUNNING_ON_BATTERY_STYLE = """
+        QProgressBar{
+            border: 2px solid grey;
+            border-radius: 5px;
+            text-align: center
+        }
+
+        QProgressBar::chunk {
+            background-color: yellow;
+            width: 10px;
+            margin: 1px;
+        }
+        """
+
+        CHARGING_STYLE = """
+        QProgressBar{
+            border: 2px solid grey;
+            border-radius: 5px;
+            text-align: center
+        }
+
+        QProgressBar::chunk {
+            background-color: blue;
+            width: 10px;
+            margin: 1px;
+        }
+        """
+        BATTERY_FULL_STYLE = """
+        QProgressBar{
+            border: 2px solid grey;
+            border-radius: 5px;
+            text-align: center
+        }
+
+        QProgressBar::chunk {
+            background-color: green;
+            width: 10px;
+            margin: 1px;
+        }
+        """
+
         state  = self.systemInfo.onBattery
         charge = self.systemInfo.batteryCharge
 
         match state:
             case True:
-                if charge == 100:
-                    self.stsBattery.setText("Full Battery")
-                else:
-                    self.stsBattery.setText(f"Charging : {charge}%")
-            case False:
-                self.stsBattery.setText(f"Battery : {charge}%")
+                if charge == 100:                           #  Fully Charged
+                    self.stsBattery.setValue(charge)
+                    self.stsBattery.setStyleSheet(BATTERY_FULL_STYLE)
+                else:                                       #  Battery charging
+                    self.stsBattery.setValue(charge)
+                    if charge < 10:
+                        self.stsBattery.setStyleSheet(BATTERY_LOW_STYLE)
+                    else:
+                        self.stsBattery.setStyleSheet(CHARGING_STYLE)
+            case False:                                     #  Running on battery
+                self.stsBattery.setValue(charge)
+
+                self.stsBattery.setStyleSheet(RUNNING_ON_BATTERY_STYLE)
             case _:
-                self.stsBattery.setText("Running on A/c")
+                self.stsBattery.setStyleSheet(RUNNING_ON_AC_STYLE)
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
         """  Updates the time text and if needed calls resizeWindow.
@@ -299,9 +380,11 @@ class KlockWindow(QMainWindow):
         self.txtTime.setText(textTime)
         self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
         self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
+        infoLineWidth  = self.infoLayout.geometry().width()
 
-        if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
-            self.resizeWindow()
+        if self.txtWidth > infoLineWidth:
+            if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
+                self.resizeWindow()
     # ----------------------------------------------------------------------------------------------------------------------- resizeWindow() --------
     def resizeWindow(self):
         """  Resizes the main window.
@@ -322,7 +405,7 @@ class KlockWindow(QMainWindow):
                 case "Left":                                                                        #  align to left hand of the screen.
                     self.setGeometry(5, self.Ypos, self.width, self.height)
                 case "Right":                                                                       #  align to right hand of the screen.
-                    xpos = screenSize.width()-self.width-20
+                    xpos = screenSize.width()-self.width-30
                     self.setGeometry(xpos, self.Ypos, self.width, self.height)
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
