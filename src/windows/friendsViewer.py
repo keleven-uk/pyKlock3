@@ -1,7 +1,9 @@
 ###############################################################################################################
-#    HelpViewer.py    Copyright (C) <2026>  <Kevin Scott>                                                     #
+#    friendsViewer   Copyright (C) <2025-26>  <Kevin Scott>                                                   #
 #                                                                                                             #
-#    A class that displays a help file in a separate window.                                                  #
+#    Display friends in a table.                                                                              #
+#                                                                                                             #
+#    For changes see history.txt                                                                              #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
@@ -19,52 +21,65 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget
-from PyQt6.QtPdfWidgets import QPdfView
-from PyQt6.QtPdf import QPdfDocument
+from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QMainWindow, QFrame, QTableWidget, QTableWidgetItem,
+                             QTableWidget)
 
-from src.projectPaths import HELP_PATH
+import src.classes.friendsStore as fs
 
 
-class HelpViewer(QWidget):
-    """  A class that displays a help file [in PDF format] in a separate window.
+class FriendsViewer(QMainWindow):
+    """  Display friends in a table in a separate window.
     """
-    def __init__(self, parent):
+    def __init__(self, myLogger):
         super().__init__()
 
-        self.setGeometry(300, 300, 800, 800)
-        self.setWindowTitle("pyKlock Help")
+        self.logger       = myLogger
+        self.friendsStore = fs.friendsStore(self.logger)
+        self.tableHeaders = self.friendsStore.getHeaders
+        self.noHeaders    = len(self.tableHeaders)
 
-        self.parent = parent
+        self.setGeometry(300, 300, 1500, 800)
+        self.setWindowTitle("Friends")
 
         self.buildGUI()
-        self.loadHelpFile()
+        self.loadTable()
 
     def buildGUI(self):
         """  Build the GUI elements.
         """
-        self.view    = QPdfView(self)
-        self.pdfView = QPdfDocument(self.view)
+        #  Create a central widget.
+        self.centralWidget = QFrame()
+        self.centralWidget.setStyleSheet("margin:0px; border:0px")
+        self.setCentralWidget(self.centralWidget)
+        self.centralLayout = QVBoxLayout()
+
+        self.tableView = QTableWidget()
+        self.tableView.setColumnCount(self.noHeaders)
+        self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
 
         btnClose = QPushButton(text="Close", parent=self)
         btnClose.clicked.connect(self.close)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.view)
-        layout.addWidget(btnClose)
+        self.centralLayout.addWidget(self.tableView)
+        self.centralLayout.addWidget(btnClose)
 
-        self.setLayout(layout)
+        self.centralWidget.setLayout(self.centralLayout)
 
-    def loadHelpFile(self):
-        """  Load the help file.
+    def loadTable(self):
         """
-        path = f"{HELP_PATH}/pyKlock.pdf"
-        self.pdfView = QPdfDocument(None)
-        self.pdfView.load(path)
+        """
+        row     = 0
+        friends = self.friendsStore.getFriends()
 
-        self.view.setPageMode(QPdfView.PageMode.MultiPage)
-        self.view.setDocument(self.pdfView)
+        for friend in friends:
+            self.tableView.insertRow(row)
+            col = 0
+            for item in friend:
+                self.tableView.setItem(row, col, QTableWidgetItem(item))
+                col += 1
+
+            row += 1
+
 
     def closeEvent(self, event):
-        self.parent.helpWindow = None       #  Set to None in parent, so can open helpViewer again.
-        event.accept()
+        pass

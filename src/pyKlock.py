@@ -29,9 +29,12 @@ from PyQt6.QtGui     import QColor, QFont, QPixmap
 from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
+
 import src.classes.menu as mu
 import src.classes.selectTime as st
 import src.classes.systemInfo as si
+import src.classes.progressBarStyles as styles
+
 import src.windows.about as About
 import src.windows.textViewer as tw
 import src.windows.helpViewer as hp
@@ -52,8 +55,9 @@ class KlockWindow(QMainWindow):
 
         self.selectTime       = st.SelectTime()
         self.systemInfo       = si.SysInfo()
+        self.pbStyles         = styles.Styles()             #  Styles for the battery progress bar.
         self.timeFont         = QFont()
-        self.textWindow       = None                        # No text external window yet.
+        self.textWindow       = None                        #  No text external window yet.
         self.helpWindow       = None
         self.startTime        = time.perf_counter()
         self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
@@ -131,7 +135,7 @@ class KlockWindow(QMainWindow):
 
         #  Create the time text display.
         self.txtTime = QLabel("00:00:00")
-        self.txtTime.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.txtTime.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.txtTime.setFont(self.timeFont)
 
         # Add pages to the stacked layout.
@@ -206,7 +210,7 @@ class KlockWindow(QMainWindow):
         self.statusBar.addPermanentWidget(self.stsIdle,  1)
 
         #self.stsBattery.setGeometry(0, 0, 8, 1)
-        self.stsBattery.setFixedHeight(16)
+        self.stsBattery.setFixedHeight(14)
         self.stsBattery.setFixedWidth(100)
         self.stsBattery.adjustSize()
 
@@ -275,76 +279,16 @@ class KlockWindow(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- updateBattery() -------
     def updateBattery(self):
         """  Updates the battery icon in the status bar.
+
+             The colour of the progress bar indicated the state of the battery.
+
+             Running on mains      - light blue.
+             battery low           - red
+             Running on Battery    - yellow
+             Battery charging      - blue
+             Battery fully charged - green
+
         """
-        RUNNING_ON_AC_STYLE = """
-        QProgressBar{
-            border: 2px solid grey;
-            border-radius: 5px;
-            text-align: center
-        }
-
-        QProgressBar::chunk {
-            background-color: lightblue;
-            width: 10px;
-            margin: 1px;
-        }
-        """
-
-        BATTERY_LOW_STYLE = """
-        QProgressBar{
-            border: 2px solid grey;
-            border-radius: 5px;
-            text-align: center
-        }
-
-        QProgressBar::chunk {
-            background-color: red;
-            width: 10px;
-            margin: 1px;
-        }
-        """
-
-        RUNNING_ON_BATTERY_STYLE = """
-        QProgressBar{
-            border: 2px solid grey;
-            border-radius: 5px;
-            text-align: center
-        }
-
-        QProgressBar::chunk {
-            background-color: yellow;
-            width: 10px;
-            margin: 1px;
-        }
-        """
-
-        CHARGING_STYLE = """
-        QProgressBar{
-            border: 2px solid grey;
-            border-radius: 5px;
-            text-align: center
-        }
-
-        QProgressBar::chunk {
-            background-color: blue;
-            width: 10px;
-            margin: 1px;
-        }
-        """
-        BATTERY_FULL_STYLE = """
-        QProgressBar{
-            border: 2px solid grey;
-            border-radius: 5px;
-            text-align: center
-        }
-
-        QProgressBar::chunk {
-            background-color: green;
-            width: 10px;
-            margin: 1px;
-        }
-        """
-
         state  = self.systemInfo.onBattery
         charge = self.systemInfo.batteryCharge
 
@@ -352,19 +296,18 @@ class KlockWindow(QMainWindow):
             case True:
                 if charge == 100:                           #  Fully Charged
                     self.stsBattery.setValue(charge)
-                    self.stsBattery.setStyleSheet(BATTERY_FULL_STYLE)
+                    self.stsBattery.setStyleSheet(self.pbStyles.BATTERY_FULL_STYLE)
                 else:                                       #  Battery charging
                     self.stsBattery.setValue(charge)
-                    if charge < 10:
-                        self.stsBattery.setStyleSheet(BATTERY_LOW_STYLE)
-                    else:
-                        self.stsBattery.setStyleSheet(CHARGING_STYLE)
+                    self.stsBattery.setStyleSheet(self.pbStyles.CHARGING_STYLE)
             case False:                                     #  Running on battery
                 self.stsBattery.setValue(charge)
-
-                self.stsBattery.setStyleSheet(RUNNING_ON_BATTERY_STYLE)
+                if charge < 10:
+                        self.stsBattery.setStyleSheet(self.pbStyles.BATTERY_LOW_STYLE)
+                else:
+                    self.stsBattery.setStyleSheet(self.pbStyles.RUNNING_ON_BATTERY_STYLE)
             case _:
-                self.stsBattery.setStyleSheet(RUNNING_ON_AC_STYLE)
+                self.stsBattery.setStyleSheet(self.pbStyles.RUNNING_ON_AC_STYLE)
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
         """  Updates the time text and if needed calls resizeWindow.
@@ -381,8 +324,9 @@ class KlockWindow(QMainWindow):
         self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
         self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
         infoLineWidth  = self.infoLayout.geometry().width()
+        statbarWidth   = self.statusBar.geometry().width()
 
-        if self.txtWidth > infoLineWidth:
+        if self.txtWidth > statbarWidth:
             if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
                 self.resizeWindow()
     # ----------------------------------------------------------------------------------------------------------------------- resizeWindow() --------

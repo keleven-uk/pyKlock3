@@ -1,7 +1,7 @@
 ###############################################################################################################
 #    menu   Copyright (C) <2025-26>  <Kevin Scott>                                                            #
 #                                                                                                             #
-#    Constructs the main menu.                                                                                 #
+#    Constructs the main menu.                                                                                #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -25,6 +25,9 @@ from PyQt6.QtGui     import QAction, QIcon
 from PyQt6.QtCore    import QSize
 
 import src.classes.selectTime as st
+import src.classes.progressBarStyles as styles
+
+import src.windows.friendsViewer as fv
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -51,6 +54,7 @@ class Menu(QMenuBar):
         self.toolbar      = QToolBar("Time Toolbar")
         self.context_menu = QMenu(self)
         self.selectTime   = st.SelectTime()
+        self.pbStyles     = styles.Styles()
 
         self.buildActions()
 
@@ -95,6 +99,9 @@ class Menu(QMenuBar):
         self.actSettings.triggered.connect(self.parent.openSettings)      #  Open the settings window.
         self.actSettings.setCheckable(False)
 
+        self.actViewFriends = QAction("Friends", self)
+        self.actViewFriends.triggered.connect(self.openFriendsViewer)
+
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
 
@@ -120,11 +127,12 @@ class Menu(QMenuBar):
         # Set up main menu
         self.logger.info(" Building Menu")
         menu = QMenuBar()
-        menu.setStyleSheet(f"color: {self.config.FOREGROUND}")
+        menu.setStyleSheet(self.pbStyles.MENU_STYLE)
 
         mnuFile    = menu.addMenu("&File")
         mnuTime    = menu.addMenu("&Time")
         mnuDisplay = menu.addMenu("&Display")
+        mnuThings = menu.addMenu("&Things")
         mnuHelp    = menu.addMenu("&Help")
 
         #  Set up menu actions.
@@ -142,6 +150,8 @@ class Menu(QMenuBar):
 
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
+
+        mnuThings.addAction(self.actViewFriends)
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()
@@ -208,3 +218,9 @@ class Menu(QMenuBar):
                                  "border-radius: 3px;"
                                  "}")
 
+    # ----------------------------------------------------------------------------------------------------------------------- openFriendsViewer() ---
+    def openFriendsViewer(self):
+        """   Open the friends viewer.
+        """
+        self.friendsViewer = fv.FriendsViewer(self.logger)
+        self.friendsViewer.show()

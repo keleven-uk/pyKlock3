@@ -34,6 +34,32 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.28		[11 January 2026]
+
+	Added a Friends Viewer, wich displays friends names, adresses and contact details.
+		The data is held in a CSV file and loaded into a custom friends Store.
+		The friends store is a dictionary behind the scenes and is held in it's own class.
+		Friends is on#t own menu,. under the main menu of Things.
+
+	Moved the progress bas styles into it's own class.
+
+	The resizing of the window now only executes if the width of the text is greater then the width of the status bar.
+
+
+
+V2026.27		[9 January 2026]
+
+	Changed the status bar battery indicator to a progress bar instead of icons.
+		The colour of the bar changes depending upon the state of the battery.
+		Running on mains      - light blue.
+		battery low           - red
+		Running on Battery    - yellow
+		Battery charging      - blue
+		Battery fully charged - green
+
+	The resizing of the window now only executes if the width of the text is greater then the width of the info line.
+
+
 V2026.26		[8 January 2026]
 
 	Added the state of the battery to the status bar.
@@ -46,15 +72,7 @@ V2026.26		[8 January 2026]
 	Moved some of the classes, which load into their own window, into a src.windows directory.
 
 
-	V2026.27		[9 January 2026]
-
-		Changed the status bar battery indicator to a progress bar instead of icons.
-			The colour of the bar changes depending upon the state of the battery.
-
-		The resizing of the window now only executes if the width of the text is greater then the width of the info line.
-
-
-	V2026.26		[8 January 2026]
+V2026.26		[8 January 2026]
 
 	Added the state of the battery to the status bar.
 		The current charge of the battery is displayed along with if the battery is currently charging.
