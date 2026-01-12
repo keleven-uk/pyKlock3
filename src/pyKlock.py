@@ -25,7 +25,7 @@ import time
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
                              QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout,
                              QProgressBar)
-from PyQt6.QtGui     import QColor, QFont, QPixmap
+from PyQt6.QtGui     import QColor, QFont
 from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
@@ -323,7 +323,7 @@ class KlockWindow(QMainWindow):
         self.txtTime.setText(textTime)
         self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
         self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
-        infoLineWidth  = self.infoLayout.geometry().width()
+        #infoLineWidth  = self.infoLayout.geometry().width()
         statbarWidth   = self.statusBar.geometry().width()
 
         if self.txtWidth > statbarWidth:

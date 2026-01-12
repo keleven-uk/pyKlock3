@@ -21,11 +21,11 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QMainWindow, QFrame, QTableWidget, QTableWidgetItem,
-                             QTableWidget)
+from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QFrame, QTableWidget,
+                             QTableWidgetItem)
 
 import src.classes.friendsStore as fs
-
+import src.windows.friendsAdd as af
 
 class FriendsViewer(QMainWindow):
     """  Display friends in a table in a separate window.
@@ -33,10 +33,11 @@ class FriendsViewer(QMainWindow):
     def __init__(self, myLogger):
         super().__init__()
 
-        self.logger       = myLogger
-        self.friendsStore = fs.friendsStore(self.logger)
-        self.tableHeaders = self.friendsStore.getHeaders
-        self.noHeaders    = len(self.tableHeaders)
+        self.logger        = myLogger
+        self.friendsStore  = fs.friendsStore(self.logger)
+        self.friendsTitles = self.friendsStore.getTitles
+        self.tableHeaders  = self.friendsStore.getHeaders
+        self.noHeaders     = len(self.tableHeaders)
 
         self.setGeometry(300, 300, 1500, 800)
         self.setWindowTitle("Friends")
@@ -52,16 +53,34 @@ class FriendsViewer(QMainWindow):
         self.centralWidget.setStyleSheet("margin:0px; border:0px")
         self.setCentralWidget(self.centralWidget)
         self.centralLayout = QVBoxLayout()
+        self.ButtonLayout  = QHBoxLayout()
 
         self.tableView = QTableWidget()
         self.tableView.setColumnCount(self.noHeaders)
-        self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
+
+        btnAdd = QPushButton(text="Add a Friend", parent=self)
+        btnAdd.clicked.connect(self.addFriend)
+
+        btnEdit = QPushButton(text="Edit a Friend", parent=self)
+        btnEdit.clicked.connect(self.editFriend)
+
+        btnDelete = QPushButton(text="Delete a Friend", parent=self)
+        btnDelete.clicked.connect(self.deleteFriend)
+
+        btnRefresh = QPushButton(text="Refresh Friends", parent=self)
+        btnRefresh.clicked.connect(self.refreshFriends)
 
         btnClose = QPushButton(text="Close", parent=self)
         btnClose.clicked.connect(self.close)
 
+        self.ButtonLayout.addWidget(btnAdd)
+        self.ButtonLayout.addWidget(btnEdit)
+        self.ButtonLayout.addWidget(btnDelete)
+        self.ButtonLayout.addWidget(btnRefresh)
+        self.ButtonLayout.addWidget(btnClose)
+
         self.centralLayout.addWidget(self.tableView)
-        self.centralLayout.addWidget(btnClose)
+        self.centralLayout.addLayout(self.ButtonLayout)
 
         self.centralWidget.setLayout(self.centralLayout)
 
@@ -80,6 +99,20 @@ class FriendsViewer(QMainWindow):
 
             row += 1
 
+    def addFriend(self):
+        """   Open the Add Friends.
+        """
+        self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles)
+        self.friendsAdd.show()
+
+    def editFriend(self):
+        pass
+
+    def deleteFriend(self):
+        pass
+
+    def refreshFriends(self):
+        pass
 
     def closeEvent(self, event):
         pass
