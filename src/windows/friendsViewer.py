@@ -22,7 +22,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QFrame, QTableWidget,
-                             QTableWidgetItem)
+                             QTableWidgetItem, QMessageBox)
 
 import src.classes.friendsStore as fs
 import src.windows.friendsAdd as af
@@ -35,9 +35,11 @@ class FriendsViewer(QMainWindow):
 
         self.logger        = myLogger
         self.friendsStore  = fs.friendsStore(self.logger)
+        self.friends       = self.friendsStore.getFriends()
         self.friendsTitles = self.friendsStore.getTitles
         self.tableHeaders  = self.friendsStore.getHeaders
         self.noHeaders     = len(self.tableHeaders)
+        self.friendsAdd    = None
 
         self.setGeometry(300, 300, 1500, 800)
         self.setWindowTitle("Friends")
@@ -84,13 +86,14 @@ class FriendsViewer(QMainWindow):
 
         self.centralWidget.setLayout(self.centralLayout)
 
+    # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
     def loadTable(self):
+        """  Populate the table with friends data.
+             The finds data is a list of lists.
         """
-        """
-        row     = 0
-        friends = self.friendsStore.getFriends()
+        row = 0
 
-        for friend in friends:
+        for friend in self.friends:
             self.tableView.insertRow(row)
             col = 0
             for item in friend:
@@ -98,21 +101,48 @@ class FriendsViewer(QMainWindow):
                 col += 1
 
             row += 1
-
+    # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
     def addFriend(self):
-        """   Open the Add Friends.
+        """   Open the Add Friends windows.
         """
-        self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles)
-        self.friendsAdd.show()
-
+        if self.friendsAdd is None:
+            newFriends = self.friends
+            self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles, self.tableHeaders)         #  Needs to be self. - to keep window alive.
+            self.friendsAdd.show()
+            self.friendsAdd.addNewFriend.connect(self.addNewFriend)                                     #  Signal is fired when a friend is to be added.
+            self.friendsAdd.closeNewFriend.connect(self.closeNewFriend)                                 #  Signal is fired when the addFriend window is closed.
+    # ----------------------------------------------------------------------------------------------------------------------- addNewFriend() --------
+    def addNewFriend(self, friend):
+        """  Adds a new Friend to the list of friends.
+             LoadTable is called to refresh the displayed data.
+        """
+        print(f" In veiwer {friend}")
+        self.friends.append(friend)
+        self.loadTable()
+    # ----------------------------------------------------------------------------------------------------------------------- closeNewFriend() ------
+    def closeNewFriend(self):
+        """  When the newFriends window is closed, it signals here so the reference can be set to null.
+        """
+        self.friendsAdd = None
+    # ----------------------------------------------------------------------------------------------------------------------- editFriend() ----------
     def editFriend(self):
         pass
-
+    # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
     def deleteFriend(self):
         pass
-
+    # ----------------------------------------------------------------------------------------------------------------------- refreshFriends() ------
     def refreshFriends(self):
         pass
-
+    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
-        pass
+        """  When the viewer is closed, checks if any child windows are still open.
+        """
+        if self.friendsAdd:
+            confirmation = QMessageBox.question(self, "Confirmation", "The Add Frieans Windows is still open - Continue?")
+
+            if confirmation == QMessageBox.StandardButton.Yes:
+                event.accept()      #  Close the app.
+                self.friendsAdd.close()
+            else:
+                event.ignore()      #  Continue the app.
+

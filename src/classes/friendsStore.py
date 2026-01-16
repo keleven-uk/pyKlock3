@@ -36,6 +36,8 @@
 #                                                                                                             #
 ###############################################################################################################
 
+import time
+
 import csv
 
 from src.projectPaths import FR_DATA_PATH
@@ -51,7 +53,7 @@ class friendsStore():
     def __init__(self, myLogger):
         self.store     = {}         #  Create the store, an empty dictionary.
         self.titles    = ["", "Mr", "Ms", "Mrs", "Miss", "Dr", "Rev"]
-        self.Headers   = ["Title", "First name", "Last name", "Mobile Number", "Telephone Number", "eMail", "Birthday",
+        self.Headers   = ["Title", "First Name", "Last Name", "Mobile Number", "Telephone Number", "E-Mail", "Birthday",
                           "House Number", "Address Line 1","Address Line 2", "City", "County", "Post Code", "Country",
                           "Notes"]
         self.storeName = FR_DATA_PATH
@@ -115,6 +117,7 @@ class friendsStore():
     def loadFriends(self):
         """  Loads the friend store from a text file in csv format.
         """
+        tic = time.perf_counter()
         try:
             with open (self.storeName, "r", encoding="utf-8") as csvFile:
                 csvFile = csv.reader(csvFile)
@@ -126,4 +129,6 @@ class friendsStore():
         except FileNotFoundError:
             print("File not found, will use an empty store.")
 
-        self.logger.info(f" Loaded {len(self.store)} friends into the FriendsStore.")
+        toc = time.perf_counter()
+
+        self.logger.info(f" Loaded {len(self.store)} friends into the FriendsStore in {toc - tic:0.4f} seconds.")

@@ -156,7 +156,6 @@ class Settings(QDialog):
 
         match name:
             case "X_POS" | "Y_POS" | "WIDTH" | "HEIGHT":        #  colour dialogs
-                action = self.sender()
                 self.newSettings[name] = int(action.text())
             case "CONFIRM_EXIT", "TOOL_BAR":
                 checked = not checked
@@ -287,7 +286,6 @@ class Settings(QDialog):
     def timeSettingsUpdate(self):
         """  When a line edit or combo boxes are changed and looses focus, add amended value to new Settings dictionary.
         """
-        print("timeSettingsUpdate")
         action = self.sender()
         name   = action.objectName()
 

@@ -34,6 +34,14 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.30		[16 January 2026]
+
+	Data entry window now finished and working [I think].
+		The new friend is added to a new list and passed to the viewer program via signal and slots.
+		Signal and slots are also used to tell the viewer that the add window is closed.
+		No validation yet added.
+
+
 V2026.29		[12 January 2026]
 
 	Work on the friends data entry window.
