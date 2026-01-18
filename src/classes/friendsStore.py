@@ -53,7 +53,7 @@ class friendsStore():
     def __init__(self, myLogger):
         self.store     = {}         #  Create the store, an empty dictionary.
         self.titles    = ["", "Mr", "Ms", "Mrs", "Miss", "Dr", "Rev"]
-        self.Headers   = ["Title", "First Name", "Last Name", "Mobile Number", "Telephone Number", "E-Mail", "Birthday",
+        self.Headers   = ["Title", "Last Name", "First Name", "Mobile Number", "Telephone Number", "E-Mail", "Birthday",
                           "House Number", "Address Line 1","Address Line 2", "City", "County", "Post Code", "Country",
                           "Notes"]
         self.storeName = FR_DATA_PATH

@@ -397,8 +397,8 @@ class KlockWindow(QMainWindow):
     def getForeColour(self):
         """  launch the colour input dialog and obtain the new foreground colour.
         """
-        self.current_color = QColor(self.foregroundColour)
-        colour = QColorDialog.getColor(self.current_color, self, "Choose Foreground Colour")
+        current_color = QColor(self.foregroundColour)
+        colour = QColorDialog.getColor(current_color, self, "Choose Foreground Colour")
         if colour.isValid():
             self.foregroundColour = colour.name()
             self.updateColour()
@@ -406,8 +406,8 @@ class KlockWindow(QMainWindow):
     def getBackColour(self):
         """  launch the colour input dialog and obtain the new background colour.
         """
-        self.current_color = QColor(self.backgroundColour)
-        colour = QColorDialog.getColor(self.current_color, self, "Choose Background Colour")
+        current_color = QColor(self.backgroundColour)
+        colour = QColorDialog.getColor(current_color, self, "Choose Background Colour")
         if colour.isValid():
             self.backgroundColour = colour.name()
             self.updateColour()

@@ -22,8 +22,8 @@
 # -*- coding: utf-8 -*-
 
 from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox,
-                             QApplication, QFrame, QPushButton, QPlainTextEdit, QDateEdit)
-from PyQt6.QtCore    import Qt, pyqtSignal
+                             QApplication, QFrame, QPushButton, QPlainTextEdit, QDateEdit, QMessageBox)
+from PyQt6.QtCore    import Qt, pyqtSignal, QDate
 
 class AddFriends(QMainWindow):
     """  Displays a window, so that a new friend s data can be entered.
@@ -88,6 +88,7 @@ class AddFriends(QMainWindow):
                     else:
                         nextRow = row
 
+                    print(header, row, col)
                     lblElement = QLabel(header)
                     lneElement = QLineEdit("", self)
                     lneElement.setObjectName(header)
@@ -108,6 +109,8 @@ class AddFriends(QMainWindow):
                 case "Birthday":
                     lblElement = QLabel(header)
                     dteElement = QDateEdit(self, calendarPopup=True)
+                    dteElement.setDisplayFormat("d-MMMM-yyyy")
+                    dteElement.setDate(QDate.currentDate())
                     dteElement.setObjectName(header)
                     lneElement.setFixedWidth(self.leWidth)
                     dteElement.dateTimeChanged.connect(self.addElement)
@@ -132,13 +135,14 @@ class AddFriends(QMainWindow):
 
             col = 0     #  Reset column number.
 
-        btnAdd = QPushButton(text="Add a Friend", parent=self)
-        btnAdd.clicked.connect(self.addFriend)
+        self.btnAdd = QPushButton(text="Add a Friend", parent=self)
+        self.btnAdd.setEnabled(False)
+        self.btnAdd.clicked.connect(self.addFriend)
 
         btnExit = QPushButton(text="Exit - No Save", parent=self)
         btnExit.clicked.connect(self.close)
 
-        ButtonLayout.addWidget(btnAdd)
+        ButtonLayout.addWidget(self.btnAdd)
         ButtonLayout.addWidget(btnExit)
 
         centralLayout.addLayout(entryLayout)
@@ -157,9 +161,11 @@ class AddFriends(QMainWindow):
             case "Title":
                 self.newFriend[0] = action.currentText()
             case "First Name":
-                self.newFriend[1] = action.text()
+                self.newFriend[2] = action.text().title().strip()
+                self.addFriendValidate()
             case "Last Name":
-                self.newFriend[2] = action.text()
+                self.newFriend[1] = action.text().title().strip()
+                self.addFriendValidate()
             case "Mobile Number":
                 self.newFriend[3] = action.text()
             case "Telephone Number":
@@ -167,38 +173,47 @@ class AddFriends(QMainWindow):
             case "E-Mail" :
                 self.newFriend[5] = action.text()
             case "Birthday":
-                self.newFriend[6] = action.date()
+                self.newFriend[6] = action.date().toString('d MMMM yyyy')
             case "House Number":
                 self.newFriend[7] = action.text()
             case "Address Line 1":
-                self.newFriend[8] = action.text()
+                self.newFriend[8] = action.text().title().strip()
             case "Address Line 2":
-                self.newFriend[9] = action.text()
+                self.newFriend[9] = action.text().title().strip()
             case "City":
-                self.newFriend[10] = action.text()
+                self.newFriend[10] = action.text().title().strip()
             case "County":
-                self.newFriend[11] = action.text()
+                self.newFriend[11] = action.text().title().strip()
             case "Post Code":
                 self.newFriend[12] = action.text()
             case "Country":
-                self.newFriend[13] = action.text()
+                self.newFriend[13] = action.text().title().strip()
             case "Notes":
                 self.newFriend[14] = action.toPlainText()
+    # ----------------------------------------------------------------------------------------------------------------------- addFriendValidate() ---
+    def addFriendValidate(self):
+        if self.newFriend[1] and self.newFriend[2]:
+            self.btnAdd.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- addFriend() -----------
     def addFriend(self):
-        """  Checks is their is new data, if so, signals the parent and passes the data.
+        """  Checks is there is new data, if so, signals the parent and passes the data.
+
+             Will only emit the signal if their si a First name and a Last Neme.
         """
         if self.newFriend == []:
             self.close()
         else:
-            self.addNewFriend.emit(self.newFriend)
-            self.close()
+            if self.newFriend[1] and self.newFriend[2]:
+                self.addNewFriend.emit(self.newFriend)      #  emit signal
+                self.close()
+            else:
+                confirmation = QMessageBox.information(self, "Error on data entry.", "First Name and last name are mandatory.")
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  Closes the window and informs the parent.
         """
         self.logger.info("Add Friends Close Event")
-        self.closeNewFriend.emit()
+        self.closeNewFriend.emit()                          #  emit signal
         event.accept()
 
 

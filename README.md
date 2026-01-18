@@ -19,13 +19,13 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
     
 A klock built using Python and QT6 GUI Framework.
 
-Using python 3.14.0 and QT 6.10.1.
+Using python 3.14.2 and QT 6.10.2.
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 - The time can be displays as either a LED Klock or as The Famous Fuzzy Time.
 - The Famous Fuzzy Time displays the time in words rounded to the nearest five minutes.
-- The text time can also be displayed in a number of other formats [Binary, Roman Time, Hex Time etc.]
+- The text time can also be displayed in a number of other formats [Binary, Roman Time, Hex Time etc.
 
 * The font of the time text can be selected.
 * The foreground and background colours can be selected.
@@ -41,5 +41,5 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.28
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.31
 

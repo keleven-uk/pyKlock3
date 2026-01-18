@@ -59,6 +59,7 @@ class FriendsViewer(QMainWindow):
 
         self.tableView = QTableWidget()
         self.tableView.setColumnCount(self.noHeaders)
+        self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
 
         btnAdd = QPushButton(text="Add a Friend", parent=self)
         btnAdd.clicked.connect(self.addFriend)
@@ -93,6 +94,10 @@ class FriendsViewer(QMainWindow):
         """
         row = 0
 
+        self.tableView.clear()
+        self.tableView.setColumnCount(self.noHeaders)
+        self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
+
         for friend in self.friends:
             self.tableView.insertRow(row)
             col = 0
@@ -110,35 +115,55 @@ class FriendsViewer(QMainWindow):
             self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles, self.tableHeaders)         #  Needs to be self. - to keep window alive.
             self.friendsAdd.show()
             self.friendsAdd.addNewFriend.connect(self.addNewFriend)                                     #  Signal is fired when a friend is to be added.
+            self.friendsAdd.delNewFriend.connect(self.deleteFriend)                                     #  Signal is fired when a friend is to be deleted.
             self.friendsAdd.closeNewFriend.connect(self.closeNewFriend)                                 #  Signal is fired when the addFriend window is closed.
     # ----------------------------------------------------------------------------------------------------------------------- addNewFriend() --------
     def addNewFriend(self, friend):
-        """  Adds a new Friend to the list of friends.
+        """  Adds a new Friend to the friends store.
+             The friends store is then re-loaded, this ensures the data is sorted.
              LoadTable is called to refresh the displayed data.
         """
-        print(f" In veiwer {friend}")
-        self.friends.append(friend)
+        key  = f"{friend[1]} : {friend[2]}"
+        item = friend
+        self.friendsStore.addFriend(key, item)
+        self.refreshFriends()
+    # ----------------------------------------------------------------------------------------------------------------------- editFriend() ----------
+    def editFriend(self):
+        pass
+    # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
+    def deleteFriend(self):
+        row = self.tableView.currentRow()
+
+        if row == -1:
+            confirmation = QMessageBox.information(self, "Error.", "No row selected.")
+            return
+
+        name         = f"{self.tableView.item(row, 2).text()} {self.tableView.item(row, 1).text()}"
+        confirmation = QMessageBox.question(self, "Confirmation", f"Delete a friend {name}")
+
+        if confirmation == QMessageBox.StandardButton.Yes:
+            key = f"{self.tableView.item(row, 1).text()} : {self.tableView.item(row, 2).text()}"
+            self.friendsStore.deleteFriend(key)             #  Delete friend
+            self.refreshFriends()
+    # ----------------------------------------------------------------------------------------------------------------------- refreshFriends() ------
+    def refreshFriends(self):
+        """  Save the table to the friends store, the friends store is then re-loaded into the table.
+             Called when a friend has been added, deleted or edited.
+        """
+        self.friendsStore.saveFriends()
+        self.friends = self.friendsStore.getFriends()
         self.loadTable()
     # ----------------------------------------------------------------------------------------------------------------------- closeNewFriend() ------
     def closeNewFriend(self):
         """  When the newFriends window is closed, it signals here so the reference can be set to null.
         """
         self.friendsAdd = None
-    # ----------------------------------------------------------------------------------------------------------------------- editFriend() ----------
-    def editFriend(self):
-        pass
-    # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
-    def deleteFriend(self):
-        pass
-    # ----------------------------------------------------------------------------------------------------------------------- refreshFriends() ------
-    def refreshFriends(self):
-        pass
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  When the viewer is closed, checks if any child windows are still open.
         """
         if self.friendsAdd:
-            confirmation = QMessageBox.question(self, "Confirmation", "The Add Frieans Windows is still open - Continue?")
+            confirmation = QMessageBox.question(self, "Confirmation", "The Add Friend's Windows is still open - Continue?")
 
             if confirmation == QMessageBox.StandardButton.Yes:
                 event.accept()      #  Close the app.

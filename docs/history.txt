@@ -34,6 +34,19 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.31		[18 January 2026]
+
+	Implemented the delete friends button.
+		Only works when a valid row is selected.
+		Prompts the user for confirmation before deletion.
+	Implanted the Refresh button.
+	The Add button is now only available if both first and last names contain text.
+	The date entry now default to todays date.
+	All text entry is now Capitalised.
+
+	Using python 3.14.2 and QT 6.10.2.
+
+
 V2026.30		[16 January 2026]
 
 	Data entry window now finished and working [I think].
@@ -49,7 +62,7 @@ V2026.29		[12 January 2026]
 
 V2026.28		[11 January 2026]
 
-	Added a Friends Viewer, whgit pich displays friends names, addresses and contact details.
+	Added a Friends Viewer, which displays friends names, addresses and contact details.
 		The data is held in a CSV file and loaded into a custom friends Store.
 		The friends store is a dictionary behind the scenes and is held in it's own class.
 		Friends is on it's menu, under the main menu of Things.
