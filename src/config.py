@@ -305,6 +305,91 @@ class Config():
         """
         self.config["TIME"]["space"] = value
 
+#---------------------------------------------------------------------------------------------- SOUNDS -----------------------
+    @property
+    def SOUNDS(self):
+        """  Returns if sounds are enabled.
+        """
+        return self.config["SOUNDS"].get("sounds", True)
+
+    @SOUNDS.setter
+    def SOUNDS(self, value):
+        """  Sets if sounds are enabled.
+        """
+        self.config["SOUNDS"]["sounds"] = value
+
+    @property
+    def SOUNDS_WESTMINSTER(self):
+        """  Returns if sounds are enabled.
+        """
+        return self.config["SOUNDS"].get("westminster", True)
+
+    @SOUNDS_WESTMINSTER.setter
+    def SOUNDS_WESTMINSTER(self, value):
+        """  Sets if sounds are enabled.
+        """
+        self.config["SOUNDS"]["westminster"] = value
+
+    @property
+    def SOUNDS_HOUR_CHIMES(self):
+        """  Returns if hour chimes are enabled.
+        """
+        return self.config["SOUNDS"].get("hour_chimes", True)
+
+    @SOUNDS_HOUR_CHIMES.setter
+    def SOUNDS_HOUR_CHIMES(self, value):
+        """  Sets if hour chimes are enabled.
+        """
+        self.config["SOUNDS"]["hour_chimes"] = value
+
+    @property
+    def SOUNDS_QUARTER_CHIMES(self):
+        """  Returns if quarter chimes are enabled.
+        """
+        return self.config["SOUNDS"].get("quarter_chimes", True)
+
+    @SOUNDS_QUARTER_CHIMES.setter
+    def SOUNDS_QUARTER_CHIMES(self, value):
+        """  Sets if quarter chimes are enabled.
+        """
+        self.config["SOUNDS"]["quarter_chimes"] = value
+
+    @property
+    def SOUNDS_HOUR_PIPS(self):
+        """  Returns if hour pips are enabled.
+        """
+        return self.config["SOUNDS"].get("hour_pips", True)
+
+    @SOUNDS_HOUR_PIPS.setter
+    def SOUNDS_HOUR_PIPS(self, value):
+        """  Sets if hour pips are enabled.
+        """
+        self.config["SOUNDS"]["hour_pips"] = value
+
+    @property
+    def SOUNDS_CUCKOO(self):
+        """  Returns if sounds are enabled.
+        """
+        return self.config["SOUNDS"].get("cuckoo", True)
+
+    @SOUNDS_CUCKOO.setter
+    def SOUNDS_CUCKOO(self, value):
+        """  Sets if sounds are enabled.
+        """
+        self.config["SOUNDS"]["cuckoo"] = value
+
+    @property
+    def SOUNDS_VOLUME(self):
+        """  Returns if sound volume.
+        """
+        return self.config["SOUNDS"].get("sound_volume", True)
+
+    @SOUNDS_VOLUME.setter
+    def SOUNDS_VOLUME(self, value):
+        """  Sets sound volume.
+        """
+        self.config["SOUNDS"]["sound_volume"] = value
+
 
     def writeConfig(self):
         """ Write the current config file.
@@ -332,7 +417,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.31",
+        config["INFO"] = {"myVERSION": "2026.32",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -355,6 +440,15 @@ class Config():
                           "prefix"   : "",
                           "postfix"  : "",
                           "space"    : " "}
+
+        config["SOUNDS"] = {"sounds"        : True,
+                            "westminster"   : True,
+                            "hour_chimes"   : True,
+                            "quarter_chimes": True,
+                            "hour_pips"     : False,
+                            "cuckoo"        : False,
+                            "sound_volume"  : 25}
+
 
 
         st_toml = toml.dumps(config)

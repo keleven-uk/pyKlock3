@@ -44,7 +44,7 @@ class Settings(QDialog):
         self.config = myConfig
         self.logger = myLogger
         self.height = 400
-        self.width  = 400
+        self.width  = 500
         screenSize  = QApplication.primaryScreen().availableGeometry()
         xPos        = int((screenSize.width() / 2)  - (self.width / 2))
         yPos        = int((screenSize.height() / 2) - (self.height / 2))
@@ -71,7 +71,7 @@ class Settings(QDialog):
 
         self.twTab = QTabWidget()
 
-        funcs = [self.Info, self.Application, self.Display, self.Time]
+        funcs = [self.Info, self.Application, self.Display, self.Time, self.Sound]
 
         for func in funcs:          #  Add the individual tabs.  For a tab to be added - insert title into the list funcs.
             func()
@@ -282,6 +282,13 @@ class Settings(QDialog):
             index = 0
 
         combo.setCurrentIndex(index)
+    # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
+    def Sound(self):
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        page.setLayout(layout)
+
+        self.twTab.addTab(page, "Sound")
     # ----------------------------------------------------------------------------------------------------------------------- timeSettingsUpdate() --
     def timeSettingsUpdate(self):
         """  When a line edit or combo boxes are changed and looses focus, add amended value to new Settings dictionary.

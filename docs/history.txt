@@ -34,6 +34,15 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.32		[15 January 2026]
+
+	Added Sound.
+		Klock will, if configured, play Westminster Chimes on the Hour, quarter past, half pas and a quarter to the hour.
+		Klock will, if configured, play the Cuckoo noise on the Hour, quarter past, half pas and a quarter to the hour.
+		Klock will, if configured, play "the pips" on the hour.
+		The settings have been added to config.toml - but not the configure pyKlock, yet.
+
+
 V2026.31		[18 January 2026]
 
 	Implemented the delete friends button.

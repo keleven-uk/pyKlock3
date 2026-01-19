@@ -111,11 +111,9 @@ class FriendsViewer(QMainWindow):
         """   Open the Add Friends windows.
         """
         if self.friendsAdd is None:
-            newFriends = self.friends
             self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles, self.tableHeaders)         #  Needs to be self. - to keep window alive.
             self.friendsAdd.show()
             self.friendsAdd.addNewFriend.connect(self.addNewFriend)                                     #  Signal is fired when a friend is to be added.
-            self.friendsAdd.delNewFriend.connect(self.deleteFriend)                                     #  Signal is fired when a friend is to be deleted.
             self.friendsAdd.closeNewFriend.connect(self.closeNewFriend)                                 #  Signal is fired when the addFriend window is closed.
     # ----------------------------------------------------------------------------------------------------------------------- addNewFriend() --------
     def addNewFriend(self, friend):

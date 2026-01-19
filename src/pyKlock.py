@@ -31,6 +31,7 @@ from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 
 import src.classes.menu as mu
+import src.classes.sounds as snds
 import src.classes.selectTime as st
 import src.classes.systemInfo as si
 import src.classes.progressBarStyles as styles
@@ -56,6 +57,7 @@ class KlockWindow(QMainWindow):
         self.selectTime       = st.SelectTime()
         self.systemInfo       = si.SysInfo()
         self.pbStyles         = styles.Styles()             #  Styles for the battery progress bar.
+        self.sounds           = snds.Sounds(self.config, self.logger)
         self.timeFont         = QFont()
         self.textWindow       = None                        #  No text external window yet.
         self.helpWindow       = None
@@ -243,7 +245,7 @@ class KlockWindow(QMainWindow):
         """  Update the time, info line  and status bar.
         """
         dtCurrent = QDateTime.currentDateTime()
-        txtTime   = dtCurrent.toString("HH:MM:SS")
+        txtTime   = dtCurrent.toString("HH:mm:ss")
         txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
 
         self.nowTotalBytesReceived = self.systemInfo.TotalRawBytesReceived
@@ -276,6 +278,9 @@ class KlockWindow(QMainWindow):
         self.stsIdle.setText(utils.getIdleDuration())
 
         self.updateBattery()
+
+        if self.config.SOUNDS:
+            self.sounds.playSounds(txtTime)
     # ----------------------------------------------------------------------------------------------------------------------- updateBattery() -------
     def updateBattery(self):
         """  Updates the battery icon in the status bar.

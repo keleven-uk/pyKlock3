@@ -88,7 +88,6 @@ class AddFriends(QMainWindow):
                     else:
                         nextRow = row
 
-                    print(header, row, col)
                     lblElement = QLabel(header)
                     lneElement = QLineEdit("", self)
                     lneElement.setObjectName(header)
@@ -173,7 +172,7 @@ class AddFriends(QMainWindow):
             case "E-Mail" :
                 self.newFriend[5] = action.text()
             case "Birthday":
-                self.newFriend[6] = action.date().toString('d MMMM yyyy')
+                self.newFriend[6] = action.date().toString("d MMMM yyyy")
             case "House Number":
                 self.newFriend[7] = action.text()
             case "Address Line 1":
@@ -207,7 +206,7 @@ class AddFriends(QMainWindow):
                 self.addNewFriend.emit(self.newFriend)      #  emit signal
                 self.close()
             else:
-                confirmation = QMessageBox.information(self, "Error on data entry.", "First Name and last name are mandatory.")
+                QMessageBox.information(self, "Error on data entry.", "First Name and last name are mandatory.")
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  Closes the window and informs the parent.
