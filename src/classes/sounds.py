@@ -84,13 +84,7 @@ class Sounds():
         seconds  = int(timeText[6:])
         sndPath  = ""
 
-        print(f"playSounds : {timeText}")
         if seconds != 0:                        #  Only continue if seconds are zero, sounds on the hour or quarter.
-            return
-        else:
-            print(f"at zero {hours} {minutes} {seconds}")
-
-        if self.player.isPlaying():
             return
 
         if hours > 12:

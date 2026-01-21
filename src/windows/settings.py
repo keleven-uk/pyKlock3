@@ -23,8 +23,9 @@
 
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QDialogButtonBox, QTabWidget, QWidget, QFormLayout,
                              QApplication, QLineEdit, QPushButton, QColorDialog, QComboBox, QFontDialog,
-                             QMessageBox)
+                             QMessageBox, QSlider)
 from PyQt6.QtGui     import QIcon, QColor, QFont
+from PyQt6.QtCore    import Qt
 
 import src.classes.selectTime as st
 
@@ -44,7 +45,7 @@ class Settings(QDialog):
         self.config = myConfig
         self.logger = myLogger
         self.height = 400
-        self.width  = 500
+        self.width  = 460
         screenSize  = QApplication.primaryScreen().availableGeometry()
         xPos        = int((screenSize.width() / 2)  - (self.width / 2))
         yPos        = int((screenSize.height() / 2) - (self.height / 2))
@@ -282,14 +283,7 @@ class Settings(QDialog):
             index = 0
 
         combo.setCurrentIndex(index)
-    # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
-    def Sound(self):
-        page = QWidget(self.twTab)
-        layout = QFormLayout()
-        page.setLayout(layout)
 
-        self.twTab.addTab(page, "Sound")
-    # ----------------------------------------------------------------------------------------------------------------------- timeSettingsUpdate() --
     def timeSettingsUpdate(self):
         """  When a line edit or combo boxes are changed and looses focus, add amended value to new Settings dictionary.
         """
@@ -308,6 +302,61 @@ class Settings(QDialog):
                 if ok:
                     self.timeFont = font.toString()
                     self.newSettings[name] = self.timeFont
+    # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
+    def Sound(self):
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        layout.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
+        page.setLayout(layout)
+
+        volume = self.config.SOUNDS_VOLUME
+        self.buttons =  {}
+        titles   = ["Play Sounds ", "Westminster Chimes ", "Chimes on the Hour ", "Chimes on the Quarter", "Play pips on the Hour", "Cuckoo Chimes"]
+        settings = ["SOUNDS", "SOUNDS_WESTMINSTER", "SOUNDS_HOUR_CHIMES", "SOUNDS_QUARTER_CHIMES", "SOUNDS_HOUR_PIPS", "SOUNDS_CUCKOO"]
+
+        for le in zip(titles, settings, strict=True):
+            title   = le[0]
+            setting = le[1]
+
+            value = self.config.__getattribute__(setting)       #  Dirty way of getting the property value using a string.
+            print(f" {setting} :: {value}")
+            self.buttons[setting] = QPushButton()
+            self.buttons[setting].setCheckable(True)
+            checked = True if value else False
+            self.buttons[setting].setDefault(True)
+            self.buttons[setting].clicked.connect(self.displaySoundUpdate)
+            self.buttons[setting].setObjectName(setting)
+
+            layout.addRow(title, self.buttons[setting])
+
+        self.sldVolume = QSlider(Qt.Orientation.Horizontal, self)
+        self.sldVolume.setSingleStep(1)
+        self.sldVolume.setRange(0, 100)
+        self.sldVolume.setValue(volume)
+        self.sldVolume.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.sldVolume.valueChanged.connect(self.displaySoundUpdate)
+        self.sldVolume.setObjectName("SOUNDS_VOLUME")
+
+        layout.addRow(f"Volume {volume}", self.sldVolume)
+
+        self.twTab.addTab(page, "Sound")
+
+
+    def displaySoundUpdate(self, checked=None):
+        """
+        """
+        action = self.sender()
+        name   = action.objectName()
+
+        match name:
+            case "SOUNDS_VOLUME":
+                print(f"Slider {checked}")
+            case _:
+                print(self.buttons)
+                print(action, name, checked)
+                checked = not checked
+                self.buttons[name].setDefault(checked)
     # ----------------------------------------------------------------------------------------------------------------------- buttonClicked() -------
     def buttonClicked(self, button):
         """   Handles the pressed buttons, either Ok or Cancel.

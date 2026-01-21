@@ -34,7 +34,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
-V2026.32		[15 January 2026]
+V2026.33		[21 January 2026]
+
+	Added the Sounds settings tab to the Settings window.
+
+
+V2026.32		[19 January 2026]
 
 	Added Sound.
 		Klock will, if configured, play Westminster Chimes on the Hour, quarter past, half pas and a quarter to the hour.
