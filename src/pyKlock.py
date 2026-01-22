@@ -21,6 +21,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+from datetime import datetime
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
                              QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout,
@@ -116,7 +117,7 @@ class KlockWindow(QMainWindow):
         self.height           = self.config.HEIGHT
         self.menu_bar         = self.config.MENU_BAR        #  menu and menuBar are already reserved by QT.
         self.tool_bar         = self.config.TOOL_BAR
-        self.timeMode         = self.config.TIME_MODE       #  Either Digital ot Text time.
+        self.timeMode         = self.config.TIME_MODE       #  Either Digital or Text time.
         self.timeFormat       = self.config.TIME_FORMAT     #  The format of time to be displayed.
         self.transparent      = self.config.TRANSPARENT
         self.foregroundColour = self.config.FOREGROUND
@@ -248,6 +249,29 @@ class KlockWindow(QMainWindow):
         txtTime   = dtCurrent.toString("HH:mm:ss")
         txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
 
+        if self.timeMode == "Digital":
+            self.lcdTime.display(txtTime)
+            self.stsFrmt.setText("L.E.D.")
+        else:
+            self.timeFormat = self.menu.combo.currentText()
+            self.updateTextTime()
+            self.stsFrmt.setText(f"{self.timeFormat}")
+
+        self.stsDate.setText(txtDate)
+        self.stsState.setText(f"{utils.getState()}")
+        self.stsIdle.setText(utils.getIdleDuration())
+
+        if self.config.INFO_LINE:
+            self.updateInfoLine()
+
+        if self.config.SOUNDS:
+            self.sounds.playSounds(txtTime)
+
+        self.updateBattery()
+    # ----------------------------------------------------------------------------------------------------------------------- updateInfoLine() ------
+    def updateInfoLine(self):
+        """
+        """
         self.nowTotalBytesReceived = self.systemInfo.TotalRawBytesReceived
         self.nowTotalBytesSent     = self.systemInfo.TotalRawBytesSent
         self.newTime               = time.time()
@@ -260,27 +284,10 @@ class KlockWindow(QMainWindow):
         self.lastTotalBytesSent     = self.nowTotalBytesSent
         self.lastTime               = self.newTime
 
-        if self.timeMode == "Digital":
-            self.lcdTime.display(txtTime)
-            self.stsFrmt.setText("L.E.D.")
-        else:
-            self.timeFormat = self.menu.combo.currentText()
-            self.updateTextTime()
-            self.stsFrmt.setText(f"{self.timeFormat}")
-
-        self.stsDate.setText(txtDate)
-        self.stsState.setText(f"{utils.getState()}")
-        if self.config.INFO_LINE:
-            self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
-            self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
-            self.stsDisc.setText(f"C: {utils.getDiscUsage()}")
-            self.stsSpeed.setText(f"↓ {utils.formatSpeed(downloadSpeed)}  ↑ {utils.formatSpeed(uploadSpeed)}")
-        self.stsIdle.setText(utils.getIdleDuration())
-
-        self.updateBattery()
-
-        if self.config.SOUNDS:
-            self.sounds.playSounds(txtTime)
+        self.stsCPU.setText(f"CPU : {self.systemInfo.TotalCPUusage}")
+        self.stsRAM.setText(f"RAM : {self.systemInfo.PercentageMemory}")
+        self.stsDisc.setText(f"C: {utils.getDiscUsage()}")
+        self.stsSpeed.setText(f"↓ {utils.formatSpeed(downloadSpeed)}  ↑ {utils.formatSpeed(uploadSpeed)}")
     # ----------------------------------------------------------------------------------------------------------------------- updateBattery() -------
     def updateBattery(self):
         """  Updates the battery icon in the status bar.
@@ -457,7 +464,7 @@ class KlockWindow(QMainWindow):
     #  ---------------------------------------------------------------------------------------------------------------------- openSettings ----------
     def openSettings(self):
         """  Open an Setting window, which displays the settings available to pyKlock and allows them to be amended.
-        All button processing, settings saving and validation is handled withing the dialog.
+        All button processing, settings saving and validation is handled within the dialog.
         """
         dlg = stngs.Settings(self, self.config, self.logger)
         dlg.exec()

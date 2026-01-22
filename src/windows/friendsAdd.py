@@ -197,7 +197,7 @@ class AddFriends(QMainWindow):
     def addFriend(self):
         """  Checks is there is new data, if so, signals the parent and passes the data.
 
-             Will only emit the signal if their si a First name and a Last Neme.
+             Will only emit the signal if their si a First name and a Last Name.
         """
         if self.newFriend == []:
             self.close()

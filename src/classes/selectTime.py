@@ -69,7 +69,7 @@ class SelectTime:
 # The time functions can't be made property's, this seems to upset the dictionary of functions - they are not callable.
 #
     def __getNowTime(self):
-        """  returns now as hour, munutes and seconds"""
+        """  returns now as hour, minutes and seconds"""
         now = datetime.datetime.now()
 
         return now.hour, now.minute, now.second

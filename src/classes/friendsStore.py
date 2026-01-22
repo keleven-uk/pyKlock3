@@ -13,7 +13,7 @@
 #    friendsStore     = es.friendsStore()                                                                     #
 #                                                                                                             #
 #    friendsStore.getHeaders           Retrieves the headers for display, as strings.                         #
-#    friendssStore.getCategories        Retrieves the categories for display, as strings.                     #
+#    friendsStore.getCategories        Retrieves the categories for display, as strings.                     #
 #    friendsStore.addFriend(key, item)  Adds an event to the store.  Key = name, item = all data.             #
 #    friendsStore.getFriends(rowKey)     Retrieves an friend matching name.                                   #
 #    friendsStore.getFriends()          Returns all events as a sorted list.                                  #

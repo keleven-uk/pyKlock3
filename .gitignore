@@ -135,8 +135,11 @@ $RECYCLE.BIN/
 *.log.*
 
 # local files
+cspell.json
+pyKlock3.code-workspace
 ruff.toml
 data/
+.vscode/
 
 
 

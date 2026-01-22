@@ -25,13 +25,27 @@ Current version of pyKlock is written in Python using different GUI frameworks
 <2017-2022>	pyKlock 0 - pygubu & pySimpleGUI - Finally settled on pySimpleGUI.
 <2024-2025>	pyKlock 1 - CustomTkinter        - Not currently maintained [Most complete].
 <2024>		pyKlock 2 - Flet.                - No font dialog.
-<2025>		pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programable.
+<2025>		pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programmable.
 <2025>		pyKlock 4 - wxPython.            - problems with frame transparency, effects all child widgets.
 
 
 Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
+
+
+V2026.34		[22 January 2026]
+
+	The chimes were being missed.  The update loop was taking nearly two seconds, so the exact time was not found.
+	The test for zero seconds was removed - so multiple chimes could occur.
+	Each chimes is now controlled by a flag, so they will only chime once.
+	The flags are reset after two minutes past, so the cycle can restart.
+
+	The built in QT media player produced a fair bit of text output.
+	This included a initial licence text on start up and what looked like debug information on play.
+	Decided to go back to AudioPlayer, as used in earlier version of pyKlock.
+
+	Moved across to VSCodium, which found some legacy spelling mistakes.
 
 
 V2026.33		[21 January 2026]
@@ -55,7 +69,7 @@ V2026.31		[18 January 2026]
 		Prompts the user for confirmation before deletion.
 	Implanted the Refresh button.
 	The Add button is now only available if both first and last names contain text.
-	The date entry now default to todays date.
+	The date entry now default to today's date.
 	All text entry is now Capitalised.
 
 	Using python 3.14.2 and QT 6.10.2.
@@ -308,7 +322,7 @@ V2025.5		[30 October 2025]
 
 	Added an option to make the confirm exit message optional.
 	Added a time format entry to the time menu.
-		This opens a sub manu containing all the time formats cu8rrently available.
+		This opens a sub manu containing all the time formats currently available.
 		The te4xt time will now displayed in the time in this format.
 		The time format is displayed in the statusbar.
 		The time format sub menu is only available when in test time mode.
@@ -319,8 +333,8 @@ V2025.4		[29 October 2025]
 	The time can be displays as either a LED Klock or as The Famous Fuzzy Time.
 		This is achieved via a Stacked layout.
 	The Famous Fuzzy Time displays the time in words rounded to the nearest five minutes.
-		Added a new properties - TIMR_MODE - can be either Digital or Text.
-	Added icons for LED Klock or text KLOCK options [both menu's and toolbar].
+		Added a new properties - TIME_MODE - can be either Digital or Text.
+	Added icons for LED Klock or text Klock options [both menu's and toolbar].
 
 
 V2025.3		[27 October 2025]

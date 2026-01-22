@@ -105,7 +105,7 @@ class Settings(QDialog):
              Can be used to reset screen position.
              Width and height are calculated by the app, so might be ignored.
 
-             NB : application x, y, width & hight - are stored as int, but display as strings.
+             NB : application x, y, width & height - are stored as int, but display as strings.
         """
         page = QWidget(self.twTab)
         layout = QFormLayout()
@@ -156,7 +156,7 @@ class Settings(QDialog):
         name   = action.objectName()
 
         match name:
-            case "X_POS" | "Y_POS" | "WIDTH" | "HEIGHT":        #  colour dialogs
+            case "X_POS" | "Y_POS" | "WIDTH" | "HEIGHT":        #  colour dialog
                 self.newSettings[name] = int(action.text())
             case "CONFIRM_EXIT", "TOOL_BAR":
                 checked = not checked
@@ -208,7 +208,7 @@ class Settings(QDialog):
         name   = action.objectName()
 
         match name:
-            case "FOREGROUND" | "BACKGROUND":        #  colour dialogs
+            case "FOREGROUND" | "BACKGROUND":        #  colour dialog
                 self.current_color = QColor(self.foregroundColour)
                 colour = QColorDialog.getColor(self.current_color, self, f"Choose {name} Colour")
 
@@ -239,11 +239,11 @@ class Settings(QDialog):
         self.setText(self.cbTimeFmt,    self.config.TIME_FORMAT)
         self.cbTimeFmt.currentTextChanged.connect(self.timeSettingsUpdate)
         self.cbTimeFmt.setObjectName("TIME_FORMAT")
-        self.cbTimeAllign = QComboBox()
-        self.cbTimeAllign.insertItems(1, ["Left", "Right", "None"])
-        self.setText(self.cbTimeAllign, self.config.TIME_ALIGNMENT)
-        self.cbTimeAllign.currentTextChanged.connect(self.timeSettingsUpdate)
-        self.cbTimeAllign.setObjectName("TIME_ALIGNMENT")
+        self.cbTimeAlign = QComboBox()
+        self.cbTimeAlign.insertItems(1, ["Left", "Right", "None"])
+        self.setText(self.cbTimeAlign, self.config.TIME_ALIGNMENT)
+        self.cbTimeAlign.currentTextChanged.connect(self.timeSettingsUpdate)
+        self.cbTimeAlign.setObjectName("TIME_ALIGNMENT")
 
         # create a button.
         path = f"{RESOURCE_PATH}/font.png"
@@ -255,7 +255,7 @@ class Settings(QDialog):
         layout.addRow("Time Format ",      self.cbTimeMode)
         layout.addRow("Text Time Format ", self.cbTimeFmt)
         layout.addRow("Time Font ",        self.btnFont)
-        layout.addRow("Time Allignment ",  self.cbTimeAllign)
+        layout.addRow("Time Alignment ",  self.cbTimeAlign)
 
         titles   = ["Prefix Character ", "Postfix Character ", "Space Character "]
         settings = ["TIME_PREFIX", "TIME_POSTFIX", "TIME_SPACE"]
@@ -352,15 +352,17 @@ class Settings(QDialog):
         match name:
             case "SOUNDS_VOLUME":
                 print(f"Slider {checked}")
+                self.newSettings[name] = self.sldVolume.value()
             case _:
                 print(self.buttons)
                 print(action, name, checked)
                 checked = not checked
                 self.buttons[name].setDefault(checked)
+                self.newSettings[name] = checked
     # ----------------------------------------------------------------------------------------------------------------------- buttonClicked() -------
     def buttonClicked(self, button):
         """   Handles the pressed buttons, either Ok or Cancel.
-              All button processing, settings saving and validation is handled withing this class.
+              All button processing, settings saving and validation is handled within this class.
 
               If Ok is pressed the new settings are written to the config file.
               if Cancel is pressed the form will just close.
@@ -372,7 +374,7 @@ class Settings(QDialog):
                 confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?")
 
                 if confirmation == QMessageBox.StandardButton.Yes:
-                    self.close()                        #  Close the app, loosing any edits.
+                    self.close()                        #  Close the app, losing any edits.
                 else:
                     return                              #  Continue to the app.
             else:                                       #  No settings have been amended.

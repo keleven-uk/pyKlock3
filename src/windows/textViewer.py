@@ -55,7 +55,7 @@ class TextViewer(QWidget):
 
     def loadText(self):
         """  Load the text file.
-             The text file can be either Licence ot Log File.
+             The text file can be either Licence or Log File.
         """
         match self.action:
             case "Licence":
