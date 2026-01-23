@@ -24,8 +24,8 @@ from PyQt6.QtWidgets import QMenuBar, QToolBar, QMenu, QComboBox
 from PyQt6.QtGui     import QAction, QIcon
 from PyQt6.QtCore    import QSize
 
+import src.classes.styles as styles
 import src.classes.selectTime as st
-import src.classes.progressBarStyles as styles
 
 import src.windows.friendsViewer as fv
 
@@ -54,7 +54,7 @@ class Menu(QMenuBar):
         self.toolbar      = QToolBar("Time Toolbar")
         self.context_menu = QMenu(self)
         self.selectTime   = st.SelectTime()
-        self.pbStyles     = styles.Styles()
+        self.styles       = styles.Styles()
 
         self.buildActions()
 
@@ -127,7 +127,7 @@ class Menu(QMenuBar):
         # Set up main menu
         self.logger.info(" Building Menu")
         menu = QMenuBar()
-        menu.setStyleSheet(self.pbStyles.MENU_STYLE)
+        menu.setStyleSheet(self.styles.MENU_STYLE)
 
         mnuFile    = menu.addMenu("&File")
         mnuTime    = menu.addMenu("&Time")

@@ -4,7 +4,7 @@
 #                                                                                                             #
 #    A class for managing sounds.                                                                             #
 #                                                                                                             #
-#    19 January 2026 - Amended the Sounds class to run under pyQt6.                                           #
+#    23 January 2026 - Amended playPips to play at a given volume.                                            #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
@@ -128,12 +128,12 @@ class Sounds():
             self.halfPast    = True
             self.quarterTo   = True
 # ------------------------------------------------------------------------------------- playPips ------------------------
-    def playPips(self):
+    def playPips(self, volume):
         """  Enable the pip to be played to test the volume.
         """
         try:
             player = AudioPlayer(f"{pp.RESOURCE_PATH}\\Sounds\\thepips.mp3")
-            player.volume = self.myConfig.SOUNDS_VOLUME
+            player.volume = volume
             player.play(block=True)
         except Exception as e:
             self.myLogger.error(f"Error {e}")

@@ -116,8 +116,29 @@ class Styles():
             background: transparent;
         }
 
-        Qmenu::item{
+        QMenu::item{
             color     : blue;
             background: transparent;
         }
+        """
+
+    @property
+    def QToggle_STYLE(self):
+        return """
+        QToggle{
+            qproperty-bg_color      :#111;
+            qproperty-circle_color  :#DDF;
+            qproperty-active_color  :#AAF;
+            qproperty-disabled_color:#777;
+            qproperty-text_color    :#A0F;
+            }
+        """
+
+    @property
+    def QEdit_STYLE(self):
+        return"""
+        QLineEdit{
+            border : 1px solid ;
+            border-color : grey
+            }
         """

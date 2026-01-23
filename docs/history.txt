@@ -34,6 +34,16 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.35		[23 January 2026]
+
+	Changed all the boolean properties in the settings window to toggle buttons from push buttons.
+		Found at https://github.com/luandiasrj/QToggle_-_Advanced_QCheckbox_for_PyQT6 - Thank you.
+
+	Added a new option to the Sound settings tan - to play the pips at a given volume to test loudness.
+
+	Because the file progressBarStyles.py held styles for more then one widget - renamed to styles.py
+
+
 V2026.34		[22 January 2026]
 
 	The chimes were being missed.  The update loop was taking nearly two seconds, so the exact time was not found.

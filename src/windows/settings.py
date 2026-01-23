@@ -23,10 +23,14 @@
 
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QDialogButtonBox, QTabWidget, QWidget, QFormLayout,
                              QApplication, QLineEdit, QPushButton, QColorDialog, QComboBox, QFontDialog,
-                             QMessageBox, QSlider)
+                             QMessageBox, QSlider, QCheckBox)
 from PyQt6.QtGui     import QIcon, QColor, QFont
 from PyQt6.QtCore    import Qt
 
+from src.classes.QToggle import QToggle
+
+import src.classes.sounds as snds
+import src.classes.styles as styles
 import src.classes.selectTime as st
 
 from src.projectPaths import RESOURCE_PATH
@@ -44,6 +48,9 @@ class Settings(QDialog):
 
         self.config = myConfig
         self.logger = myLogger
+        self.styles = styles.Styles()             #  Styles for QToggle.
+        self.sounds = snds.Sounds(self.config, self.logger)
+
         self.height = 400
         self.width  = 460
         screenSize  = QApplication.primaryScreen().availableGeometry()
@@ -88,6 +95,7 @@ class Settings(QDialog):
         """
         page   = QWidget(self.twTab)
         layout = QFormLayout()
+        layout.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
         page.setLayout(layout)
 
         lbName = QLineEdit(self.config.NAME, self)
@@ -125,27 +133,21 @@ class Settings(QDialog):
 
             layout.addRow(title, lineEdit)
 
-        # create a push buttons.
-        path = f"{RESOURCE_PATH}/toolbox.png"
-        self.btnToolBar = QPushButton()
-        self.btnToolBar.setIcon(QIcon(path))
-        self.btnToolBar.setCheckable(True)
-        checked = True if self.config.TOOL_BAR else False
-        self.btnToolBar.setDefault(checked)
-        self.btnToolBar.clicked.connect(self.appSettingsUpdate)
-        self.btnToolBar.setObjectName("TOOL_BAR")
+        # create toggle buttons.
+        self.tgToolBar = QToggle(self)
+        self.tgToolBar.setChecked(self.config.TOOL_BAR)
+        self.tgToolBar.stateChanged.connect(self.appSettingsUpdate)
+        self.tgToolBar.setObjectName("TOOL_BAR")
+        self.tgToolBar.setStyleSheet(self.styles.QToggle_STYLE)
 
-        path = f"{RESOURCE_PATH}/cross.png"
-        self.btnConfirmExit = QPushButton()
-        self.btnConfirmExit.setIcon(QIcon(path))
-        self.btnConfirmExit.setCheckable(True)
-        checked = True if self.config.CONFIRM_EXIT else False
-        self.btnConfirmExit.setDefault(checked)
-        self.btnConfirmExit.clicked.connect(self.appSettingsUpdate)
-        self.btnConfirmExit.setObjectName("CONFIRM_EXIT")
+        self.tgConfirmExit = QToggle(self)
+        self.tgConfirmExit.setChecked(self.config.CONFIRM_EXIT)
+        self.tgConfirmExit.stateChanged.connect(self.appSettingsUpdate)
+        self.tgConfirmExit.setObjectName("CONFIRM_EXIT")
+        self.tgConfirmExit.setStyleSheet(self.styles.QToggle_STYLE)
 
-        layout.addRow("Display Tool Bar ", self.btnToolBar)
-        layout.addRow("Confirm Exit ", self.btnConfirmExit)
+        layout.addRow("Display Tool Bar ", self.tgToolBar)
+        layout.addRow("Confirm Exit ",     self.tgConfirmExit)
 
         self.twTab.addTab(page, "Application Data")
 
@@ -185,19 +187,16 @@ class Settings(QDialog):
         leTransparent = QLineEdit("Amend in config.toml and restart", self)
         leTransparent.setReadOnly(True)
 
-        path = f"{RESOURCE_PATH}/infoLine.png"
-        self.btnInfoLine = QPushButton()
-        self.btnInfoLine.setIcon(QIcon(path))
-        self.btnInfoLine.setCheckable(True)
-        checked = True if self.config.INFO_LINE else False
-        self.btnInfoLine.setDefault(checked)
-        self.btnInfoLine.clicked.connect(self.displaySettingsUpdate)
-        self.btnInfoLine.setObjectName("INFO_LINE")
+        self.tgInfoLine = QToggle(self)
+        self.tgInfoLine.setChecked(self.config.INFO_LINE)
+        self.tgInfoLine.stateChanged.connect(self.displaySettingsUpdate)
+        self.tgInfoLine.setObjectName("INFO_LINE")
+        self.tgInfoLine.setStyleSheet(self.styles.QToggle_STYLE)
 
         layout.addRow("Foreground Colour ", self.btnForeColour)
         layout.addRow("Background Colour ", self.btnBackColour)
         layout.addRow("Transparent Background ", leTransparent)
-        layout.addRow("Information Line ", self.btnInfoLine)
+        layout.addRow("Information Line ", self.tgInfoLine)
 
         self.twTab.addTab(page, "Display")
 
@@ -221,7 +220,7 @@ class Settings(QDialog):
                         self.newSettings[name] = self.backgroundColour
             case "INFO_LINE":
                 checked = not checked
-                self.btnInfoLine.setDefault(checked)
+                self.tgInfoLine.setChecked(checked)
                 self.newSettings[name] = checked
     # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
     def Time(self):
@@ -268,6 +267,7 @@ class Settings(QDialog):
             lineEdit = QLineEdit(str(value), self)
             lineEdit.setObjectName(setting)
             lineEdit.editingFinished.connect(self.timeSettingsUpdate)
+            lineEdit.setStyleSheet(self.styles.QEdit_STYLE)
 
             layout.addRow(title, lineEdit)
 
@@ -311,7 +311,7 @@ class Settings(QDialog):
         page.setLayout(layout)
 
         volume = self.config.SOUNDS_VOLUME
-        self.buttons =  {}
+        self.toggles =  {}
         titles   = ["Play Sounds ", "Westminster Chimes ", "Chimes on the Hour ", "Chimes on the Quarter", "Play pips on the Hour", "Cuckoo Chimes"]
         settings = ["SOUNDS", "SOUNDS_WESTMINSTER", "SOUNDS_HOUR_CHIMES", "SOUNDS_QUARTER_CHIMES", "SOUNDS_HOUR_PIPS", "SOUNDS_CUCKOO"]
 
@@ -320,15 +320,15 @@ class Settings(QDialog):
             setting = le[1]
 
             value = self.config.__getattribute__(setting)       #  Dirty way of getting the property value using a string.
-            print(f" {setting} :: {value}")
-            self.buttons[setting] = QPushButton()
-            self.buttons[setting].setCheckable(True)
             checked = True if value else False
-            self.buttons[setting].setDefault(True)
-            self.buttons[setting].clicked.connect(self.displaySoundUpdate)
-            self.buttons[setting].setObjectName(setting)
 
-            layout.addRow(title, self.buttons[setting])
+            self.toggles[setting] = QToggle(self)
+            self.toggles[setting].setChecked(checked)
+            self.toggles[setting].stateChanged.connect(self.displaySoundUpdate)
+            self.toggles[setting].setObjectName(setting)
+            self.toggles[setting].setStyleSheet(self.styles.QToggle_STYLE)
+
+            layout.addRow(title, self.toggles[setting])
 
         self.sldVolume = QSlider(Qt.Orientation.Horizontal, self)
         self.sldVolume.setSingleStep(1)
@@ -338,27 +338,35 @@ class Settings(QDialog):
         self.sldVolume.valueChanged.connect(self.displaySoundUpdate)
         self.sldVolume.setObjectName("SOUNDS_VOLUME")
 
-        layout.addRow(f"Volume {volume}", self.sldVolume)
+        self.btnVolume = QPushButton()
+        self.btnVolume.setObjectName("TEST_VOLUME")
+        self.btnVolume.clicked.connect(self.displaySoundUpdate)
+
+        layout.addRow(f"Volume ", self.sldVolume)
+        layout.addRow(f"Test Volume ", self.btnVolume)
 
         self.twTab.addTab(page, "Sound")
-
 
     def displaySoundUpdate(self, checked=None):
         """
         """
         action = self.sender()
         name   = action.objectName()
-
+        
         match name:
             case "SOUNDS_VOLUME":
-                print(f"Slider {checked}")
                 self.newSettings[name] = self.sldVolume.value()
+            case "TEST_VOLUME":
+                self.testVolume()
             case _:
-                print(self.buttons)
-                print(action, name, checked)
-                checked = not checked
-                self.buttons[name].setDefault(checked)
+                checked = True if checked == 2 else False
+                self.toggles[name].setChecked(checked)
                 self.newSettings[name] = checked
+
+    def testVolume(self):
+        """  Plays the Pips at the slider volume to test loudness.
+        """
+        self.sounds.playPips(self.sldVolume.value())
     # ----------------------------------------------------------------------------------------------------------------------- buttonClicked() -------
     def buttonClicked(self, button):
         """   Handles the pressed buttons, either Ok or Cancel.

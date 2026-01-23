@@ -33,9 +33,9 @@ import src.utils.klock_utils as utils                                 #  Need to
 
 import src.classes.menu as mu
 import src.classes.sounds as snds
+import src.classes.styles as styles
 import src.classes.selectTime as st
 import src.classes.systemInfo as si
-import src.classes.progressBarStyles as styles
 
 import src.windows.about as About
 import src.windows.textViewer as tw
@@ -57,7 +57,7 @@ class KlockWindow(QMainWindow):
 
         self.selectTime       = st.SelectTime()
         self.systemInfo       = si.SysInfo()
-        self.pbStyles         = styles.Styles()             #  Styles for the battery progress bar.
+        self.styles           = styles.Styles()             #  Styles for the battery progress bar.
         self.sounds           = snds.Sounds(self.config, self.logger)
         self.timeFont         = QFont()
         self.textWindow       = None                        #  No text external window yet.
@@ -235,7 +235,7 @@ class KlockWindow(QMainWindow):
     def openFontDialog(self):
         """  Open the font dialog.
         """
-        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Fomt for Time.")
+        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Font for Time.")
 
         # If user clicked OK, update the label's font
         if ok:
@@ -308,18 +308,18 @@ class KlockWindow(QMainWindow):
             case True:
                 if charge == 100:                           #  Fully Charged
                     self.stsBattery.setValue(charge)
-                    self.stsBattery.setStyleSheet(self.pbStyles.BATTERY_FULL_STYLE)
+                    self.stsBattery.setStyleSheet(self.styles.BATTERY_FULL_STYLE)
                 else:                                       #  Battery charging
                     self.stsBattery.setValue(charge)
-                    self.stsBattery.setStyleSheet(self.pbStyles.CHARGING_STYLE)
+                    self.stsBattery.setStyleSheet(self.styles.CHARGING_STYLE)
             case False:                                     #  Running on battery
                 self.stsBattery.setValue(charge)
                 if charge < 10:
-                        self.stsBattery.setStyleSheet(self.pbStyles.BATTERY_LOW_STYLE)
+                        self.stsBattery.setStyleSheet(self.styles.BATTERY_LOW_STYLE)
                 else:
-                    self.stsBattery.setStyleSheet(self.pbStyles.RUNNING_ON_BATTERY_STYLE)
+                    self.stsBattery.setStyleSheet(self.styles.RUNNING_ON_BATTERY_STYLE)
             case _:
-                self.stsBattery.setStyleSheet(self.pbStyles.RUNNING_ON_AC_STYLE)
+                self.stsBattery.setStyleSheet(self.styles.RUNNING_ON_AC_STYLE)
     # ----------------------------------------------------------------------------------------------------------------------- updateTextTime() ------
     def updateTextTime(self):
         """  Updates the time text and if needed calls resizeWindow.
@@ -392,7 +392,7 @@ class KlockWindow(QMainWindow):
         self.statusBar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.myMenu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
         self.menu.toolbar.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
-        self.menu.context_menu.setStyleSheetf(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
+        self.menu.context_menu.setStyleSheet(f"color: {self.foregroundColour}; background-color: {self.backgroundColour}")
     # ----------------------------------------------------------------------------------------------------------------------- setDigitalTime() ------
     def setDigitalTime(self):
         """  Bring forward the digital time display, hides the text time display.
