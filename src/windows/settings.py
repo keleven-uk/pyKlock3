@@ -23,7 +23,7 @@
 
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QDialogButtonBox, QTabWidget, QWidget, QFormLayout,
                              QApplication, QLineEdit, QPushButton, QColorDialog, QComboBox, QFontDialog,
-                             QMessageBox, QSlider, QCheckBox)
+                             QMessageBox, QSlider)
 from PyQt6.QtGui     import QIcon, QColor, QFont
 from PyQt6.QtCore    import Qt
 
@@ -51,17 +51,17 @@ class Settings(QDialog):
         self.styles = styles.Styles()             #  Styles for QToggle.
         self.sounds = snds.Sounds(self.config, self.logger)
 
-        self.height = 400
-        self.width  = 460
-        screenSize  = QApplication.primaryScreen().availableGeometry()
-        xPos        = int((screenSize.width() / 2)  - (self.width / 2))
-        yPos        = int((screenSize.height() / 2) - (self.height / 2))
+        height     = 400
+        width      = 460
+        screenSize = QApplication.primaryScreen().availableGeometry()
+        xPos       = int((screenSize.width() / 2)  - (width / 2))
+        yPos       = int((screenSize.height() / 2) - (height / 2))
 
         self.logger.info("Launching Settings dialog")
 
         self.setWindowTitle(f"PyKlock Settings {self.config.NAME}")
-        self.setGeometry(xPos, yPos, self.width, self.height)
-        self.setFixedSize(self.width, self.height)
+        self.setGeometry(xPos, yPos, width, height)
+        self.setFixedSize(width, height)
 
         self.selectTime       = st.SelectTime()
         self.timeFont         = QFont()
@@ -342,8 +342,8 @@ class Settings(QDialog):
         self.btnVolume.setObjectName("TEST_VOLUME")
         self.btnVolume.clicked.connect(self.displaySoundUpdate)
 
-        layout.addRow(f"Volume ", self.sldVolume)
-        layout.addRow(f"Test Volume ", self.btnVolume)
+        layout.addRow("Volume ", self.sldVolume)
+        layout.addRow("Test Volume ", self.btnVolume)
 
         self.twTab.addTab(page, "Sound")
 

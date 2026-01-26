@@ -21,7 +21,6 @@
 # -*- coding: utf-8 -*-
 
 import time
-from datetime import datetime
 
 from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLayout, QColorDialog,
                              QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout,
@@ -361,7 +360,7 @@ class KlockWindow(QMainWindow):
                 case "Left":                                                                        #  align to left hand of the screen.
                     self.setGeometry(5, self.Ypos, self.width, self.height)
                 case "Right":                                                                       #  align to right hand of the screen.
-                    xpos = screenSize.width()-self.width-30
+                    xpos = screenSize.width()-self.width-50
                     self.setGeometry(xpos, self.Ypos, self.width, self.height)
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)

@@ -11,7 +11,7 @@ The custom properties include:
     bg_color: background color of the toggle
     circle_color: color of the circle inside the toggle
     active_color: color of the background when the toggle is checked
-    disabled_color: color of the toggle when it's disabled
+    disabled_color: color of the toggle when it"s disabled
     text_color: color of the text
 
 Main functions and methods in the class include:
@@ -40,25 +40,25 @@ from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QVBoxLayout
 class QToggle(QCheckBox):
     bg_color = pyqtProperty(
         QColor, lambda self: self._bg_color,
-        lambda self, col: setattr(self, '_bg_color', col))
+        lambda self, col: setattr(self, "_bg_color", col))
     circle_color = pyqtProperty(
         QColor, lambda self: self._circle_color,
-        lambda self, col: setattr(self, '_circle_color', col))
+        lambda self, col: setattr(self, "_circle_color", col))
     active_color = pyqtProperty(
         QColor, lambda self: self._active_color,
-        lambda self, col: setattr(self, '_active_color', col))
+        lambda self, col: setattr(self, "_active_color", col))
     disabled_color = pyqtProperty(
         QColor, lambda self: self._disabled_color,
-        lambda self, col: setattr(self, '_disabled_color', col))
+        lambda self, col: setattr(self, "_disabled_color", col))
     text_color = pyqtProperty(
         QColor, lambda self: self._text_color,
-        lambda self, col: setattr(self, '_text_color', col))
+        lambda self, col: setattr(self, "_text_color", col))
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._bg_color, self._circle_color, self._active_color, \
             self._disabled_color, self._text_color = QColor("#0BF"), \
-            QColor("#DDD"), QColor('#777'), QColor("#CCC"), QColor("#000")
+            QColor("#DDD"), QColor("#777"), QColor("#CCC"), QColor("#000")
         self._circle_pos, self._intermediate_bg_color = None, None
         self.setFixedHeight(18)
         self._animation_duration = 500  # milliseconds
@@ -67,10 +67,10 @@ class QToggle(QCheckBox):
 
     circle_pos = pyqtProperty(
         float, lambda self: self._circle_pos,
-        lambda self, pos: (setattr(self, '_circle_pos', pos), self.update()))
+        lambda self, pos: (setattr(self, "_circle_pos", pos), self.update()))
     intermediate_bg_color = pyqtProperty(
         QColor, lambda self: self._intermediate_bg_color,
-        lambda self, col: setattr(self, '_intermediate_bg_color', col))
+        lambda self, col: setattr(self, "_intermediate_bg_color", col))
 
     def setDuration(self, duration: int):
         """
@@ -87,7 +87,7 @@ class QToggle(QCheckBox):
             self._intermediate_bg_color = self._bg_color
 
     def start_transition(self, state):
-        if not self._user_checked:  # Skip animation if change isn't user-initiated
+        if not self._user_checked:  # Skip animation if change isn"t user-initiated
             self.update_pos_color(state)
             return
         for anim in [self.create_animation, self.create_bg_color_animation]:
@@ -101,11 +101,11 @@ class QToggle(QCheckBox):
 
     def create_animation(self, state):
         return self._create_common_animation(
-            state, b'circle_pos', self.height() * 0.1, self.height() * 1.1)
+            state, b"circle_pos", self.height() * 0.1, self.height() * 1.1)
 
     def create_bg_color_animation(self, state):
         return self._create_common_animation(
-            state, b'intermediate_bg_color', self._bg_color, self._active_color)
+            state, b"intermediate_bg_color", self._bg_color, self._active_color)
 
     def _create_common_animation(self, state, prop, start_val, end_val):
         animation = QPropertyAnimation(self, prop, self)
@@ -116,7 +116,7 @@ class QToggle(QCheckBox):
         return animation
 
     def showEvent(self, event):
-        super().showEvent(event)  # Ensure to call the super class's implementation
+        super().showEvent(event)  # Ensure to call the super class"s implementation
         self.update_pos_color(self.isChecked())
 
     def resizeEvent(self, event):
@@ -170,7 +170,7 @@ class QToggle(QCheckBox):
         painter.end()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication([])
     window = QWidget()
     layout = QVBoxLayout()
@@ -180,14 +180,14 @@ if __name__ == '__main__':
     layout.addWidget(checkbox0)
 
     checkbox1 = QToggle()
-    checkbox1.setText('Checkbox 1 - Disabled')
+    checkbox1.setText("Checkbox 1 - Disabled")
     checkbox1.setEnabled(False)
     layout.addWidget(checkbox1)
 
     checkbox2 = QToggle()
-    checkbox2.setText('Checkbox 2 - Checked, custom height, animation duration, colors and font')
+    checkbox2.setText("Checkbox 2 - Checked, custom height, animation duration, colors and font")
     checkbox2.setFixedHeight(24)
-    checkbox2.setFont(QFont('Segoe Print', 10))
+    checkbox2.setFont(QFont("Segoe Print", 10))
     checkbox2.setStyleSheet("QToggle{"
                             "qproperty-bg_color:#FAA;"
                             "qproperty-circle_color:#DDF;"

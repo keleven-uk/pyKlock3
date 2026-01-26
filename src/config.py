@@ -389,6 +389,91 @@ class Config():
         """  Sets sound volume.
         """
         self.config["SOUNDS"]["sound_volume"] = value
+#---------------------------------------------------------------------------------------------- EVENTS -----------------------
+    @property
+    def EVENTS_STAGE_1_DAYS(self):
+        """  Returns the number of days due for stage 1.
+        """
+        return self.config["EVENTS"].get("stage1Days", 5)
+
+    @EVENTS_STAGE_1_DAYS.setter
+    def EVENTS_STAGE_1_DAYS(self, value):
+        """  Sets the number of days due for stage 1.
+        """
+        self.config["EVENTS"]["stage1Days"] = value
+
+    @property
+    def EVENTS_STAGE_2_DAYS(self):
+        """  Returns the number of days due for stage 2.
+        """
+        return self.config["EVENTS"].get("stage2Days", 10)
+
+    @EVENTS_STAGE_2_DAYS.setter
+    def EVENTS_STAGE_2_DAYS(self, value):
+        """  Sets the number of days due for stage 2.
+        """
+        self.config["EVENTS"]["stage2Days"] = value
+
+    @property
+    def EVENTS_STAGE_3_DAYS(self):
+        """  Returns the number of days due for stage 3.
+        """
+        return self.config["EVENTS"].get("stage3Days", 30)
+
+    @EVENTS_STAGE_3_DAYS.setter
+    def EVENTS_STAGE_3_DAYS(self, value):
+        """  Sets the number of days due for stage 3.
+        """
+        self.config["EVENTS"]["stage3Days"] = value
+
+    @property
+    def EVENTS_STAGE_1_COLOUR(self):
+        """  Returns the colour for stage 1.
+        """
+        return self.config["EVENTS"].get("stage1Colour", "red")
+
+    @EVENTS_STAGE_1_COLOUR.setter
+    def EVENTS_STAGE_1_COLOUR(self, value):
+        """  Sets the the colour for stage 1.
+        """
+        self.config["EVENTS"]["stage1Colour"] = value
+
+    @property
+    def EVENTS_STAGE_2_COLOUR(self):
+        """  Returns the colour for stage 2.
+        """
+        return self.config["EVENTS"].get("stage2Colour", "yellow")
+
+    @EVENTS_STAGE_2_COLOUR.setter
+    def EVENTS_STAGE_2_COLOUR(self, value):
+        """  Sets the the colour for stage 2.
+        """
+        self.config["EVENTS"]["stage2Colour"] = value
+
+    @property
+    def EVENTS_STAGE_3_COLOUR(self):
+        """  Returns the colour for stage 3.
+        """
+        return self.config["EVENTS"].get("stage3Colour", "green")
+
+    @EVENTS_STAGE_3_COLOUR.setter
+    def EVENTS_STAGE_3_COLOUR(self, value):
+        """  Sets the the colour for stage 3.
+        """
+        self.config["EVENTS"]["stage3Colour"] = value
+
+    @property
+    def EVENTS_NOW_COLOUR(self):
+        """  Returns the colour for events now due.
+        """
+        return self.config["EVENTS"].get("nowColour", "blue")
+
+    @EVENTS_NOW_COLOUR.setter
+    def EVENTS_NOW_COLOUR(self, value):
+        """  Sets the colour for events now due.
+        """
+        self.config["EVENTS"]["nowColour"] = value
+
 
 
     def writeConfig(self):
@@ -417,7 +502,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.35",
+        config["INFO"] = {"myVERSION": "2026.36",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -449,7 +534,13 @@ class Config():
                             "cuckoo"        : False,
                             "sound_volume"  : 25}
 
-
+        config["EVENTS"] = {"stage1Days"   : 5,
+                            "stage2Days"   : 10,
+                            "stage3Days"   : 30,
+                            "stage1Colour" : "red",
+                            "stage2Colour" : "yellow",
+                            "stage3Colour" : "green",
+                            "nowColour"    : "blue"}
 
         st_toml = toml.dumps(config)
 

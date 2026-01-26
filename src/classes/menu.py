@@ -28,6 +28,7 @@ import src.classes.styles as styles
 import src.classes.selectTime as st
 
 import src.windows.friendsViewer as fv
+import src.windows.eventsViewer as ev
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -102,6 +103,9 @@ class Menu(QMenuBar):
         self.actViewFriends = QAction("Friends", self)
         self.actViewFriends.triggered.connect(self.openFriendsViewer)
 
+        self.actViewEvents = QAction("Events", self)
+        self.actViewEvents.triggered.connect(self.openEventsViewer)
+
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
 
@@ -152,6 +156,8 @@ class Menu(QMenuBar):
         mnuTime.addAction(self.actTextTime)
 
         mnuThings.addAction(self.actViewFriends)
+        mnuThings.addAction(self.actViewEvents)
+
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()
@@ -224,3 +230,9 @@ class Menu(QMenuBar):
         """
         self.friendsViewer = fv.FriendsViewer(self.logger)
         self.friendsViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openEventsViewer() ----
+    def openEventsViewer(self):
+        """   Open the event viewer.
+        """
+        self.eventsViewer = ev.EventsViewer(self.logger, self.config)
+        self.eventsViewer.show()

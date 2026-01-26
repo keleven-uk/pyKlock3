@@ -22,7 +22,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QFrame, QTableWidget,
-                             QTableWidgetItem, QMessageBox)
+                             QTableWidgetItem, QMessageBox, QApplication)
 
 import src.classes.friendsStore as fs
 import src.windows.friendsAdd as af
@@ -41,7 +41,14 @@ class FriendsViewer(QMainWindow):
         self.noHeaders     = len(self.tableHeaders)
         self.friendsAdd    = None
 
-        self.setGeometry(300, 300, 1500, 800)
+        height     = 800
+        width      = 1500
+        screenSize = QApplication.primaryScreen().availableGeometry()
+        xPos       = int((screenSize.width() / 2)  - (width / 2))
+        yPos       = int((screenSize.height() / 2) - (height / 2))
+
+        self.setGeometry(xPos, yPos, height, width)
+        self.setFixedSize(width, height)
         self.setWindowTitle("Friends")
 
         self.buildGUI()
@@ -95,6 +102,7 @@ class FriendsViewer(QMainWindow):
         row = 0
 
         self.tableView.clear()
+        self.tableView.setRowCount(row)
         self.tableView.setColumnCount(self.noHeaders)
         self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
 

@@ -40,17 +40,18 @@ class About(QDialog):
         self.config     = myConfig
         self.logger     = myLogger
         self.startTime  = startTime
-        self.height     = 600
-        self.width      = 400
+
+        height     = 600
+        width      = 400
         screenSize      = QApplication.primaryScreen().availableGeometry()
-        xPos            = int((screenSize.width() / 2)  - (self.width / 2))
-        yPos            = int((screenSize.height() / 2) - (self.height / 2))
+        xPos            = int((screenSize.width() / 2)  - (width / 2))
+        yPos            = int((screenSize.height() / 2) - (height / 2))
 
         self.logger.info("Launching About dialog")
 
         self.setWindowTitle(f"About {self.config.NAME}")
-        self.setGeometry(xPos, yPos, self.width, self.height)
-        self.setFixedSize(self.width, self.height)
+        self.setGeometry(xPos, yPos, width, height)
+        self.setFixedSize(width, height)
 
         layout = QVBoxLayout()
 

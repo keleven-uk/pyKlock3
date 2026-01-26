@@ -34,6 +34,19 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.36		[23 January 2026]
+
+	Added an Events Viewer.
+		The data is held in a CSV file and loaded into a custom events Store.
+		The events store is a dictionary behind the scenes and is held in it's own class.
+		Events is on it's menu, under the main menu of Things.
+		Modelled heavily on the friends store.
+		
+	The toast came from https://github.com/niklashenning/pyqttoast
+	Added a QToggle widget to display the binary choices in settings.
+		QToggle came from https://github.com/luandiasrj/QToggle_-_Advanced_QCheckbox_for_PyQT6
+
+	
 V2026.35		[23 January 2026]
 
 	Changed all the boolean properties in the settings window to toggle buttons from push buttons.

@@ -1,16 +1,16 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Friday 23 January 2026  21:55:54
+#   (c) Kevin Scott   Written Sunday 25 January 2026  22:24:19
 #
 #   true and false are lower case 
 #
 [INFO]
 myNAME = "pyKlock"
-myVERSION = "2026.35"
+myVERSION = "2026.36"
 
 [APPLICATION]
-x_pos = 3012
-y_pos = 30
-width = 580
+x_pos = 2829
+y_pos = 23
+width = 561
 height = 58
 confirmExit = false
 menuBar = true
@@ -38,4 +38,13 @@ hour_chimes = true
 quarter_chimes = true
 hour_pips = false
 cuckoo = false
-sound_volume = 52
+sound_volume = 13
+
+[EVENTS]
+stage1Days = 5
+stage2Days = 30
+stage3Days = 30
+stage1Colour = "red"
+stage2Colour = "yellow"
+stage3Colour = "green"
+nowColour = "blue"
