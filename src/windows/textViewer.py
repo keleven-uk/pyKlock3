@@ -19,7 +19,7 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QPlainTextEdit
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QPlainTextEdit, QApplication
 
 from src.projectPaths import MAIN_PATH, LOGGER_PATH
 
@@ -30,8 +30,9 @@ class TextViewer(QWidget):
     def __init__(self, parent, action, logger):
         super().__init__()
 
-        xPos            = int((screenSize.width() / 2)  - (self.width / 2))
-        yPos            = int((screenSize.height() / 2) - (self.height / 2))
+        screenSize = QApplication.primaryScreen().availableGeometry()
+        xPos       = int((screenSize.width() / 2)  - (self.width / 2))
+        yPos       = int((screenSize.height() / 2) - (self.height / 2))
 
         self.setGeometry(xPos, yPos, 800, 800)
 

@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    friendsViewer   Copyright (C) <2025-26>  <Kevin Scott>                                                   #
+#    eventsViewer   Copyright (C) <2026>  <Kevin Scott>                                                       #
 #                                                                                                             #
-#    Display friends in a table.                                                                              #
+#    Display Events in a table.                                                                               #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow,
                              QTableWidgetItem, QMessageBox, QApplication)
 
 import src.classes.eventsStore as es
+import src.windows.eventsAdd as ae
 
 class EventsViewer(QMainWindow):
     """  Display friends in a table in a separate window.
@@ -39,7 +40,7 @@ class EventsViewer(QMainWindow):
         self.eventsCategories = self.eventsStore.getCategories
         self.tableHeaders     = self.eventsStore.getHeaders
         self.noHeaders        = len(self.tableHeaders)
-        self.friendsAdd       = None
+        self.eventsAdd        = None
 
         height     = 800
         width      = 800
@@ -116,8 +117,22 @@ class EventsViewer(QMainWindow):
 
     # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
     def addEvent(self):
-        """   Open the Add Friends windows.
+        """   Open the Add Events windows.
         """
+        if self.eventsAdd is None:
+            self.eventsAdd = ae.AddFriends(self.logger, self.eventsCategories, self.tableHeaders)     #  Needs to be self. - to keep window alive.
+            self.eventsAdd.show()
+            self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                      #  Signal is fired when a friend is to be added.
+            self.eventsAdd.closeNewEvent.connect(self.closeNewEvent)                                     #  Signal is fired when the addFriend window is closed.
+    # ----------------------------------------------------------------------------------------------------------------------- addNewFriend() --------
+    def addNewEvent(self,event):
+        """  Adds a new Event to the events store.
+             The events store is then re-loaded, this ensures the data is sorted.
+             LoadTable is called to refresh the displayed data.
+        """
+        key  = event[1]
+        item = event
+        self.eventsStore.addEvent(key, item)
         self.refreshEvents()
     # ----------------------------------------------------------------------------------------------------------------------- editEvent() -----------
     def editEvent(self):
@@ -133,11 +148,23 @@ class EventsViewer(QMainWindow):
         self.eventsStore.saveEvents()
         self.events = self.eventsStore.getEvents()
         self.loadTable()
+    # ----------------------------------------------------------------------------------------------------------------------- closeNewFriend() ------
+    def closeNewEvent(self):
+        """  When the newEvents window is closed, it signals here so the reference can be set to null.
+        """
+        self.eventsAdd = None
    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  When the viewer is closed, checks if any child windows are still open.
         """
-        pass
+        if self.eventsAdd:
+            confirmation = QMessageBox.question(self, "Confirmation", "The Add Event's Windows is still open - Continue?")
+
+            if confirmation == QMessageBox.StandardButton.Yes:
+                event.accept()      #  Close the app.
+                self.eventsAdd.close()
+            else:
+                event.ignore()      #  Continue the app.
 
 
  

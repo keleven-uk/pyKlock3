@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    eventsStore.py   Copyright (C) <2024>  <Kevin Scott>                                                     #
+#    eventsStore.py   Copyright (C) <2024-26>  <Kevin Scott>                                                  #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
 #    A store class for the saving and manipulation of events.                                                 #
@@ -135,7 +135,7 @@ class eventsStore():
             dtLeft  = int((dtDue - now).total_seconds())                                    #  Convert timedelta to seconds.
 
             self.__checkEvent(key, dtLeft)
-# ------------------------------------------------------------------------------------- _checkYear --------------------
+# ------------------------------------------------------------------------------------- checkYear ---------------------
     def checkYear(self, dateDue, now):
         """  Rule 1 : If the year if before the current year [i.e. original birthday year] use current year.
              Rule 2 : If the month is before the current month [i.e. original birthday month] add 1 to year.
@@ -147,7 +147,7 @@ class eventsStore():
              Both dateDue input and output are in string format.
              now is input in datetime format.
 
-              Made the method callable, is a means of degerming the actual due date.
+              Made the method callable, is a means of determining the actual due date.
         """
         curDay   = now.day
         curMonth = now.month

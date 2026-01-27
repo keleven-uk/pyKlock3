@@ -34,6 +34,13 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.37		[27 January 2026]
+
+	Completed the add events screen - still needs the add logic.
+		This is called from the events viewer.
+	Completed the events viewer close button.
+
+
 V2026.36		[23 January 2026]
 
 	Added an Events Viewer.
@@ -41,7 +48,7 @@ V2026.36		[23 January 2026]
 		The events store is a dictionary behind the scenes and is held in it's own class.
 		Events is on it's menu, under the main menu of Things.
 		Modelled heavily on the friends store.
-		
+
 	The toast came from https://github.com/niklashenning/pyqttoast
 	Added a QToggle widget to display the binary choices in settings.
 		QToggle came from https://github.com/luandiasrj/QToggle_-_Advanced_QCheckbox_for_PyQT6
@@ -52,7 +59,7 @@ V2026.35		[23 January 2026]
 	Changed all the boolean properties in the settings window to toggle buttons from push buttons.
 		Found at https://github.com/luandiasrj/QToggle_-_Advanced_QCheckbox_for_PyQT6 - Thank you.
 
-	Added a new option to the Sound settings tan - to play the pips at a given volume to test loudness.
+	Added a new option to the Sound settings tab - to play the pips at a given volume to test loudness.
 
 	Because the file progressBarStyles.py held styles for more then one widget - renamed to styles.py
 

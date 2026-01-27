@@ -142,3 +142,19 @@ class Styles():
             border-color : grey
             }
         """
+
+    @property
+    def QDateEdit_STYLE(self):
+        return"""
+        QDateEdit{
+            width : 134px
+            }
+        """
+
+    @property
+    def QTimeEdit_STYLE(self):
+        return"""
+        QTimeEdit{
+            width : 134px
+            }
+        """

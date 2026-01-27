@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    friendsStore.py   Copyright (C) <2024>  <Kevin Scott>                                                    #
+#    friendsStore.py   Copyright (C) <2024-26>  <Kevin Scott>                                                 #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
 #    A store class for the saving and manipulation of events.                                                 #
@@ -13,7 +13,7 @@
 #    friendsStore     = es.friendsStore()                                                                     #
 #                                                                                                             #
 #    friendsStore.getHeaders           Retrieves the headers for display, as strings.                         #
-#    friendsStore.getCategories        Retrieves the categories for display, as strings.                     #
+#    friendsStore.getCategories        Retrieves the categories for display, as strings.                      #
 #    friendsStore.addFriend(key, item)  Adds an event to the store.  Key = name, item = all data.             #
 #    friendsStore.getFriends(rowKey)     Retrieves an friend matching name.                                   #
 #    friendsStore.getFriends()          Returns all events as a sorted list.                                  #

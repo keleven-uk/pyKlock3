@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    About   Copyright (C) <2025-26>  <Kevin Scott>                                                           #
+#    friendsAdd   Copyright (C) <2026>  <Kevin Scott>                                                         #
 #                                                                                                             #
-#    Displays an about dialog.                                                                                #
+#    Displays an friends add window.                                                                          #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -25,8 +25,10 @@ from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QVBoxLayout, QHBoxLayout,
                              QApplication, QFrame, QPushButton, QPlainTextEdit, QDateEdit, QMessageBox)
 from PyQt6.QtCore    import Qt, pyqtSignal, QDate
 
+import src.classes.styles as styles
+
 class AddFriends(QMainWindow):
-    """  Displays a window, so that a new friend s data can be entered.
+    """  Displays a window, so that a new friends data can be entered.
     """
 
     addNewFriend   = pyqtSignal(list)  # <-- This is the sub window's signal
@@ -36,6 +38,7 @@ class AddFriends(QMainWindow):
         super().__init__()
 
         self.logger    = myLogger
+        self.styles    = styles.Styles()
         self.titles    = titles
         self.headers   = headers
         self.newFriend = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
@@ -111,17 +114,11 @@ class AddFriends(QMainWindow):
                     dteElement.setDisplayFormat("d-MMMM-yyyy")
                     dteElement.setDate(QDate.currentDate())
                     dteElement.setObjectName(header)
-                    lneElement.setFixedWidth(self.leWidth)
                     dteElement.dateTimeChanged.connect(self.addElement)
+                    dteElement.setStyleSheet(self.styles.QDateEdit_STYLE)
                     entryLayout.addWidget(lblElement, row, 2, Qt.AlignmentFlag.AlignCenter)
                     entryLayout.addWidget(dteElement, row, 3, Qt.AlignmentFlag.AlignCenter)
 
-                    # setting style sheet
-                    dteElement.setStyleSheet("QDateEdit"
-                                            "{"
-                                            f"width : {self.leWidth-16}px"
-                                            "}"
-                                            )
                     row += 1
                 case "Notes":
                     lblElement = QLabel(header)
