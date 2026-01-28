@@ -114,7 +114,6 @@ class EventsViewer(QMainWindow):
                 col += 1
 
             row += 1
-
     # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
     def addEvent(self):
         """   Open the Add Events windows.
@@ -139,7 +138,24 @@ class EventsViewer(QMainWindow):
         pass
     # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
     def deleteEvent(self):
-        pass
+        """  Deletes an event from the table.
+             Displays an error if no row selected.
+             Prompts user for confirmation.
+        """
+        row = self.tableView.currentRow()
+
+        if row == -1:
+            confirmation = QMessageBox.information(self, "Error.", "No row selected.")
+            return
+
+        name         = f"{self.tableView.item(row, 2).text()} {self.tableView.item(row, 1).text()}"
+        confirmation = QMessageBox.question(self, "Confirmation", f"Delete an Event {name}")
+
+        if confirmation == QMessageBox.StandardButton.Yes:
+            key = f"{self.tableView.item(row, 0).text()}"
+            print(key)
+            self.eventsStore.deleteEvent(key)             #  Delete event
+            self.refreshEvents()
     # ----------------------------------------------------------------------------------------------------------------------- refreshEvents() -------
     def refreshEvents(self):
         """  Save the table to the friends store, the friends store is then re-loaded into the table.

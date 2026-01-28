@@ -138,6 +138,10 @@ class FriendsViewer(QMainWindow):
         pass
     # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
     def deleteFriend(self):
+        """  Deletes an event from the table.
+             Displays an error if no row selected.
+             Prompts user for confirmation.
+        """
         row = self.tableView.currentRow()
 
         if row == -1:

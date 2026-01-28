@@ -149,7 +149,6 @@ class AddFriends(QMainWindow):
         action    = self.sender()
         name      = action.objectName()
 
-        print (name, action)
         match name:
             case "Event Name":
                 self.newEvent[0] = action.text().title().strip()

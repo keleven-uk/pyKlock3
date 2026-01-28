@@ -502,7 +502,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.38",
+        config["INFO"] = {"myVERSION": "2026.39",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -520,7 +520,7 @@ class Config():
 
         config["TIME"] = {"mode"     : "Digital",
                           "format"   : "Fuzzy Time",
-                          "font"     :  "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular",
+                          "font"     : "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular",
                           "alignment": "Right",
                           "prefix"   : "",
                           "postfix"  : "",
