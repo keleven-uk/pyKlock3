@@ -44,7 +44,8 @@ class AddFriends(QMainWindow):
         self.styles     = styles.Styles()
         self.categories = categories
         self.headers    = headers
-        self.newEvent   = ["", "", "", "", "", "", "", "", "", ""]
+        self.today      = QDate.currentDate()
+        self.newEvent   = ["", self.today.toString("d MMMM yyyy"), "00:00", "", "", "", "", "", "", ""]
         self.height     = 400
         self.width      = 600
         self.leWidth    = 150                #  Width of a line edit
@@ -73,7 +74,7 @@ class AddFriends(QMainWindow):
 
         lblName = QLabel("Event Name")
         lneName = QLineEdit("", self)
-        lneName.setObjectName("Name")
+        lneName.setObjectName("Event Name")
         lneName.editingFinished.connect(self.addElement)
         lneName.setFixedWidth(self.leWidth)
         entryLayout.addWidget(lblName, 0, 0, Qt.AlignmentFlag.AlignCenter)
@@ -84,28 +85,32 @@ class AddFriends(QMainWindow):
         cbCategory.setObjectName("Category")
         cbCategory.insertItems(0, self.categories)
         cbCategory.currentTextChanged.connect(self.addElement)
+        cbCategory.setStyleSheet(self.styles.QComboBox_STYLE)
         entryLayout.addWidget(lblCategory, 0, 2, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(cbCategory,  0, 3, Qt.AlignmentFlag.AlignCenter)
 
         lblDateDue = QLabel("Date Due")
         dteDateDue = QDateEdit(self, calendarPopup=True)
         dteDateDue.setDisplayFormat("d-MMMM-yyyy")
-        dteDateDue.setDate(QDate.currentDate())
+        dteDateDue.setDate(self.today)
         dteDateDue.setObjectName("Date Due")
         dteDateDue.dateTimeChanged.connect(self.addElement)
         dteDateDue.setStyleSheet(self.styles.QDateEdit_STYLE)
+        dteDateDue.setTime(QTime(0, 0))
         entryLayout.addWidget(lblDateDue, 1, 0, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(dteDateDue, 1, 1, Qt.AlignmentFlag.AlignCenter)
 
-        lblTimeDue = QLabel("TimeDue")
-        dteTimeDue = QTimeEdit(self, calendarPopup=True)
-        dteTimeDue.setDisplayFormat("HH-MM")
-        dteTimeDue.setTime(QTime.currentTime())  
-        dteTimeDue.setObjectName("TimeDue")
-        dteTimeDue.editingFinished.connect(self.addElement)
-        dteTimeDue.setStyleSheet(self.styles.QTimeEdit_STYLE)
+        lblTimeDue = QLabel("Time Due")
+        teTimeDue  = QTimeEdit(self)
+        teTimeDue.setDisplayFormat("HH-MM")
+        teTimeDue.setTime(QTime.currentTime())  
+        teTimeDue.setObjectName("Time Due")
+        teTimeDue.editingFinished.connect(self.addElement)
+        teTimeDue.setDisplayFormat("HH:mm")
+        teTimeDue.setTime(QTime(0, 0))
+        teTimeDue.setStyleSheet(self.styles.QTimeEdit_STYLE)
         entryLayout.addWidget(lblTimeDue, 1, 2, Qt.AlignmentFlag.AlignCenter)
-        entryLayout.addWidget(dteTimeDue, 1, 3, Qt.AlignmentFlag.AlignCenter)
+        entryLayout.addWidget(teTimeDue, 1, 3, Qt.AlignmentFlag.AlignCenter)
 
         lblRecurring = QLabel("Recurring")
         tgRecurring  = QToggle(self)
@@ -123,7 +128,6 @@ class AddFriends(QMainWindow):
         entryLayout.addWidget(lblNotes, 3, 0, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(lteNotes, 3, 1, 3, 3)
 
-
         self.btnAdd = QPushButton(text="Add a Friend", parent=self)
         self.btnAdd.setEnabled(False)
         self.btnAdd.clicked.connect(self.addEvent)
@@ -139,16 +143,49 @@ class AddFriends(QMainWindow):
         centralWidget.setLayout(centralLayout)
     # ----------------------------------------------------------------------------------------------------------------------- addElement() ----------
     def addElement(self):
-        """  When an element has been edited, add the data to the appropriate position in the new friends list.
+        """  When an element has been edited, add the data to the appropriate position in the new event list.
              We replace instead of inserting, to stop the list growing.
         """
         action    = self.sender()
         name      = action.objectName()
 
-        self.addNewEvent.emit(self.newEvent)      #  emit signal
+        print (name, action)
+        match name:
+            case "Event Name":
+                self.newEvent[0] = action.text().title().strip()
+                self.addEventValidate()
+            case "Date Due":
+                self.newEvent[1] = action.date().toString("d MMMM yyyy")
+                self.addEventValidate()
+            case "Time Due":
+                self.newEvent[2] = str(action.time().toPyTime())
+            case "Category":
+                self.newEvent[3] = action.currentText()
+            case "Recurring":
+                self.newEvent[4] = ""
+            case "Notes":
+                self.newEvent[5] = action.toPlainText()
+    # ----------------------------------------------------------------------------------------------------------------------- addEventValidate() ----
+    def addEventValidate(self):
+        """  Event name and Event category are mandatory.
+        """
+        if self.newEvent[0] and self.newEvent[1]:
+            self.btnAdd.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
     def addEvent(self, event):
-        pass
+        print(self.newEvent)
+        """  Checks is there is new data, if so, signals the parent and passes the data.
+
+             Will only emit the signal if their is a Event Name and Event category.
+        """
+        if self.newEvent == []:
+            self.close()
+        else:
+            if self.newEvent[0] and self.newEvent[1]:
+                self.addNewEvent.emit(self.newEvent)      #  emit signal
+                self.close()
+            else:
+                QMessageBox.information(self, "Error on data entry.", "Event Name and Event category are mandatory.")
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  Closes the window and informs the parent.

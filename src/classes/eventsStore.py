@@ -40,7 +40,7 @@ import datetime
 import csv
 
 import src.projectPaths as pp
-from pyqttoast import Toast, ToastPreset
+from pyqttoast import Toast
 
 
 class eventsStore():
@@ -55,7 +55,7 @@ class eventsStore():
         self.myConfig   = myConfig
         self.myLogger   = myLogger
         self.store      = {}         #  Create the store, an empty dictionary.
-        self.Headers    = ["Name", "Date Due", "Time Due", "Category", "Recurring", "Notes", "Left"]
+        self.Headers    = ["Event Name", "Date Due", "Time Due", "Category", "Recurring", "Notes", "Left"]
         self.Categories = ["", "Birthday", "Wedding Anniversary", "Anniversary", "Moto", "Holiday", "Appointment", "One Off Event", "Other"]
         self.storeName  = pp.EV_DATA_PATH
 
@@ -203,7 +203,7 @@ class eventsStore():
         match stage:
             case "Stage 3":
                 message = f" {eventName} in {eventDue}"
-                eventNot = toast.notification(self.master, message, self.stage3Colour)
+                eventNot = Toast.notification(self.master, message, self.stage3Colour)
                 response = eventNot.get()
                 if response == "Acknowledge":
                     self.store[key][9] = "True"
@@ -211,7 +211,7 @@ class eventsStore():
 
             case "Stage 2":
                 message = f" {eventName} in {eventDue}"
-                eventNot = toast.notification(self.master, message, self.stage2Colour)
+                eventNot = Toast.notification(self.master, message, self.stage2Colour)
                 response = eventNot.get()
                 if response == "Acknowledge":
                     self.store[key][8] = "True"
@@ -219,7 +219,7 @@ class eventsStore():
 
             case "Stage 1":
                 message = f" {eventName} in {eventDue}"
-                eventNot = toast.notification(self.master, message, self.stage1Colour)
+                eventNot = Toast.notification(self.master, message, self.stage1Colour)
                 response = eventNot.get()
                 if response == "Acknowledge":
                     self.store[key][7] = "True"
@@ -227,7 +227,7 @@ class eventsStore():
 
             case "Now":
                 message = f" {eventName} Now"
-                eventNot = toast.notification(self.master, message, self.nowColour)
+                eventNot = Toast.notification(self.master, message, self.nowColour)
                 response = eventNot.get()
                 # if response == "Acknowledge":
                 #     self.deleteEvent(key)

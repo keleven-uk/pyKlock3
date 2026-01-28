@@ -34,6 +34,11 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.38		[28 January 2026]
+
+	Added the events add logic.
+
+
 V2026.37		[27 January 2026]
 
 	Completed the add events screen - still needs the add logic.

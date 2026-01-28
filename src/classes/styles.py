@@ -158,3 +158,11 @@ class Styles():
             width : 134px
             }
         """
+
+    @property
+    def QComboBox_STYLE(self):
+        return"""
+        QComboBox{
+            width : 134px
+            }
+        """

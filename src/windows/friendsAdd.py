@@ -188,13 +188,15 @@ class AddFriends(QMainWindow):
                 self.newFriend[14] = action.toPlainText()
     # ----------------------------------------------------------------------------------------------------------------------- addFriendValidate() ---
     def addFriendValidate(self):
+        """  First name and Last Name are mandatory.
+        """
         if self.newFriend[1] and self.newFriend[2]:
             self.btnAdd.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- addFriend() -----------
     def addFriend(self):
         """  Checks is there is new data, if so, signals the parent and passes the data.
 
-             Will only emit the signal if their si a First name and a Last Name.
+             Will only emit the signal if their is a First name and a Last Name.
         """
         if self.newFriend == []:
             self.close()
