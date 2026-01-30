@@ -114,6 +114,9 @@ class FriendsViewer(QMainWindow):
                 col += 1
 
             row += 1
+            
+        for head in range(self.noHeaders):
+            self.tableView.resizeColumnToContents(head)
     # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
     def addFriend(self):
         """   Open the Add Friends windows.
@@ -135,7 +138,18 @@ class FriendsViewer(QMainWindow):
         self.refreshFriends()
     # ----------------------------------------------------------------------------------------------------------------------- editFriend() ----------
     def editFriend(self):
-        pass
+        row = self.tableView.currentRow()
+
+        if row == -1:
+            QMessageBox.information(self, "Error.", "No row selected.")
+            return
+
+        key    = f"{self.tableView.item(row, 1).text()} : {self.tableView.item(row, 2).text()}"
+        friend = self.friendsStore.getFriend(key)
+        self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles, self.tableHeaders, friend)         #  Needs to be self. - to keep window alive.
+        self.friendsAdd.show()
+        self.friendsAdd.addNewFriend.connect(self.addNewFriend)                                             #  Signal is fired when a friend is to be added.
+        self.friendsAdd.closeNewFriend.connect(self.closeNewFriend)   
     # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
     def deleteFriend(self):
         """  Deletes an event from the table.

@@ -43,7 +43,7 @@ class EventsViewer(QMainWindow):
         self.eventsAdd        = None
 
         height     = 800
-        width      = 800
+        width      = 600
         screenSize = QApplication.primaryScreen().availableGeometry()
         xPos       = int((screenSize.width() / 2)  - (width / 2))
         yPos       = int((screenSize.height() / 2) - (height / 2))
@@ -114,6 +114,9 @@ class EventsViewer(QMainWindow):
                 col += 1
 
             row += 1
+
+        for head in range(self.noHeaders):
+            self.tableView.resizeColumnToContents(head)
     # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
     def addEvent(self):
         """   Open the Add Events windows.
@@ -122,20 +125,32 @@ class EventsViewer(QMainWindow):
             self.eventsAdd = ae.AddFriends(self.logger, self.eventsCategories, self.tableHeaders)     #  Needs to be self. - to keep window alive.
             self.eventsAdd.show()
             self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                      #  Signal is fired when a friend is to be added.
-            self.eventsAdd.closeNewEvent.connect(self.closeNewEvent)                                     #  Signal is fired when the addFriend window is closed.
+            self.eventsAdd.closeNewEvent.connect(self.closeNewEvent)                                  #  Signal is fired when the addFriend window is closed.
     # ----------------------------------------------------------------------------------------------------------------------- addNewFriend() --------
     def addNewEvent(self,event):
         """  Adds a new Event to the events store.
              The events store is then re-loaded, this ensures the data is sorted.
              LoadTable is called to refresh the displayed data.
         """
-        key  = event[1]
+        key  = event[0]
         item = event
         self.eventsStore.addEvent(key, item)
         self.refreshEvents()
     # ----------------------------------------------------------------------------------------------------------------------- editEvent() -----------
     def editEvent(self):
-        pass
+        row = self.tableView.currentRow()
+
+        if row == -1:
+            QMessageBox.information(self, "Error.", "No row selected.")
+            return
+
+        key    = self.tableView.item(row, 0).text()
+        event = self.eventsStore.getEvent(key)
+        print(key, event)
+        self.eventsAdd = ae.AddEvents(self.logger, self.eventsCategories, self.tableHeaders, event)         #  Needs to be self. - to keep window alive.
+        self.eventsAdd.show()
+        self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                          #  Signal is fired when a friend is to be added.
+        self.eventsAdd.closeNewEvent.connect(self.closeNewEvent) 
     # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
     def deleteEvent(self):
         """  Deletes an event from the table.
@@ -148,8 +163,8 @@ class EventsViewer(QMainWindow):
             confirmation = QMessageBox.information(self, "Error.", "No row selected.")
             return
 
-        name         = f"{self.tableView.item(row, 2).text()} {self.tableView.item(row, 1).text()}"
-        confirmation = QMessageBox.question(self, "Confirmation", f"Delete an Event {name}")
+        event        = self.tableView.item(row, 0).text()
+        confirmation = QMessageBox.question(self, "Confirmation", f"Delete an Event {event}")
 
         if confirmation == QMessageBox.StandardButton.Yes:
             key = f"{self.tableView.item(row, 0).text()}"

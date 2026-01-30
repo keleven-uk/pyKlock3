@@ -34,6 +34,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.40		[30 January 2026]
+
+	Implemented the edit buttons for both friends and events.
+	Also, amended both tables so that the columns resize to their contents.
+
+
 V2026.39		[28 January 2026]
 
 	Implemented the delete events button.

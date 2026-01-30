@@ -46,7 +46,7 @@ from pyqttoast import Toast
 class eventsStore():
     """  A class that implements a store for friends.
          The store is implemented as a dictionary - [key, item].
-         The key is a string - Name.
+         The key is a string - Event Name.
          The item is a list  - Name, Date Due, Time, Due, Category, Notes, Time Left, Stage 1, stage 2, stage 3.
     """
 # ------------------------------------------------------------------------------------- __init__ ----------------------

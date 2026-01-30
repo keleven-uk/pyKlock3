@@ -28,13 +28,14 @@ from PyQt6.QtCore    import Qt, pyqtSignal, QDate
 import src.classes.styles as styles
 
 class AddFriends(QMainWindow):
-    """  Displays a window, so that a new friends data can be entered.
+    """  Displays a window, so that a new friends data can be entered in add mode.
+         If a friend is supplied, then enter edit mode and display the data.
     """
 
     addNewFriend   = pyqtSignal(list)  # <-- This is the sub window's signal
     closeNewFriend = pyqtSignal()      # <-- This is the sub window's signal
 
-    def __init__(self, myLogger, titles, headers):
+    def __init__(self, myLogger, titles, headers, friend=None):
         super().__init__()
 
         self.logger    = myLogger
@@ -42,6 +43,7 @@ class AddFriends(QMainWindow):
         self.titles    = titles
         self.headers   = headers
         self.newFriend = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+        self.friend    = friend
         self.height    = 400
         self.width     = 600
         self.leWidth   = 150                #  Width of a line edit
@@ -56,6 +58,11 @@ class AddFriends(QMainWindow):
         self.setFixedSize(self.width, self.height)
 
         self.buildGUI()
+
+        if self.friend:
+            self.PopulateFriend()
+            self.btnAdd.setText("Save Edited Friend")
+            self.btnAdd.setEnabled(True)
 
     def buildGUI(self):
         """  Build the GUI elements.
@@ -74,13 +81,13 @@ class AddFriends(QMainWindow):
         for header in self.headers:
             match header:
                 case "Title":
-                    lblTitle = QLabel(header)
-                    cbTitle  = QComboBox()
-                    cbTitle.setObjectName(header)
-                    cbTitle.insertItems(0, self.titles)
-                    cbTitle.currentTextChanged.connect(self.addElement)
-                    entryLayout.addWidget(lblTitle, row, col, Qt.AlignmentFlag.AlignCenter)
-                    entryLayout.addWidget(cbTitle,  row, col+1, Qt.AlignmentFlag.AlignRight)
+                    self.lblElement = QLabel(header)
+                    self.cbElement  = QComboBox()
+                    self.cbElement.setObjectName(header)
+                    self.cbElement.insertItems(0, self.titles)
+                    self.cbElement.currentTextChanged.connect(self.addElement)
+                    entryLayout.addWidget(self.lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
+                    entryLayout.addWidget(self.cbElement,  row, col+1, Qt.AlignmentFlag.AlignRight)
                     row += 1
                 case "First Name" | "Last Name" | "Mobile Number" | "Telephone Number" | "E-Mail" | "Address Line 1" | "Address Line 2" | \
                      "City" | "County" | "Post Code" | "Country":
@@ -91,42 +98,42 @@ class AddFriends(QMainWindow):
                     else:
                         nextRow = row
 
-                    lblElement = QLabel(header)
-                    lneElement = QLineEdit("", self)
-                    lneElement.setObjectName(header)
-                    lneElement.editingFinished.connect(self.addElement)
-                    lneElement.setFixedWidth(self.leWidth)
-                    entryLayout.addWidget(lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
-                    entryLayout.addWidget(lneElement, row, col+1, Qt.AlignmentFlag.AlignCenter)
+                    self.lblElement = QLabel(header)
+                    self.lneElement = QLineEdit("", self)
+                    self.lneElement.setObjectName(header)
+                    self.lneElement.editingFinished.connect(self.addElement)
+                    self.lneElement.setFixedWidth(self.leWidth)
+                    entryLayout.addWidget(self.lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
+                    entryLayout.addWidget(self.lneElement, row, col+1, Qt.AlignmentFlag.AlignCenter)
                     row = nextRow           #  Pass on the added row.
                 case "House Number":
-                    lblElement = QLabel(header)
-                    lneElement = QLineEdit("", self)
-                    lneElement.setObjectName(header)
-                    lneElement.setFixedWidth(self.leWidth)
-                    lneElement.editingFinished.connect(self.addElement)
-                    entryLayout.addWidget(lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
-                    entryLayout.addWidget(lneElement, row, col+1, Qt.AlignmentFlag.AlignCenter)
+                    self.lblElement = QLabel(header)
+                    self.lneElement = QLineEdit("", self)
+                    self.lneElement.setObjectName(header)
+                    self.lneElement.setFixedWidth(self.leWidth)
+                    self.lneElement.editingFinished.connect(self.addElement)
+                    entryLayout.addWidget(self.lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
+                    entryLayout.addWidget(self.lneElement, row, col+1, Qt.AlignmentFlag.AlignCenter)
                     row += 1
                 case "Birthday":
-                    lblElement = QLabel(header)
-                    dteElement = QDateEdit(self, calendarPopup=True)
-                    dteElement.setDisplayFormat("d-MMMM-yyyy")
-                    dteElement.setDate(QDate.currentDate())
-                    dteElement.setObjectName(header)
-                    dteElement.dateTimeChanged.connect(self.addElement)
-                    dteElement.setStyleSheet(self.styles.QDateEdit_STYLE)
-                    entryLayout.addWidget(lblElement, row, 2, Qt.AlignmentFlag.AlignCenter)
-                    entryLayout.addWidget(dteElement, row, 3, Qt.AlignmentFlag.AlignCenter)
+                    self.lblElement = QLabel(header)
+                    self.dteElement = QDateEdit(self, calendarPopup=True)
+                    self.dteElement.setDisplayFormat("d-MMMM-yyyy")
+                    self.dteElement.setDate(QDate.currentDate())
+                    self.dteElement.setObjectName(header)
+                    self.dteElement.dateTimeChanged.connect(self.addElement)
+                    self.dteElement.setStyleSheet(self.styles.QDateEdit_STYLE)
+                    entryLayout.addWidget(self.lblElement, row, 2, Qt.AlignmentFlag.AlignCenter)
+                    entryLayout.addWidget(self.dteElement, row, 3, Qt.AlignmentFlag.AlignCenter)
 
                     row += 1
                 case "Notes":
-                    lblElement = QLabel(header)
-                    lteElement = QPlainTextEdit("", self)
-                    lteElement.setObjectName(header)
-                    lteElement.textChanged.connect(self.addElement)
-                    entryLayout.addWidget(lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
-                    entryLayout.addWidget(lteElement, row, col+1, 3, 3)
+                    self.lblElement = QLabel(header)
+                    self.lteElement = QPlainTextEdit("", self)
+                    self.lteElement.setObjectName(header)
+                    self.lteElement.textChanged.connect(self.addElement)
+                    entryLayout.addWidget(self.lblElement, row, col, Qt.AlignmentFlag.AlignCenter)
+                    entryLayout.addWidget(self.lteElement, row, col+1, 3, 3)
 
 
             col = 0     #  Reset column number.
@@ -144,6 +151,42 @@ class AddFriends(QMainWindow):
         centralLayout.addLayout(entryLayout)
         centralLayout.addLayout(ButtonLayout)
         centralWidget.setLayout(centralLayout)
+    # ----------------------------------------------------------------------------------------------------------------------- PopulateFriend() ------
+    def PopulateFriend(self):
+        """  If in edit mode, populate the friends with friends data.
+        """
+        element = self.findChild(QComboBox, "Title")
+        index   = element.findText(self.friend[0])
+        element.setCurrentIndex(index)
+        element = self.findChild(QLineEdit, "Last Name")
+        element.setText(self.friend[1])
+        element = self.findChild(QLineEdit, "First Name")
+        element.setText(self.friend[2])
+        element = self.findChild(QLineEdit, "Mobile Number")
+        element.setText(self.friend[3])
+        element = self.findChild(QLineEdit, "Telephone Number")
+        element.setText(self.friend[4])
+        element = self.findChild(QLineEdit, "E-Mail")
+        element.setText(self.friend[5])
+        element = self.findChild(QDateEdit, "Birthday")
+        birthday = QDate.fromString(self.friend[6], "d MMMM yyyy")
+        element.setDate(birthday)
+        element = self.findChild(QLineEdit, "House Number")
+        element.setText(self.friend[7])
+        element = self.findChild(QLineEdit, "Address Line 1")
+        element.setText(self.friend[8])
+        element = self.findChild(QLineEdit, "Address Line 2")
+        element.setText(self.friend[9])
+        element = self.findChild(QLineEdit, "City")
+        element.setText(self.friend[10])
+        element = self.findChild(QLineEdit, "County")
+        element.setText(self.friend[11])
+        element = self.findChild(QLineEdit, "Post Code")
+        element.setText(self.friend[12])
+        element = self.findChild(QLineEdit, "Country")
+        element.setText(self.friend[13])
+        element = self.findChild(QPlainTextEdit, "Notes")
+        element.setPlainText(self.friend[14])
 
     # ----------------------------------------------------------------------------------------------------------------------- addElement() ----------
     def addElement(self):

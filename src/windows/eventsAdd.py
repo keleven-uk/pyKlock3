@@ -30,14 +30,14 @@ from src.classes.QToggle import QToggle
 
 import src.classes.styles as styles
 
-class AddFriends(QMainWindow):
+class AddEvents(QMainWindow):
     """  Displays a window, so that a new Event data can be entered.
     """
 
     addNewEvent   = pyqtSignal(list)  # <-- This is the sub window's signal
     closeNewEvent = pyqtSignal()      # <-- This is the sub window's signal
 
-    def __init__(self, myLogger, categories, headers):
+    def __init__(self, myLogger, categories, headers, event=None):
         super().__init__()
 
         self.logger     = myLogger
@@ -46,8 +46,9 @@ class AddFriends(QMainWindow):
         self.headers    = headers
         self.today      = QDate.currentDate()
         self.newEvent   = ["", self.today.toString("d MMMM yyyy"), "00:00", "", "", "", "", "", "", ""]
+        self.event      = event
         self.height     = 400
-        self.width      = 600
+        self.width      = 800
         self.leWidth    = 150                #  Width of a line edit
         screenSize      = QApplication.primaryScreen().availableGeometry()
         xPos            = int((screenSize.width() / 2)  - (self.width / 2))
@@ -58,6 +59,8 @@ class AddFriends(QMainWindow):
         self.setWindowTitle("Add a Friend")
         self.setGeometry(xPos, yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
+
+        print(self.event)
 
         self.buildGUI()
 
@@ -141,6 +144,33 @@ class AddFriends(QMainWindow):
         centralLayout.addLayout(entryLayout)
         centralLayout.addLayout(ButtonLayout)
         centralWidget.setLayout(centralLayout)
+
+        if self.event:
+            self.PopulateEvent()
+            self.btnAdd.setText("Save Edited Event")
+            self.btnAdd.setEnabled(True)
+            lneName.setReadOnly(True)
+            self.newEvent = self.event
+    # ----------------------------------------------------------------------------------------------------------------------- PopulateEvent() -------
+    def PopulateEvent(self):
+        """  If in edit mode, populate the friends with friends data.
+        """
+        element = self.findChild(QLineEdit, "Event Name")
+        element.setText(self.event[0])
+        element = self.findChild(QDateEdit, "Date Due")
+        dateDue = QDate.fromString(self.event[1], "d MMMM yyyy")
+        element.setDate(dateDue)
+        element = self.findChild(QTimeEdit, "Time Due")
+        timeDue = QTime.fromString(self.event[2], "HH-MM")
+        element.setTime(timeDue)
+        element = self.findChild(QComboBox, "Category")
+        index   = element.findText(self.event[3])
+        element.setCurrentIndex(index)
+        element = self.findChild(QToggle, "Recurring")
+        checked = True if self.event[4] == "True" else False
+        element.setChecked(checked)
+        element = self.findChild(QPlainTextEdit, "Notes")
+        element.setPlainText(self.event[5])
     # ----------------------------------------------------------------------------------------------------------------------- addElement() ----------
     def addElement(self):
         """  When an element has been edited, add the data to the appropriate position in the new event list.
@@ -150,9 +180,9 @@ class AddFriends(QMainWindow):
         name      = action.objectName()
 
         match name:
-            case "Event Name":
-                self.newEvent[0] = action.text().title().strip()
-                self.addEventValidate()
+            # case "Event Name":
+            #     self.newEvent[0] = action.text().title().strip()
+            #     self.addEventValidate()
             case "Date Due":
                 self.newEvent[1] = action.date().toString("d MMMM yyyy")
                 self.addEventValidate()
@@ -161,7 +191,8 @@ class AddFriends(QMainWindow):
             case "Category":
                 self.newEvent[3] = action.currentText()
             case "Recurring":
-                self.newEvent[4] = ""
+                checked = "True" if action.isChecked() else "False"
+                self.newEvent[4] = checked
             case "Notes":
                 self.newEvent[5] = action.toPlainText()
     # ----------------------------------------------------------------------------------------------------------------------- addEventValidate() ----
