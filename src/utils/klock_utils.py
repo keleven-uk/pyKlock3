@@ -115,7 +115,7 @@ def getBootTime():
     # (format = x days, HH:MM:SS)
     #print(f"{days} days, {hour:02}:{mins:02}:{sec:02}")
 
-    return (t*-1)
+    return (t)
 
 def formatSpeed(bitsPerSecond):
     """  Returns a more human readable internet speed.

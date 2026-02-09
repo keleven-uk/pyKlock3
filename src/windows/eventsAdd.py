@@ -45,7 +45,7 @@ class AddEvents(QMainWindow):
         self.categories = categories
         self.headers    = headers
         self.today      = QDate.currentDate()
-        self.newEvent   = ["", self.today.toString("d MMMM yyyy"), "00:00", "", "", "", "", "", "", ""]
+        self.newEvent   = ["", self.today.toString("d MMMM yyyy"), "00:00", "", "", "", "", "False", "False", "false", "False"]
         self.event      = event
         self.height     = 400
         self.width      = 800
@@ -54,13 +54,11 @@ class AddEvents(QMainWindow):
         xPos            = int((screenSize.width() / 2)  - (self.width / 2))
         yPos            = int((screenSize.height() / 2) - (self.height / 2))
 
-        self.logger.info("Launching Add Friends dialog")
+        self.logger.info("Launching Add Events dialog")
 
-        self.setWindowTitle("Add a Friend")
+        self.setWindowTitle("Add a Event")
         self.setGeometry(xPos, yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
-
-        print(self.event)
 
         self.buildGUI()
 
@@ -131,7 +129,7 @@ class AddEvents(QMainWindow):
         entryLayout.addWidget(lblNotes, 3, 0, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(lteNotes, 3, 1, 3, 3)
 
-        self.btnAdd = QPushButton(text="Add a Friend", parent=self)
+        self.btnAdd = QPushButton(text="Add an Event", parent=self)
         self.btnAdd.setEnabled(False)
         self.btnAdd.clicked.connect(self.addEvent)
 
@@ -180,14 +178,17 @@ class AddEvents(QMainWindow):
         name      = action.objectName()
 
         match name:
-            # case "Event Name":
-            #     self.newEvent[0] = action.text().title().strip()
-            #     self.addEventValidate()
+            case "Event Name":
+                if not self.event:
+                    self.newEvent[0] = action.text().title().strip()
+                    self.addEventValidate()
             case "Date Due":
                 self.newEvent[1] = action.date().toString("d MMMM yyyy")
                 self.addEventValidate()
             case "Time Due":
-                self.newEvent[2] = str(action.time().toPyTime())
+                s = str(action.time().toPyTime())
+                s = s[0:5]                              #  Ignore the seconds.
+                self.newEvent[2] = s
             case "Category":
                 self.newEvent[3] = action.currentText()
             case "Recurring":
@@ -203,7 +204,6 @@ class AddEvents(QMainWindow):
             self.btnAdd.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
     def addEvent(self, event):
-        print(self.newEvent)
         """  Checks is there is new data, if so, signals the parent and passes the data.
 
              Will only emit the signal if their is a Event Name and Event category.

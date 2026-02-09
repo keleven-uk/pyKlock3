@@ -30,9 +30,11 @@ class TextViewer(QWidget):
     def __init__(self, parent, action, logger):
         super().__init__()
 
+        height     = 600
+        width      = 400
         screenSize = QApplication.primaryScreen().availableGeometry()
-        xPos       = int((screenSize.width() / 2)  - (self.width / 2))
-        yPos       = int((screenSize.height() / 2) - (self.height / 2))
+        xPos       = int((screenSize.width() / 2)  - (width / 2))
+        yPos       = int((screenSize.height() / 2) - (height / 2))
 
         self.setGeometry(xPos, yPos, 800, 800)
 

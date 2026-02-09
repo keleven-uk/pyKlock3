@@ -1,23 +1,24 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Friday 30 January 2026  21:59:53
+#   (c) Kevin Scott   Written Monday 09 February 2026  21:48:37
 #
 #   true and false are lower case 
 #
 [INFO]
+myVERSION = "2026.41"
 myNAME = "pyKlock"
-myVERSION = "2026.40"
 
 [APPLICATION]
-x_pos = 2979
-y_pos = 37
-width = 410
-height = 58
+x_pos = 2809
+y_pos = 27
+width = 581
+height = 63
 confirmExit = false
-menuBar = true
+menu = true
 toolBar = false
+menuBar = true
 
 [DISPLAY]
-foreground = "#ffaa00"
+foreground = "#00ff00"
 background = "#000000"
 transparent = true
 infoLine = true
@@ -25,7 +26,7 @@ infoLine = true
 [TIME]
 mode = "Text"
 format = "Fuzzy Time"
-font = "Vladimir Script,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
+font = "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
 alignment = "Right"
 prefix = ""
 postfix = ""
@@ -38,11 +39,11 @@ hour_chimes = true
 quarter_chimes = true
 hour_pips = false
 cuckoo = false
-sound_volume = 13
+sound_volume = 25
 
 [EVENTS]
 stage1Days = 5
-stage2Days = 30
+stage2Days = 10
 stage3Days = 30
 stage1Colour = "red"
 stage2Colour = "yellow"

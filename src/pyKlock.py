@@ -35,6 +35,7 @@ import src.classes.sounds as snds
 import src.classes.styles as styles
 import src.classes.selectTime as st
 import src.classes.systemInfo as si
+import src.classes.eventsStore as es
 
 import src.windows.about as About
 import src.windows.textViewer as tw
@@ -48,6 +49,8 @@ class KlockWindow(QMainWindow):
 
         self.config = myConfig
         self.logger = myLogger
+
+        self.eventsStore = es.eventsStore(self, self.logger, self.config)
 
         self.updateValues()
 
@@ -72,7 +75,7 @@ class KlockWindow(QMainWindow):
         self.newTime                = time.time()
         self.lastTime               = self.newTime
 
-        self.menu   = mu.Menu(self.config, self.logger, self)
+        self.menu   = mu.Menu(self.config, self.logger, self.eventsStore, self)
         self.myMenu = self.menu.buildMenu()
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
@@ -242,7 +245,7 @@ class KlockWindow(QMainWindow):
             self.timeFont = font
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
-        """  Update the time, info line  and status bar.
+        """  Update the time, info line  and status bar every second.
         """
         dtCurrent = QDateTime.currentDateTime()
         txtTime   = dtCurrent.toString("HH:mm:ss")
@@ -267,6 +270,7 @@ class KlockWindow(QMainWindow):
             self.sounds.playSounds(txtTime)
 
         self.updateBattery()
+        self.eventsStore.updateEvents()
     # ----------------------------------------------------------------------------------------------------------------------- updateInfoLine() ------
     def updateInfoLine(self):
         """

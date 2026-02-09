@@ -24,32 +24,31 @@
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QFrame, QTableWidget,
                              QTableWidgetItem, QMessageBox, QApplication)
 
-import src.classes.eventsStore as es
 import src.windows.eventsAdd as ae
 
 class EventsViewer(QMainWindow):
     """  Display friends in a table in a separate window.
     """
-    def __init__(self, myLogger, myConfig):
+    def __init__(self, myLogger, myConfig, eventsStore):
         super().__init__()
 
         self.logger           = myLogger
         self.config           = myConfig
-        self.eventsStore      = es.eventsStore(self, self.logger, self.config)
+        self.eventsStore      = eventsStore
         self.events           = self.eventsStore.getEvents()
         self.eventsCategories = self.eventsStore.getCategories
         self.tableHeaders     = self.eventsStore.getHeaders
         self.noHeaders        = len(self.tableHeaders)
         self.eventsAdd        = None
 
-        height     = 800
-        width      = 600
-        screenSize = QApplication.primaryScreen().availableGeometry()
-        xPos       = int((screenSize.width() / 2)  - (width / 2))
-        yPos       = int((screenSize.height() / 2) - (height / 2))
+        self.height      = 600
+        self.width       = 200
+        self.screenSize  = QApplication.primaryScreen().availableGeometry()
+        self.xPos        = int((self.screenSize.width() / 2)  - (self.width / 2))
+        self.yPos        = int((self.screenSize.height() / 2) - (self.height / 2))
 
-        self.setGeometry(xPos, yPos, 800, 800)
-        self.setFixedSize(width, height)
+        self.setGeometry(self.xPos, self.yPos, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
         self.setWindowTitle("Events")
 
         self.buildGUI()
@@ -95,9 +94,11 @@ class EventsViewer(QMainWindow):
 
         self.centralWidget.setLayout(self.centralLayout)
     # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
-    def loadTable(self):
+    def loadTable(self, refresh=False):
         """  Populate the table with events data.
              The finds data is a list of lists.
+
+             If table being drawn for thr first time, either after an add of initially - Do not add width offset.
         """
         row = 0
 
@@ -117,12 +118,20 @@ class EventsViewer(QMainWindow):
 
         for head in range(self.noHeaders):
             self.tableView.resizeColumnToContents(head)
+
+        if not refresh:
+            self.width = self.tableView.width() + 120
+            
+        self.xPos = int((self.screenSize.width() / 2)  - (self.width / 2))
+        self.yPos = int((self.screenSize.height() / 2) - (self.height / 2))
+        self.setGeometry(self.xPos, self.yPos, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
     # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
     def addEvent(self):
         """   Open the Add Events windows.
         """
         if self.eventsAdd is None:
-            self.eventsAdd = ae.AddFriends(self.logger, self.eventsCategories, self.tableHeaders)     #  Needs to be self. - to keep window alive.
+            self.eventsAdd = ae.AddEvents(self.logger, self.eventsCategories, self.tableHeaders)     #  Needs to be self. - to keep window alive.
             self.eventsAdd.show()
             self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                      #  Signal is fired when a friend is to be added.
             self.eventsAdd.closeNewEvent.connect(self.closeNewEvent)                                  #  Signal is fired when the addFriend window is closed.
@@ -146,7 +155,7 @@ class EventsViewer(QMainWindow):
 
         key    = self.tableView.item(row, 0).text()
         event = self.eventsStore.getEvent(key)
-        print(key, event)
+
         self.eventsAdd = ae.AddEvents(self.logger, self.eventsCategories, self.tableHeaders, event)         #  Needs to be self. - to keep window alive.
         self.eventsAdd.show()
         self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                          #  Signal is fired when a friend is to be added.
@@ -168,7 +177,6 @@ class EventsViewer(QMainWindow):
 
         if confirmation == QMessageBox.StandardButton.Yes:
             key = f"{self.tableView.item(row, 0).text()}"
-            print(key)
             self.eventsStore.deleteEvent(key)             #  Delete event
             self.refreshEvents()
     # ----------------------------------------------------------------------------------------------------------------------- refreshEvents() -------
@@ -178,7 +186,7 @@ class EventsViewer(QMainWindow):
         """
         self.eventsStore.saveEvents()
         self.events = self.eventsStore.getEvents()
-        self.loadTable()
+        self.loadTable(True)
     # ----------------------------------------------------------------------------------------------------------------------- closeNewFriend() ------
     def closeNewEvent(self):
         """  When the newEvents window is closed, it signals here so the reference can be set to null.

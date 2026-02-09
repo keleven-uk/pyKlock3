@@ -41,14 +41,14 @@ class FriendsViewer(QMainWindow):
         self.noHeaders     = len(self.tableHeaders)
         self.friendsAdd    = None
 
-        height     = 800
-        width      = 1500
-        screenSize = QApplication.primaryScreen().availableGeometry()
-        xPos       = int((screenSize.width() / 2)  - (width / 2))
-        yPos       = int((screenSize.height() / 2) - (height / 2))
+        self.height      = 800
+        self.width       = 200
+        self.screenSize  = QApplication.primaryScreen().availableGeometry()
+        self.xPos        = int((self.screenSize.width() / 2)  - (self.width / 2))
+        self.yPos        = int((self.screenSize.height() / 2) - (self.height / 2))
 
-        self.setGeometry(xPos, yPos, height, width)
-        self.setFixedSize(width, height)
+        self.setGeometry(self.xPos, self.yPos, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
         self.setWindowTitle("Friends")
 
         self.buildGUI()
@@ -95,9 +95,11 @@ class FriendsViewer(QMainWindow):
         self.centralWidget.setLayout(self.centralLayout)
 
     # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
-    def loadTable(self):
+    def loadTable(self, refresh=False):
         """  Populate the table with friends data.
              The finds data is a list of lists.
+
+             If table being drawn for thr first time, either after an add of initially - Do not add width offset.
         """
         row = 0
 
@@ -117,6 +119,14 @@ class FriendsViewer(QMainWindow):
             
         for head in range(self.noHeaders):
             self.tableView.resizeColumnToContents(head)
+
+        if not refresh:
+            self.width = self.tableView.width() + 800
+
+        self.xPos = int((self.screenSize.width() / 2)  - (self.width / 2))
+        self.yPos = int((self.screenSize.height() / 2) - (self.height / 2))
+        self.setGeometry(self.xPos, self.yPos, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
     # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
     def addFriend(self):
         """   Open the Add Friends windows.
@@ -176,7 +186,7 @@ class FriendsViewer(QMainWindow):
         """
         self.friendsStore.saveFriends()
         self.friends = self.friendsStore.getFriends()
-        self.loadTable()
+        self.loadTable(True)
     # ----------------------------------------------------------------------------------------------------------------------- closeNewFriend() ------
     def closeNewFriend(self):
         """  When the newFriends window is closed, it signals here so the reference can be set to null.

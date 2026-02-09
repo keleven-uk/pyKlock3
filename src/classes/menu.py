@@ -45,12 +45,13 @@ class Menu(QMenuBar):
 
     """
 
-    def __init__(self, myConfig, myLogger, parent=None):
+    def __init__(self, myConfig, myLogger, eventsStore, parent=None):
         super().__init__(parent)
 
-        self.config = myConfig
-        self.logger = myLogger
-        self.parent = parent
+        self.config      = myConfig
+        self.logger      = myLogger
+        self.parent      = parent
+        self.eventsStore = eventsStore
 
         self.toolbar      = QToolBar("Time Toolbar")
         self.context_menu = QMenu(self)
@@ -234,5 +235,5 @@ class Menu(QMenuBar):
     def openEventsViewer(self):
         """   Open the event viewer.
         """
-        self.eventsViewer = ev.EventsViewer(self.logger, self.config)
+        self.eventsViewer = ev.EventsViewer(self.logger, self.config, self.eventsStore)
         self.eventsViewer.show()

@@ -26,12 +26,22 @@ Current version of pyKlock is written in Python using different GUI frameworks
 <2024-2025>	pyKlock 1 - CustomTkinter        - Not currently maintained [Most complete].
 <2024>		pyKlock 2 - Flet.                - No font dialog.
 <2025>		pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programmable.
+                                             - Can't set date to blank in QDateEdit.
 <2025>		pyKlock 4 - wxPython.            - problems with frame transparency, effects all child widgets.
 
 
 Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
+
+
+V2026.41		[30 January 2026]
+
+	Added the stuff which checks if an event is due - mostly copied from pyKlock1.
+	It seems yo work for events that are set for a future time but for today.
+		Changed the toast library to pyqttoast, looks better.
+		But, doesn't allowed for user interaction - so the notification doesn't time out for the moment.
+	Moved the initialise of the event store to the main program, so the main clock tick and call event update.
 
 
 V2026.40		[30 January 2026]

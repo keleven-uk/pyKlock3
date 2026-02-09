@@ -6,13 +6,17 @@ pyKlock serves as a vehicle by which I learn and tinker with programming.
 
 Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and Free Basic - and may again.
 
+<2012 - 2016>	klock.net - written in Visual Basic.
+<2016 - 2019>	lazKlock  - written in Lazarus / Pascal.
+
 Current version of pyKlock is written in Python using different GUI frameworks
 
-    pyKlock 0 - pygubu & pySimpleGUI - finally settled on pySimpleGUI.  
-    pyKlock 1 - CustomTkinter        - Most complete.
-    pyKlock 2 - Flet.                - font dialog.
-    pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programmable.
-    pyKlock 4 - wxPython.            - problems with frame transparency, effects all child widgets.
+<2017-2022>	pyKlock 0 - pygubu & pySimpleGUI - Finally settled on pySimpleGUI.  
+<2024-2025>	pyKlock 1 - CustomTkinter        - Not currently maintained [Most complete].                
+<2024>		pyKlock 2 - Flet.                - No font dialogue.                    
+<2025>		pyKlock 3 - QT.                  - problems with frame transparency, cannot be toggled programmable.
+                                             - Can't set date to blank in QDateEdit.
+<2025>		pyKlock 4 - wxPython.            - Problems with frame transparency, effects all child widgets.
 
 Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
 
@@ -50,4 +54,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.40
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.41

@@ -40,18 +40,18 @@ import datetime
 import csv
 
 import src.projectPaths as pp
-from pyqttoast import Toast
+from pyqttoast import Toast, ToastPreset, ToastIcon, ToastPosition, ToastButtonAlignment
 
 
 class eventsStore():
     """  A class that implements a store for friends.
          The store is implemented as a dictionary - [key, item].
          The key is a string - Event Name.
-         The item is a list  - Name, Date Due, Time, Due, Category, Notes, Time Left, Stage 1, stage 2, stage 3.
+         The item is a list  - Name, Date Due, Time, Due, Category, Notes, Time Left, Stage 1, stage 2, stage 3, NOW.
     """
 # ------------------------------------------------------------------------------------- __init__ ----------------------
-    def __init__(self, master, myLogger, myConfig):
-        self.master     = master     #  Need to pass in a tk window, so the notifications work.
+    def __init__(self, parent, myLogger, myConfig):
+        self.parent     = parent
         self.myConfig   = myConfig
         self.myLogger   = myLogger
         self.store      = {}         #  Create the store, an empty dictionary.
@@ -126,7 +126,6 @@ class eventsStore():
              to be investigated later.
         """
         now = datetime.datetime.now()
-
         for key in self.store.copy():
             dateDue = self.store[key][1]
             dateDue = self.checkYear(dateDue, now)
@@ -134,6 +133,7 @@ class eventsStore():
             dtDue   = datetime.datetime.strptime(f"{dateDue} {timeDue}", "%d/%m/%Y %H:%M")  #  Now a dateTime
             dtLeft  = int((dtDue - now).total_seconds())                                    #  Convert timedelta to seconds.
 
+            self.store[key][6] = self.__formatSeconds(dtLeft)      #  Time left in seconds.
             self.__checkEvent(key, dtLeft)
 # ------------------------------------------------------------------------------------- checkYear ---------------------
     def checkYear(self, dateDue, now):
@@ -152,9 +152,10 @@ class eventsStore():
         curDay   = now.day
         curMonth = now.month
         curYear  = now.year
-        dueDay   = int(dateDue[0:2])
-        dueMonth = int(dateDue[3:5])
-        dueYear  = int(dateDue[6:])
+        dueDate  = datetime.datetime.strptime(dateDue, "%d %B %Y")  #  Convert string to Python dateTime.
+        dueDay   = dueDate.day
+        dueMonth = dueDate.month
+        dueYear  = dueDate.year
 
         if dueYear < curYear:
             dueYear = curYear
@@ -175,12 +176,9 @@ class eventsStore():
                 stage 1 becomes active after 1 day.
                 Now becomes active with 1 minute to go - mainly intended for event with a time.
         """
-        self.store[key][6] = self.__formatSeconds(secondsLeft)      #  Time left in seconds.
-
         match secondsLeft:
-            case secondsLeft if secondsLeft <= 0:
-                self.store[key][6] = "Event Due"
-            case secondsLeft if secondsLeft <= 60:
+            case secondsLeft if (secondsLeft <= 60 and self.store[key][10] == "False"):
+                print("Now")
                 self.__eventDue(key, "Now")
             case secondsLeft if (secondsLeft <= self.stage3 and self.store[key][9] == "False"):
                 self.__eventDue(key, "Stage 3")
@@ -192,51 +190,38 @@ class eventsStore():
     def __eventDue(self, key, stage):
         """  Called when an event is found to be due.
              An appropriate notification is displayed for the event.
-
-             If the notification is Acknowledged, then cancel that stage.
-             If the notification is muted, the notification with be re-displayed.  [Maybe not the next minute]
         """
         event     = self.store[key]
         eventDue  = event[6]
         eventName = event[0]
+        toast = Toast(self.parent)
+        toast.setDuration(0)        #  Do not timeout.
+        toast.applyPreset(ToastPreset.INFORMATION_DARK)
+        toast.setTitle("Event Reminder")
+        toast.setText(f" {eventName} in {eventDue}")
 
         match stage:
             case "Stage 3":
-                message = f" {eventName} in {eventDue}"
-                eventNot = Toast.notification(self.master, message, self.stage3Colour)
-                response = eventNot.get()
-                if response == "Acknowledge":
-                    self.store[key][9] = "True"
-                    self.saveEvents()
+                self.store[key][9] = "True"
 
             case "Stage 2":
-                message = f" {eventName} in {eventDue}"
-                eventNot = Toast.notification(self.master, message, self.stage2Colour)
-                response = eventNot.get()
-                if response == "Acknowledge":
-                    self.store[key][8] = "True"
-                    self.saveEvents()
+                self.store[key][8] = "True"
 
             case "Stage 1":
-                message = f" {eventName} in {eventDue}"
-                eventNot = Toast.notification(self.master, message, self.stage1Colour)
-                response = eventNot.get()
-                if response == "Acknowledge":
-                    self.store[key][7] = "True"
-                    self.saveEvents()
+                self.store[key][7] = "True"
 
             case "Now":
-                message = f" {eventName} Now"
-                eventNot = Toast.notification(self.master, message, self.nowColour)
-                response = eventNot.get()
-                # if response == "Acknowledge":
-                #     self.deleteEvent(key)
+                self.store[key][10] = "True"
+                toast.setText(f" {eventName}  NOW")
+        
+        toast.show()
+        self.saveEvents()
 # ------------------------------------------------------------------------------------- saveEvents --------------------
     def saveEvents(self):
         """  Saves the event store to a text file in csv format.
         """
         with open (self.storeName, "w", newline="", encoding="utf-8") as csvFile:
-            writer =csv.writer(csvFile, quoting=csv.QUOTE_ALL)
+            writer = csv.writer(csvFile, quoting=csv.QUOTE_ALL)
             for key in sorted(self.store):
                 writer.writerow(self.store[key])
 # ------------------------------------------------------------------------------------- loadEvents --------------------
