@@ -36,7 +36,7 @@
 
 from audioplayer import AudioPlayer
 
-from PyQt6.QtWidgets import (QMessageBox)
+from PyQt6.QtWidgets import QMessageBox
 
 import src.projectPaths as pp
 
@@ -54,11 +54,6 @@ class Sounds():
     def __init__(self, myConfig, myLogger):
         self.myConfig = myConfig
         self.myLogger = myLogger
-
-        self.hour        = True
-        self.quarterPast = True
-        self.halfPast    = True
-        self.quarterTo   = True
 
         self.strHour = {
             0  : "twelve",
@@ -85,12 +80,15 @@ class Sounds():
         minutes  = int(timeText[3:5])
         sndPath  = ""
 
+        if minutes not in [0, 15, 30, 45]:      #  Only process further if on the hour or a quarter.
+            return
+
+        print(hours, minutes)
         if hours > 12:
             hours -= 12                         #  Work on a 12 hour klock.
 
-        if self.myConfig.SOUNDS_HOUR_CHIMES and self.hour:
+        if self.myConfig.SOUNDS_HOUR_CHIMES:
             if minutes == 0:
-                self.hour = False
                 if self.myConfig.SOUNDS_WESTMINSTER:
                     sndPath = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\{self.strHour[hours]}.mp3"
                 if self.myConfig.SOUNDS_CUCKOO:
@@ -99,37 +97,26 @@ class Sounds():
                     sndPath = f"{pp.RESOURCE_PATH}\\Sounds\\thepips.mp3"
 
         if self.myConfig.SOUNDS_QUARTER_CHIMES:
-            if minutes in [15, 30, 45]:
-                match minutes:
-                    case 15:
-                        if self.quarterPast:
-                            self.quarterPast = False
-                            sndPath          = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\quarterchime.mp3"
-                    case 30:
-                        if self.halfPast:
-                            self.halfPast = False
-                            sndPath       = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\halfchime.mp3"
-                    case 45:
-                        if self.quarterTo:
-                            self.quarterTo = False
-                            sndPath        = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\threequarterchime.mp3"
+            match minutes:
+                case 15:
+                    sndPath = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\quarterchime.mp3"
+                case 30:
+                    sndPath = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\halfchime.mp3"
+                case 45:
+                    sndPath = f"{pp.RESOURCE_PATH}\\Sounds\\westminster\\threequarterchime.mp3"
+
         if sndPath:
             # Playback stops when the object is destroyed (GC"ed), so save a reference to the object for non-blocking playback.
+            print(sndPath)
             try:
                 self.player = AudioPlayer(sndPath)
                 self.player.volume = self.myConfig.SOUNDS_VOLUME
                 self.player.play(block=False)
             except Exception as e:
                 self.myLogger.error(f"Error {e}")
-
-        if minutes == 2:
-            self.hour        = True
-            self.quarterPast = True
-            self.halfPast    = True
-            self.quarterTo   = True
 # ------------------------------------------------------------------------------------- playPips ------------------------
     def playPips(self, volume):
-        """  Enable the pip to be played to test the volume.
+        """  Enable the pips to be played to test the volume.
         """
         try:
             player = AudioPlayer(f"{pp.RESOURCE_PATH}\\Sounds\\thepips.mp3")

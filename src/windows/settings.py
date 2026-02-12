@@ -396,7 +396,6 @@ class Settings(QDialog):
         """  Transfers the new settings dictionary to config values and writes new config file.
         """
         for key, value in self.newSettings.items():
-            print(f"key = {key} :: val = {value}")
             self.config.__setattr__(key, value)         #  Dirty way of setting the property value using a string.
 
         self.newSettings = {}                           #  Clear new settings dict

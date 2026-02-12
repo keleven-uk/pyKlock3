@@ -67,6 +67,7 @@ class KlockWindow(QMainWindow):
         self.startTime        = time.perf_counter()
         self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
         self.lblHeight        = 0
+        self.lastMin          = -1
 
         self.nowTotalBytesReceived  = self.systemInfo.TotalRawBytesReceived        #  Use to measure network speed.
         self.nowTotalBytesSent      = self.systemInfo.TotalRawBytesSent
@@ -108,6 +109,8 @@ class KlockWindow(QMainWindow):
 
         self.updateColour()
         self.updateTime()
+        self.updateBattery()
+        self.eventsStore.updateEvents()
 
     def updateValues(self):
         """  Set up run time values from the config file.
@@ -159,20 +162,20 @@ class KlockWindow(QMainWindow):
 
         self.centralWidget.setLayout(self.centralLayout)
 
-        #  Set up timer to update the clock
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.updateTime)
-        self.timer.start(1000)
+        #  Set up short timer to update the clock every second
+        self.Timer = QTimer(self)
+        self.Timer.timeout.connect(self.updateTime)
+        self.Timer.start(1000)
 
     def buildInfoLine(self):
         """  Create Info Line
         """
         self.logger.info(" Building Info Line.")
+        self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
+
         self.stsCPU   = QLabel("CPU : 0%")
         self.stsRAM   = QLabel("RAM : 0%")
         self.stsDisc  = QLabel("C: [          ]")
-        self.stsSpeed = QLabel("↓ 1.0 Mbit/s  ↑ 1.0 Mbit/s")
-
         self.infoLayout = QHBoxLayout()
         self.infoLayout.addWidget(self.stsCPU)
         self.infoLayout.addStretch()
@@ -251,29 +254,38 @@ class KlockWindow(QMainWindow):
         txtTime   = dtCurrent.toString("HH:mm:ss")
         txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
 
+        currentMin = dtCurrent.time().minute()
+
+        if currentMin != self.lastMin:
+            self.updateMinute(txtDate, txtTime)
+            self.lastMin = currentMin
+
         if self.timeMode == "Digital":
             self.lcdTime.display(txtTime)
             self.stsFrmt.setText("L.E.D.")
         else:
-            self.timeFormat = self.menu.combo.currentText()
             self.updateTextTime()
-            self.stsFrmt.setText(f"{self.timeFormat}")
-
-        self.stsDate.setText(txtDate)
+            
         self.stsState.setText(f"{utils.getState()}")
+        self.stsFrmt.setText(f"{self.timeFormat}")
         self.stsIdle.setText(utils.getIdleDuration())
 
         if self.config.INFO_LINE:
             self.updateInfoLine()
-
-        if self.config.SOUNDS:
-            self.sounds.playSounds(txtTime)
-
+    # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
+    def updateMinute(self, txtDate, txtTime):
+        """  Update the battery, date and check the events and maybe play a sound every minute.
+        """
         self.updateBattery()
         self.eventsStore.updateEvents()
+        
+        self.stsDate.setText(txtDate)
+                
+        if self.config.SOUNDS:
+            self.sounds.playSounds(txtTime)
     # ----------------------------------------------------------------------------------------------------------------------- updateInfoLine() ------
     def updateInfoLine(self):
-        """
+        """  Updates the info line.
         """
         self.nowTotalBytesReceived = self.systemInfo.TotalRawBytesReceived
         self.nowTotalBytesSent     = self.systemInfo.TotalRawBytesSent
@@ -329,7 +341,7 @@ class KlockWindow(QMainWindow):
 
              The text time is bracketed with the prefix and postfix characters.  Mostly "".
         """
-
+        self.timeFormat = self.menu.combo.currentText()
         textTime = f"{self.config.TIME_PREFIX}{self.selectTime.getTime(self.timeFormat)}{self.config.TIME_POSTFIX}"
 
         if self.config.TIME_SPACE != " ":
@@ -339,9 +351,9 @@ class KlockWindow(QMainWindow):
         self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
         self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
         #infoLineWidth  = self.infoLayout.geometry().width()
-        statbarWidth   = self.statusBar.geometry().width()
+        statBarWidth   = self.statusBar.geometry().width()
 
-        if self.txtWidth > statbarWidth:
+        if self.txtWidth > statBarWidth:
             if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
                 self.resizeWindow()
     # ----------------------------------------------------------------------------------------------------------------------- resizeWindow() --------
@@ -495,8 +507,8 @@ class KlockWindow(QMainWindow):
     def endBit(self):
         """  Save config file, stop the timer and print Goodbye.
         """
-        self.timer.stop()           #  Stop the time when the frame closes.
-        self.timer = None           #  Hopefully, stop any memory leaks - maybe only need close()
+        self.Timer.stop()           #  Stop the time when the frame closes.
+        self.Timer = None           #  Hopefully, stop any memory leaks - maybe only need close()
         self.saveConfig()
         self.logger.info(f"  Ending {self.config.NAME} Version {self.config.VERSION} ")
         self.logger.info("=" * 100)

@@ -35,11 +35,20 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.42		[12 February 2026]
+
+	Refactored the updateTime method, so that some heavy stuff is only run every minute.
+		Moved updateBattery, eventStory.update() and  sound playing to be checked every minute.
+		This ensures that the sound playing is checked on the correct minute.
+		Removed the flag checking in the sound module added in V2026.34.
+
+
 V2026.41		[30 January 2026]
 
 	Added the stuff which checks if an event is due - mostly copied from pyKlock1.
-	It seems yo work for events that are set for a future time but for today.
+	It seems to work for events that are set for a future time but not for today.
 		Changed the toast library to pyqttoast, looks better.
+			https://github.com/ZyphrZero/pyqttoast
 		But, doesn't allowed for user interaction - so the notification doesn't time out for the moment.
 	Moved the initialise of the event store to the main program, so the main clock tick and call event update.
 
