@@ -22,7 +22,7 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 
 A klock built using Python and QT6 GUI Framework.
 
-Using python 3.14.2 and QT 6.10.2.
+Using python 3.14.3 and QT 6.10.2.
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
@@ -54,4 +54,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.42
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.43

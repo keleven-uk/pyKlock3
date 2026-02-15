@@ -1,17 +1,17 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Thursday 12 February 2026  22:04:01
+#   (c) Kevin Scott   Written Sunday 15 February 2026  20:16:44
 #
 #   true and false are lower case 
 #
 [INFO]
-myVERSION = "2026.42"
+myVERSION = "2026.43"
 myNAME = "pyKlock"
 
 [APPLICATION]
-x_pos = 2875
-y_pos = 13
-width = 515
-height = 63
+x_pos = 2895
+y_pos = 36
+width = 495
+height = 49
 confirmExit = false
 menu = true
 toolBar = false
@@ -26,7 +26,7 @@ infoLine = true
 [TIME]
 mode = "Text"
 format = "Fuzzy Time"
-font = "Curlz MT,36,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
+font = "Curlz MT,28,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
 alignment = "Right"
 prefix = ""
 postfix = ""
@@ -39,7 +39,7 @@ hour_chimes = true
 quarter_chimes = true
 hour_pips = false
 cuckoo = false
-sound_volume = 32
+sound_volume = 12
 
 [EVENTS]
 stage1Days = 5

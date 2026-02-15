@@ -252,26 +252,25 @@ class KlockWindow(QMainWindow):
         """
         dtCurrent = QDateTime.currentDateTime()
         txtTime   = dtCurrent.toString("HH:mm:ss")
-        txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
-
-        currentMin = dtCurrent.time().minute()
-
-        if currentMin != self.lastMin:
-            self.updateMinute(txtDate, txtTime)
-            self.lastMin = currentMin
-
-        if self.timeMode == "Digital":
-            self.lcdTime.display(txtTime)
-            self.stsFrmt.setText("L.E.D.")
-        else:
-            self.updateTextTime()
-            
+        
         self.stsState.setText(f"{utils.getState()}")
-        self.stsFrmt.setText(f"{self.timeFormat}")
         self.stsIdle.setText(utils.getIdleDuration())
 
         if self.config.INFO_LINE:
             self.updateInfoLine()
+
+        currentMin = dtCurrent.time().minute()
+
+        if currentMin != self.lastMin:
+            print(txtTime, self.timeMode)
+            txtDate = dtCurrent.toString("dddd dd MMMM yyyy")
+            self.updateMinute(txtDate, txtTime)
+            self.lastMin = currentMin
+            if self.timeMode == "Text":
+                self.updateTextTime()
+                return
+
+        self.lcdTime.display(txtTime)       #  Must be Digital text mode by now.
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateMinute(self, txtDate, txtTime):
         """  Update the battery, date and check the events and maybe play a sound every minute.
@@ -342,6 +341,8 @@ class KlockWindow(QMainWindow):
              The text time is bracketed with the prefix and postfix characters.  Mostly "".
         """
         self.timeFormat = self.menu.combo.currentText()
+        self.stsFrmt.setText(f"{self.timeFormat}")        
+
         textTime = f"{self.config.TIME_PREFIX}{self.selectTime.getTime(self.timeFormat)}{self.config.TIME_POSTFIX}"
 
         if self.config.TIME_SPACE != " ":
@@ -350,12 +351,14 @@ class KlockWindow(QMainWindow):
         self.txtTime.setText(textTime)
         self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
         self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
-        #infoLineWidth  = self.infoLayout.geometry().width()
-        statBarWidth   = self.statusBar.geometry().width()
+        self.infoLineWidth  = self.infoLayout.geometry().width()
+        self.statusBarWidth = self.statusBar.geometry().width()
 
-        if self.txtWidth > statBarWidth:
-            if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
-                self.resizeWindow()
+        print(f"infoLineWidth : {self.infoLineWidth} :: statusBarWidth : {self.statusBarWidth} :: txtWidth : {self.txtWidth} :: lblWidth : {self.lblWidth}")
+
+        #if self.txtWidth > statusBarWidth:
+        if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
+            self.resizeWindow()
     # ----------------------------------------------------------------------------------------------------------------------- resizeWindow() --------
     def resizeWindow(self):
         """  Resizes the main window.
@@ -369,17 +372,21 @@ class KlockWindow(QMainWindow):
         if self.config.TOOL_BAR:
             self.height += 40
 
-        screenSize = QApplication.primaryScreen().availableGeometry()
+        print(f"resizeWindow :: width : {self.width} :: height : {self.height} .::. width set to {self.width}")
 
         if self.config.TIME_ALIGNMENT:
             match self.config.TIME_ALIGNMENT:
                 case "Left":                                                                        #  align to left hand of the screen.
                     self.setGeometry(5, self.Ypos, self.width, self.height)
-                case "Right":                                                                       #  align to right hand of the screen.
-                    xpos = screenSize.width()-self.width-50
+                case "Right":  
+                    screenSize = QApplication.primaryScreen().availableGeometry()                                                                     #  align to right hand of the screen.
+                    xpos = screenSize.width() - self.width - 50
                     self.setGeometry(xpos, self.Ypos, self.width, self.height)
         else:
             self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
+
+        #self.statusBar.setFixedWidth(self.infoLineWidth)
+        #self.infoLayout.setFixedWidth(self.width)
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
     def updateColour(self):
         """  Update the foreground and background colour of both the main form and the statusbar.
@@ -389,6 +396,7 @@ class KlockWindow(QMainWindow):
         #  So, just update the foreground colour of the timer and statusbar.
         if self.transparent:
             self.txtTime.setStyleSheet(f"color: {self.foregroundColour}")
+            self.lcdTime.setStyleSheet(f"color: {self.foregroundColour}")
             self.statusBar.setStyleSheet(f"color: {self.foregroundColour}")
             self.myMenu.setStyleSheet(f"color: {self.foregroundColour}")
             if self.config.INFO_LINE:
@@ -414,12 +422,14 @@ class KlockWindow(QMainWindow):
         """
         self.stackedLayout.setCurrentIndex(0)
         self.timeMode = "Digital"
+        self.stsFrmt.setText("L.E.D.")
     # ----------------------------------------------------------------------------------------------------------------------- setWordTime() ---------
     def setTextTime(self):
         """  Bring forward the text time display, hides the digital time display.
         """
         self.stackedLayout.setCurrentIndex(1)
         self.timeMode = "Text"
+        self.updateTextTime()
     # ----------------------------------------------------------------------------------------------------------------------- getForeColour() -------
     def getForeColour(self):
         """  launch the colour input dialog and obtain the new foreground colour.

@@ -40,7 +40,7 @@ import datetime
 import csv
 
 import src.projectPaths as pp
-from pyqttoast import Toast, ToastPreset, ToastIcon, ToastPosition, ToastButtonAlignment
+from pyqttoast import Toast, ToastPreset
 
 
 class eventsStore():
