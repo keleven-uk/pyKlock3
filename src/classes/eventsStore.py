@@ -126,6 +126,7 @@ class eventsStore():
              to be investigated later.
         """
         now = datetime.datetime.now()
+        #print(f" Running updateEvents {now}")
         for key in self.store.copy():
             dateDue = self.store[key][1]
             dateDue = self.checkYear(dateDue, now)
@@ -178,7 +179,6 @@ class eventsStore():
         """
         match secondsLeft:
             case secondsLeft if (secondsLeft <= 60 and self.store[key][10] == "False"):
-                print("Now")
                 self.__eventDue(key, "Now")
             case secondsLeft if (secondsLeft <= self.stage3 and self.store[key][9] == "False"):
                 self.__eventDue(key, "Stage 3")

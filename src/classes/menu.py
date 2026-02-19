@@ -29,6 +29,7 @@ import src.classes.selectTime as st
 
 import src.windows.friendsViewer as fv
 import src.windows.eventsViewer as ev
+import src.windows.NTPViewer as ntp
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -107,6 +108,9 @@ class Menu(QMenuBar):
         self.actViewEvents = QAction("Events", self)
         self.actViewEvents.triggered.connect(self.openEventsViewer)
 
+        self.actViewNTP = QAction("NTP Server", self)
+        self.actViewNTP.triggered.connect(self.openNTPViewer)
+
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
 
@@ -137,7 +141,8 @@ class Menu(QMenuBar):
         mnuFile    = menu.addMenu("&File")
         mnuTime    = menu.addMenu("&Time")
         mnuDisplay = menu.addMenu("&Display")
-        mnuThings = menu.addMenu("&Things")
+        mnuThings  = menu.addMenu("&Things")
+        mnuInfo    = menu.addMenu("&Info")
         mnuHelp    = menu.addMenu("&Help")
 
         #  Set up menu actions.
@@ -159,6 +164,7 @@ class Menu(QMenuBar):
         mnuThings.addAction(self.actViewFriends)
         mnuThings.addAction(self.actViewEvents)
 
+        mnuInfo.addAction(self.actViewNTP)
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()
@@ -237,3 +243,9 @@ class Menu(QMenuBar):
         """
         self.eventsViewer = ev.EventsViewer(self.logger, self.config, self.eventsStore)
         self.eventsViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openNTPViewer() -------
+    def openNTPViewer(self):
+        """   Open the NTP viewer.
+        """
+        self.NTPViewer = ntp.NTPViewer(self.logger, self.config)
+        self.NTPViewer.show()

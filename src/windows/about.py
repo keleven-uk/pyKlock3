@@ -43,9 +43,9 @@ class About(QDialog):
 
         height     = 600
         width      = 400
-        screenSize      = QApplication.primaryScreen().availableGeometry()
-        xPos            = int((screenSize.width() / 2)  - (width / 2))
-        yPos            = int((screenSize.height() / 2) - (height / 2))
+        screenSize = QApplication.primaryScreen().availableGeometry()
+        xPos       = int((screenSize.width() / 2)  - (width / 2))
+        yPos       = int((screenSize.height() / 2) - (height / 2))
 
         self.logger.info("Launching About dialog")
 

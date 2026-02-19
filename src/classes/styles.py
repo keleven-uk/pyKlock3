@@ -166,3 +166,14 @@ class Styles():
             width : 134px
             }
         """
+
+    @property
+    def QGroupBox_STYLE(self):
+        return"""
+        QGroupBox {
+            background-color: black;
+            border: 2px solid gray;
+            border-radius: 5px;
+            margin-top: 1ex; /* leave space at the top for the title */
+            }
+        """

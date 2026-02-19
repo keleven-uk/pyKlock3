@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLa
                              QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout,
                              QProgressBar)
 from PyQt6.QtGui     import QColor, QFont
-from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
+from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot, QSize
 
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 
@@ -57,17 +57,18 @@ class KlockWindow(QMainWindow):
         self.setWindowTitle("pyKlock")
         self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
 
-        self.selectTime       = st.SelectTime()
-        self.systemInfo       = si.SysInfo()
-        self.styles           = styles.Styles()             #  Styles for the battery progress bar.
-        self.sounds           = snds.Sounds(self.config, self.logger)
-        self.timeFont         = QFont()
-        self.textWindow       = None                        #  No text external window yet.
-        self.helpWindow       = None
-        self.startTime        = time.perf_counter()
-        self.lblWidth         = 0                           #  Used to measure size of time text and do we need to resize.
-        self.lblHeight        = 0
-        self.lastMin          = -1
+        self.selectTime    = st.SelectTime()
+        self.systemInfo    = si.SysInfo()
+        self.styles        = styles.Styles()             #  Styles for the battery progress bar.
+        self.sounds        = snds.Sounds(self.config, self.logger)
+        self.timeFont      = QFont()
+        self.textWindow    = None                        #  No text external window yet.
+        self.helpWindow    = None
+        self.startTime     = time.perf_counter()
+        self.lblWidth      = 0                           #  Used to measure size of time text and do we need to resize.
+        self.lblHeight     = 0
+        self.lastMin       = -1
+        self.minimumWidth  = 500
 
         self.nowTotalBytesReceived  = self.systemInfo.TotalRawBytesReceived        #  Use to measure network speed.
         self.nowTotalBytesSent      = self.systemInfo.TotalRawBytesSent
@@ -240,12 +241,13 @@ class KlockWindow(QMainWindow):
     def openFontDialog(self):
         """  Open the font dialog.
         """
-        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Font for Time.")
+        font, ok = QFontDialog.getFont(self.txtTime.font(), self, "Choose Font for Text Time.")
 
         # If user clicked OK, update the label's font
         if ok:
             self.txtTime.setFont(font)
             self.timeFont = font
+            self.updateTextTime()
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
         """  Update the time, info line  and status bar every second.
@@ -262,7 +264,6 @@ class KlockWindow(QMainWindow):
         currentMin = dtCurrent.time().minute()
 
         if currentMin != self.lastMin:
-            print(txtTime, self.timeMode)
             txtDate = dtCurrent.toString("dddd dd MMMM yyyy")
             self.updateMinute(txtDate, txtTime)
             self.lastMin = currentMin
@@ -349,15 +350,11 @@ class KlockWindow(QMainWindow):
             textTime = textTime.replace(" ", self.config.TIME_SPACE)
 
         self.txtTime.setText(textTime)
-        self.txtWidth  = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
-        self.txtHeight = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
+        self.txtWidth       = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).width()
+        self.txtHeight      = self.txtTime.fontMetrics().boundingRect(self.txtTime.text()).height()
         self.infoLineWidth  = self.infoLayout.geometry().width()
-        self.statusBarWidth = self.statusBar.geometry().width()
 
-        print(f"infoLineWidth : {self.infoLineWidth} :: statusBarWidth : {self.statusBarWidth} :: txtWidth : {self.txtWidth} :: lblWidth : {self.lblWidth}")
-
-        #if self.txtWidth > statusBarWidth:
-        if self.txtWidth != self.lblWidth or self.txtHeight != self.lblHeight:
+        if self.txtWidth != self.infoLineWidth:
             self.resizeWindow()
     # ----------------------------------------------------------------------------------------------------------------------- resizeWindow() --------
     def resizeWindow(self):
@@ -365,28 +362,27 @@ class KlockWindow(QMainWindow):
              Will align to the side of the screen if required.
              Will only align to the primary screen, I think - I only have one screen
         """
-        self.lblWidth  = self.txtWidth              #  Saved to be used in updateTextTime.
-        self.lblHeight = self.txtHeight             #  Saved to be used in updateTextTime.
-        self.width     = self.lblWidth
-        self.height    = self.lblHeight
         if self.config.TOOL_BAR:
-            self.height += 40
+            self.self.txtHeight += 40
 
-        print(f"resizeWindow :: width : {self.width} :: height : {self.height} .::. width set to {self.width}")
+        if self.txtWidth > self.minimumWidth:
+            klockWidth = self.txtWidth
+        else:
+            klockWidth = self.minimumWidth
 
         if self.config.TIME_ALIGNMENT:
             match self.config.TIME_ALIGNMENT:
                 case "Left":                                                                        #  align to left hand of the screen.
-                    self.setGeometry(5, self.Ypos, self.width, self.height)
+                    self.setGeometry(5, self.Ypos, klockWidth, self.txtHeight)
                 case "Right":  
-                    screenSize = QApplication.primaryScreen().availableGeometry()                                                                     #  align to right hand of the screen.
-                    xpos = screenSize.width() - self.width - 50
-                    self.setGeometry(xpos, self.Ypos, self.width, self.height)
+                    screenSize = QApplication.primaryScreen().availableGeometry()                   #  align to right hand of the screen.
+                    xpos = screenSize.width() - klockWidth - 30
+                    self.setGeometry(xpos, self.Ypos, klockWidth, self.txtHeight)
         else:
-            self.setGeometry(self.Xpos, self.Ypos, self.width, self.height)
+            self.setGeometry(self.Xpos, self.Ypos, klockWidth, self.txtHeight)
 
-        #self.statusBar.setFixedWidth(self.infoLineWidth)
-        #self.infoLayout.setFixedWidth(self.width)
+        self.statusBar.geometry().setWidth(klockWidth)
+        self.infoLayout.geometry().setWidth(klockWidth)
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
     def updateColour(self):
         """  Update the foreground and background colour of both the main form and the statusbar.

@@ -83,7 +83,6 @@ class Sounds():
         if minutes not in [0, 15, 30, 45]:      #  Only process further if on the hour or a quarter.
             return
 
-        print(hours, minutes)
         if hours > 12:
             hours -= 12                         #  Work on a 12 hour klock.
 
@@ -107,7 +106,6 @@ class Sounds():
 
         if sndPath:
             # Playback stops when the object is destroyed (GC"ed), so save a reference to the object for non-blocking playback.
-            print(sndPath)
             try:
                 self.player = AudioPlayer(sndPath)
                 self.player.volume = self.myConfig.SOUNDS_VOLUME

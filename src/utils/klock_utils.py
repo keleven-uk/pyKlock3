@@ -133,10 +133,10 @@ def getDiscUsage():
     totalSpace   = disc.total / 1e9
     usedSpace    = disc.used / 1e9
     percent      = disc.percent
-    barLength    = 10
+    barLength    = 20
     filledBlocks = int((percent / 100) * barLength)
     emptyBlocks  = barLength - filledBlocks
-    progressBar  = "[" + "█" * filledBlocks + " " * emptyBlocks + "]"
+    progressBar  = "[" + "|" * filledBlocks + " " * emptyBlocks + "]"
     return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
     #return f"{progressBar} {percent:.1f}%)"
 

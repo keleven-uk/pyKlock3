@@ -21,6 +21,8 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
+from titlecase import titlecase
+
 from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox,
                              QApplication, QFrame, QPushButton, QPlainTextEdit, QDateEdit, QMessageBox, 
                              QTimeEdit)
@@ -180,7 +182,7 @@ class AddEvents(QMainWindow):
         match name:
             case "Event Name":
                 if not self.event:
-                    self.newEvent[0] = action.text().title().strip()
+                    self.newEvent[0] = titlecase(action.text().strip())     #  not using title(), it capitalises the letter after an apostrophe
                     self.addEventValidate()
             case "Date Due":
                 self.newEvent[1] = action.date().toString("d MMMM yyyy")

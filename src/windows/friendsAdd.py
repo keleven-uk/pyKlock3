@@ -21,6 +21,8 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
+from titlecase import titlecase
+
 from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox,
                              QApplication, QFrame, QPushButton, QPlainTextEdit, QDateEdit, QMessageBox)
 from PyQt6.QtCore    import Qt, pyqtSignal, QDate
@@ -200,10 +202,10 @@ class AddFriends(QMainWindow):
             case "Title":
                 self.newFriend[0] = action.currentText()
             case "First Name":
-                self.newFriend[2] = action.text().title().strip()
+                self.newFriend[2] = titlecase(action.text().strip())  
                 self.addFriendValidate()
             case "Last Name":
-                self.newFriend[1] = action.text().title().strip()
+                self.newFriend[1] = titlecase(action.text().strip())
                 self.addFriendValidate()
             case "Mobile Number":
                 self.newFriend[3] = action.text()
@@ -216,17 +218,17 @@ class AddFriends(QMainWindow):
             case "House Number":
                 self.newFriend[7] = action.text()
             case "Address Line 1":
-                self.newFriend[8] = action.text().title().strip()
+                self.newFriend[8] = titlecase(action.text().strip())  
             case "Address Line 2":
-                self.newFriend[9] = action.text().title().strip()
+                self.newFriend[9] = titlecase(action.text().strip())   
             case "City":
-                self.newFriend[10] = action.text().title().strip()
+                self.newFriend[10] = titlecase(action.text().strip())  
             case "County":
-                self.newFriend[11] = action.text().title().strip()
+                self.newFriend[11] = titlecase(action.text().strip())  
             case "Post Code":
                 self.newFriend[12] = action.text()
             case "Country":
-                self.newFriend[13] = action.text().title().strip()
+                self.newFriend[13] = titlecase(action.text().strip()) 
             case "Notes":
                 self.newFriend[14] = action.toPlainText()
     # ----------------------------------------------------------------------------------------------------------------------- addFriendValidate() ---
