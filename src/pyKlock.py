@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (QMainWindow, QFrame, QLabel, QLCDNumber, QStackedLa
                              QMessageBox, QFontDialog, QApplication, QHBoxLayout, QVBoxLayout,
                              QProgressBar)
 from PyQt6.QtGui     import QColor, QFont
-from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot, QSize
+from PyQt6.QtCore    import Qt, QPoint, QTimer, QDateTime, pyqtSlot
 
 import src.utils.klock_utils as utils                                 #  Need to install pywin32
 

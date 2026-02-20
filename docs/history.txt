@@ -35,6 +35,14 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.45		[20 February 2026]
+
+	Added a second Info, Easter dates.
+		The dates of easter can be displayed for any given year [0-30000].
+		The easter dates can be either Hebrew Calendar, Julian Calendar or Gregorian Calendar.
+		Still work to be done on the spinbox style sheet.
+
+
 V2026.44		[19 February 2026]
 
 	Added a new menu item - Info.

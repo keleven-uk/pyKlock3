@@ -163,6 +163,7 @@ class Styles():
     def QComboBox_STYLE(self):
         return"""
         QComboBox{
+            background-color: black;
             width : 134px
             }
         """
@@ -174,6 +175,21 @@ class Styles():
             background-color: black;
             border: 2px solid gray;
             border-radius: 5px;
-            margin-top: 1ex; /* leave space at the top for the title */
+            }
+        """
+
+    @property
+    def QSpinBox_STYLE(self):
+        return"""
+        QSpinBox {
+            background-color: black;
+            }
+
+        QSpinBox::up-arrow {
+            color: white;
+            }
+
+        QSpinBox::up-arrow {
+            color: white;
             }
         """

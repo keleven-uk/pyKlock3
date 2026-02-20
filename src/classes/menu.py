@@ -30,6 +30,7 @@ import src.classes.selectTime as st
 import src.windows.friendsViewer as fv
 import src.windows.eventsViewer as ev
 import src.windows.NTPViewer as ntp
+import src.windows.easterViewer as estr
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -110,6 +111,8 @@ class Menu(QMenuBar):
 
         self.actViewNTP = QAction("NTP Server", self)
         self.actViewNTP.triggered.connect(self.openNTPViewer)
+        self.actViewEaster = QAction("Easter Dates", self)
+        self.actViewEaster.triggered.connect(self.openEasterViewer)
 
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
@@ -165,6 +168,7 @@ class Menu(QMenuBar):
         mnuThings.addAction(self.actViewEvents)
 
         mnuInfo.addAction(self.actViewNTP)
+        mnuInfo.addAction(self.actViewEaster)
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()
@@ -249,3 +253,9 @@ class Menu(QMenuBar):
         """
         self.NTPViewer = ntp.NTPViewer(self.logger, self.config)
         self.NTPViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openEasterViewer() -------
+    def openEasterViewer(self):
+        """   Open the Easter Dates viewer.
+        """
+        self.easterViewer = estr.easterViewer(self.logger, self.config)
+        self.easterViewer.show()

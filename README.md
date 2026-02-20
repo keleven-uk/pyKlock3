@@ -54,4 +54,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.44
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.45

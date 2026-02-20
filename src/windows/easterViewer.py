@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    NTPViewer   Copyright (C) <2026>  <Kevin Scott>                                                          #
+#    easterViewer   Copyright (C) <2026>  <Kevin Scott>                                                       #
 #                                                                                                             #
-#    Display NTP Server time.                                                                                 #
+#    Display Easter dates for a given year.                                                                   #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -21,17 +21,17 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-import time
+import datetime
 
-import ntplib
+import src.utils.easterDates as ed 
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QFrame, QApplication,
-                            QGroupBox, QGridLayout, QLabel)
-from PyQt6.QtCore    import Qt, QTimer
+                            QGroupBox, QGridLayout, QLabel, QComboBox, QSpinBox)
+from PyQt6.QtCore    import Qt
 
 import src.classes.styles as styles
 
-class NTPViewer(QMainWindow):
+class easterViewer(QMainWindow):
     """  Display results from a NTP server in a separate window.
     """
     def __init__(self, myLogger, myConfig):
@@ -40,7 +40,6 @@ class NTPViewer(QMainWindow):
         self.logger = myLogger
         self.config = myConfig
         self.styles = styles.Styles()
-        self.client = ntplib.NTPClient()
 
         self.height      = 400
         self.width       = 400
@@ -50,10 +49,10 @@ class NTPViewer(QMainWindow):
 
         self.setGeometry(self.xPos, self.yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
-        self.setWindowTitle("NTP Viewer")
+        self.setWindowTitle("Easter Dates")
 
         self.buildGUI()
-        self.updateTime()
+        self.update()
 
     def buildGUI(self):
         """  Build the GUI elements.
@@ -65,29 +64,43 @@ class NTPViewer(QMainWindow):
         self.centralLayout = QVBoxLayout()
         self.ButtonLayout  = QHBoxLayout()
 
-        self.ntpGroup   = QGroupBox("NTP Server Time")
+        self.ntpGroup   = QGroupBox("Easter Dates")
         self.ntpLayout  = QGridLayout(self.ntpGroup)
-        self.ntpText    = QLabel("NTP Server Time")
-        self.ntpLabel   = QLabel("12:34:56:789")
-        self.pcText     = QLabel("PC Time")
-        self.pcLabel    = QLabel("12:34:56:789")
-        self.difText    = QLabel("Difference Time")
-        self.difLabel   = QLabel("0.00 Seconds")
-        self.offText    = QLabel("NTP Offset")
-        self.offLabel   = QLabel("0.00 Seconds")
-        self.delayText  = QLabel("NTP Root Delay")
-        self.delayLabel = QLabel("0.00 Seconds")
 
-        self.ntpLayout.addWidget(self.ntpText,    0, 0, Qt.AlignmentFlag.AlignCenter)
-        self.ntpLayout.addWidget(self.ntpLabel,   0, 1, Qt.AlignmentFlag.AlignLeft)
-        self.ntpLayout.addWidget(self.pcText,     1, 0, Qt.AlignmentFlag.AlignCenter)
-        self.ntpLayout.addWidget(self.pcLabel,    1, 1, Qt.AlignmentFlag.AlignLeft)
-        self.ntpLayout.addWidget(self.difText,    2, 0, Qt.AlignmentFlag.AlignCenter)
-        self.ntpLayout.addWidget(self.difLabel,   2, 1, Qt.AlignmentFlag.AlignLeft)
-        self.ntpLayout.addWidget(self.offText,    3, 0, Qt.AlignmentFlag.AlignCenter)
-        self.ntpLayout.addWidget(self.offLabel,   3, 1, Qt.AlignmentFlag.AlignLeft)
-        self.ntpLayout.addWidget(self.delayText,  4, 0, Qt.AlignmentFlag.AlignCenter)
-        self.ntpLayout.addWidget(self.delayLabel, 4, 1, Qt.AlignmentFlag.AlignLeft)
+        self.txtGoodFriday   = QLabel("Good Friday")
+        self.lblGoodFriday   = QLabel("03 April 2026")
+        self.txtEasterSunday = QLabel("Easter Sunday")
+        self.lblEasterSunday = QLabel("05 April 2026")
+        self.txtEasterMonday = QLabel("Easter Monday")
+        self.lblEasterMonday = QLabel("06 April 2026")
+        self.txtTypeOfEaster = QLabel("Type of Easter")
+        self.cbTypeOfEaster  = QComboBox()
+
+        self.txtYearOfEaster = QLabel("Year")
+        self.sbYearOfEaster  = QSpinBox(self)
+
+        self.cbTypeOfEaster.insertItems(3, ["Hebrew Calendar", "Julian Calendar", "Gregorian Calendar"])
+        self.cbTypeOfEaster.setStyleSheet(self.styles.QComboBox_STYLE)
+        self.cbTypeOfEaster.setCurrentIndex(2)
+
+        self.sbYearOfEaster.setMinimum(1)
+        self.sbYearOfEaster.setMaximum(3000)
+        self.sbYearOfEaster.setValue(2026)
+        #self.sbYearOfEaster.setStyleSheet(self.styles.QSpinBox_STYLE)
+
+        self.cbTypeOfEaster.currentTextChanged.connect(self.update)
+        self.sbYearOfEaster.valueChanged.connect(self.update)
+
+        self.ntpLayout.addWidget(self.txtGoodFriday,   0, 0, Qt.AlignmentFlag.AlignCenter)
+        self.ntpLayout.addWidget(self.lblGoodFriday,   0, 1, Qt.AlignmentFlag.AlignLeft)
+        self.ntpLayout.addWidget(self.txtEasterSunday, 1, 0, Qt.AlignmentFlag.AlignCenter)
+        self.ntpLayout.addWidget(self.lblEasterSunday, 1, 1, Qt.AlignmentFlag.AlignLeft)
+        self.ntpLayout.addWidget(self.txtEasterMonday, 2, 0, Qt.AlignmentFlag.AlignCenter)
+        self.ntpLayout.addWidget(self.lblEasterMonday, 2, 1, Qt.AlignmentFlag.AlignLeft)
+        self.ntpLayout.addWidget(self.txtTypeOfEaster, 3, 0, Qt.AlignmentFlag.AlignCenter)
+        self.ntpLayout.addWidget(self.cbTypeOfEaster,  3, 1, Qt.AlignmentFlag.AlignLeft)
+        self.ntpLayout.addWidget(self.txtYearOfEaster, 5, 0, Qt.AlignmentFlag.AlignCenter)
+        self.ntpLayout.addWidget(self.sbYearOfEaster,  5, 1, Qt.AlignmentFlag.AlignLeft)
 
         self.ntpGroup.setStyleSheet(self.styles.QGroupBox_STYLE)
         self.ntpGroup.setLayout(self.ntpLayout)
@@ -102,30 +115,24 @@ class NTPViewer(QMainWindow):
 
         self.centralWidget.setLayout(self.centralLayout)
 
-        #  Set up short timer to update the clock every second
-        self.Timer = QTimer(self)
-        self.Timer.timeout.connect(self.updateTime)
-        self.Timer.start(1000)
- 
-     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
-    def updateTime(self):
-        """  Update the time every second.
+    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
+    def update(self):
         """
-        try:
-            response = self.client.request("time.enhost.uk")
-            ntpTime  = response.tx_time
-            offset   = response.offset
-            delay    = response.root_delay
+        """
+        match  self.cbTypeOfEaster.currentText():
+            case "Hebrew Calendar":
+                easterSunday = ed.hebrew_easter(self.sbYearOfEaster.value())
+            case "Julian Calendar":
+                easterSunday = ed.julian_easter(self.sbYearOfEaster.value())
+            case "Gregorian Calendar":
+                easterSunday = ed.gregorian_easter(self.sbYearOfEaster.value())
 
-            pcTime = time.time()
-            diff   = pcTime - ntpTime
-            self.ntpLabel.setText(time.ctime(ntpTime))
-            self.pcLabel.setText(time.ctime(pcTime))
-            self.difLabel.setText(f" {diff:.2f} seconds")
-            self.offLabel.setText(f" {offset:.2f} seconds")
-            self.delayLabel.setText(f" {delay:.2f} seconds")
-        except ntplib.NTPException:
-            print("No response from server")
+        easterMonday = easterSunday + datetime.timedelta(days=1)
+        goodFriday   = easterSunday - datetime.timedelta(days=2)
+
+        self.lblGoodFriday.setText(goodFriday.strftime("%d %B %Y"))
+        self.lblEasterSunday.setText(easterSunday.strftime("%d %B %Y"))
+        self.lblEasterMonday.setText(easterMonday.strftime("%d %B %Y"))
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  When the viewer is closed, checks if any child windows are still open.
