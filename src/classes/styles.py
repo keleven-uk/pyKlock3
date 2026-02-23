@@ -172,7 +172,7 @@ class Styles():
     def QGroupBox_STYLE(self):
         return"""
         QGroupBox {
-            background-color: black;
+            background: black;
             border: 2px solid gray;
             border-radius: 5px;
             }
@@ -182,14 +182,19 @@ class Styles():
     def QSpinBox_STYLE(self):
         return"""
         QSpinBox {
-            background-color: black;
+            padding-right: 15px; /* make room for the arrows */
+            background: black;
             }
 
         QSpinBox::up-arrow {
             color: white;
+            background: black;
+            width: 32px
             }
 
-        QSpinBox::up-arrow {
+        QSpinBox::down-arrow {
             color: white;
+            background: black;
+            width: 32px
             }
         """

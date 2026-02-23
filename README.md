@@ -40,6 +40,8 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 * Klock can play sounds on the hour - Westminster Chimes, Cuckoo Chimes or the classic Pips.
 
+* Klock can also some useful [maybe] information - a NTP server response and Easter Dates..
+
 * Klock includes the ability to display a table of Friends.
 
 * Klock includes the ability to display a table of Events, although no checking - YET.
@@ -54,4 +56,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.45
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.46

@@ -29,8 +29,7 @@ import src.classes.selectTime as st
 
 import src.windows.friendsViewer as fv
 import src.windows.eventsViewer as ev
-import src.windows.NTPViewer as ntp
-import src.windows.easterViewer as estr
+import src.windows.infoViewer as info
 
 from src.projectPaths import RESOURCE_PATH
 
@@ -110,9 +109,11 @@ class Menu(QMenuBar):
         self.actViewEvents.triggered.connect(self.openEventsViewer)
 
         self.actViewNTP = QAction("NTP Server", self)
-        self.actViewNTP.triggered.connect(self.openNTPViewer)
+        self.actViewNTP.setObjectName("NTP Server")
+        self.actViewNTP.triggered.connect(self.openInfoViewer)
         self.actViewEaster = QAction("Easter Dates", self)
-        self.actViewEaster.triggered.connect(self.openEasterViewer)
+        self.actViewEaster.setObjectName("Easter Dates")
+        self.actViewEaster.triggered.connect(self.openInfoViewer)
 
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
@@ -247,15 +248,16 @@ class Menu(QMenuBar):
         """
         self.eventsViewer = ev.EventsViewer(self.logger, self.config, self.eventsStore)
         self.eventsViewer.show()
-    # ----------------------------------------------------------------------------------------------------------------------- openNTPViewer() -------
-    def openNTPViewer(self):
-        """   Open the NTP viewer.
-        """
-        self.NTPViewer = ntp.NTPViewer(self.logger, self.config)
-        self.NTPViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openEasterViewer() -------
-    def openEasterViewer(self):
-        """   Open the Easter Dates viewer.
+    def openInfoViewer(self):
+        """   Open the info viewer.
+
+              senderName will contain the chosen menu item and indicate to the viewer which info to display.
         """
-        self.easterViewer = estr.easterViewer(self.logger, self.config)
-        self.easterViewer.show()
+        # The sender object:
+        sender = self.sender()
+        # The sender object's name:
+        senderName = sender.objectName()
+
+        self.infoViewer = info.easterViewer(self.logger, self.config, senderName)
+        self.infoViewer.show()

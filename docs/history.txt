@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.46		[23 February 2026]
+
+	Combined easterViewer and NTPViewer into on generic infoViewer.
+	The methods for easterViewer and NTPViewer are now in their own modules and loaded when required.
+
+
 V2026.45		[20 February 2026]
 
 	Added a second Info, Easter dates.
