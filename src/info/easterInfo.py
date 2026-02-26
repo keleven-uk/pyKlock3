@@ -58,9 +58,11 @@ def buildGUI(self):
     self.cbTypeOfEaster.setStyleSheet(self.styles.QComboBox_STYLE)
     self.cbTypeOfEaster.setCurrentIndex(2)
 
+    currentYear = datetime.datetime.now().year
+
     self.sbYearOfEaster.setMinimum(1)
     self.sbYearOfEaster.setMaximum(3000)
-    self.sbYearOfEaster.setValue(2026)
+    self.sbYearOfEaster.setValue(currentYear)
     self.sbYearOfEaster.setStyleSheet(self.styles.QSpinBox_STYLE)
 
     self.cbTypeOfEaster.currentTextChanged.connect(self.update)
@@ -92,7 +94,7 @@ def buildGUI(self):
 
 # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
 def update(self):
-    """
+    """    Updated the labels.
     """
     match  self.cbTypeOfEaster.currentText():
         case "Hebrew Calendar":

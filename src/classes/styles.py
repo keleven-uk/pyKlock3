@@ -179,22 +179,98 @@ class Styles():
         """
 
     @property
-    def QSpinBox_STYLE(self):
-        return"""
-        QSpinBox {
-            padding-right: 15px; /* make room for the arrows */
-            background: black;
-            }
-
-        QSpinBox::up-arrow {
-            color: white;
-            background: black;
-            width: 32px
-            }
-
-        QSpinBox::down-arrow {
-            color: white;
-            background: black;
-            width: 32px
-            }
+    def QGroupBox_STYLE(self):
+        return """
+        
         """
+    QSpinBox,
+    QDateTimeEdit 
+    {
+        background-color: #131313;
+        color : #eee;
+        border: 1px solid #343434;
+        padding: 3px;
+        padding-left: 5px;
+        border-radius : 2px;
+
+    }
+
+
+    QSpinBox::up-button, 
+    QDateTimeEdit::up-button
+    {
+        border-top-right-radius:2px;
+        background-color: #777777;
+        width: 16px; 
+        border-width: 1px;
+
+    }
+
+
+    QSpinBox::up-button:hover, 
+    QDateTimeEdit::up-button:hover
+    {
+        background-color: #585858;
+
+    }
+
+
+    QSpinBox::up-button:pressed, 
+    QDateTimeEdit::up-button:pressed
+    {
+        background-color: #252525;
+        width: 16px; 
+        border-width: 1px;
+
+    }
+
+
+    QSpinBox::up-arrow,
+    QDateTimeEdit::up-arrow
+    {
+        image: url(://arrow-up.png);
+        width: 7px;
+        height: 7px;
+
+    }
+
+
+    QSpinBox::down-button, 
+    QDateTimeEdit::down-button
+    {
+        border-bottom-right-radius:2px;
+        background-color: #777777;
+        width: 16px; 
+        border-width: 1px;
+
+    }
+
+
+    QSpinBox::down-button:hover, 
+    QDateTimeEdit::down-button:hover
+    {
+        background-color: #585858;
+
+    }
+
+
+    QSpinBox::down-button:pressed, 
+    QDateTimeEdit::down-button:pressed
+    {
+        background-color: #252525;
+        width: 16px; 
+        border-width: 1px;
+
+    }
+
+
+    QSpinBox::down-arrow,
+    QDateTimeEdit::down-arrow
+    {
+        image: url(://arrow-down.png);
+        width: 7px;
+        height: 7px;
+
+    }
+
+

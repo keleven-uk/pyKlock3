@@ -114,6 +114,9 @@ class Menu(QMenuBar):
         self.actViewEaster = QAction("Easter Dates", self)
         self.actViewEaster.setObjectName("Easter Dates")
         self.actViewEaster.triggered.connect(self.openInfoViewer)
+        self.actViewCNY = QAction("Chinese New Year", self)
+        self.actViewCNY.setObjectName("Chinese New Year")
+        self.actViewCNY.triggered.connect(self.openInfoViewer)
 
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
@@ -170,6 +173,7 @@ class Menu(QMenuBar):
 
         mnuInfo.addAction(self.actViewNTP)
         mnuInfo.addAction(self.actViewEaster)
+        mnuInfo.addAction(self.actViewCNY)
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()
@@ -259,5 +263,5 @@ class Menu(QMenuBar):
         # The sender object's name:
         senderName = sender.objectName()
 
-        self.infoViewer = info.easterViewer(self.logger, self.config, senderName)
+        self.infoViewer = info.infoViewer(self.logger, self.config, senderName)
         self.infoViewer.show()

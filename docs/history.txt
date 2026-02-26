@@ -35,6 +35,13 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+
+V2026.47		[26 February 2026]
+
+	Added a new info viewer - Chinese New year.
+		The start of the Chinese new year is displayed, along with with extra information.
+		This includes the element, animal and aspect of the chinese year.
+
 V2026.46		[23 February 2026]
 
 	Combined easterViewer and NTPViewer into on generic infoViewer.

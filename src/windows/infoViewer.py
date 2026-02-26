@@ -22,6 +22,7 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
+import src.info.chineseYearInfo as cny
 import src.info.easterInfo as estr
 import src.info.NTPInfo as ntp
 
@@ -29,7 +30,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 
 import src.classes.styles as styles
 
-class easterViewer(QMainWindow):
+class infoViewer(QMainWindow):
     """  Display results from a number of info modules in a separate window.
     """
     def __init__(self, myLogger, myConfig, info):
@@ -39,11 +40,12 @@ class easterViewer(QMainWindow):
         self.config = myConfig
         self.styles = styles.Styles()
 
-        self.height      = 400
-        self.width       = 400
-        self.screenSize  = QApplication.primaryScreen().availableGeometry()
-        self.xPos        = int((self.screenSize.width() / 2)  - (self.width / 2))
-        self.yPos        = int((self.screenSize.height() / 2) - (self.height / 2))
+        self.height       = 400
+        self.width        = 500
+        self.screenSize   = QApplication.primaryScreen().availableGeometry()
+        self.xPos         = int((self.screenSize.width() / 2)  - (self.width / 2))
+        self.yPos         = int((self.screenSize.height() / 2) - (self.height / 2))
+        self.timerStarted = False
 
         self.setGeometry(self.xPos, self.yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
@@ -54,13 +56,18 @@ class easterViewer(QMainWindow):
                 estr.buildGUI(self)
                 estr.update(self)
             case "NTP Server":
+                self.timerStarted = True
                 ntp.buildGUI(self)
+            case "Chinese New Year":
+                cny.buildGUI(self)
+                cny.update(self)
                 
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  When the viewer is closed, checks if any child windows are still open.
         """
-        ntp.close(self)
+        if self.timerStarted:
+            ntp.close(self)
         event.accept()
 
 
