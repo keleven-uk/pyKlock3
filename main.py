@@ -42,7 +42,7 @@ def loadQSS(app, myConfig):
 
             Style sheet from https://qss-stock.devsecstudio.com/
     """
-    fileName = f"{STYLE_PATH}\{myConfig.STYLE_SHEET}"
+    fileName = f"{STYLE_PATH}\\{myConfig.STYLE_SHEET}"
     try:
         with open (fileName, "r", encoding="utf-8") as file:
             qss = file.read()

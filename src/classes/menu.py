@@ -117,6 +117,9 @@ class Menu(QMenuBar):
         self.actViewCNY = QAction("Chinese New Year", self)
         self.actViewCNY.setObjectName("Chinese New Year")
         self.actViewCNY.triggered.connect(self.openInfoViewer)
+        self.actEquinox = QAction("Season Equinox", self)
+        self.actEquinox.setObjectName("Season Equinox")
+        self.actEquinox.triggered.connect(self.openInfoViewer)
 
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
@@ -173,6 +176,7 @@ class Menu(QMenuBar):
         mnuInfo.addAction(self.actViewNTP)
         mnuInfo.addAction(self.actViewEaster)
         mnuInfo.addAction(self.actViewCNY)
+        mnuInfo.addAction(self.actEquinox)
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()

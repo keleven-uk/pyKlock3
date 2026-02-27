@@ -24,7 +24,9 @@
 
 import src.info.chineseYearInfo as cny
 import src.info.easterInfo as estr
+import src.info.equinoxInfo as ei
 import src.info.NTPInfo as ntp
+
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
@@ -61,6 +63,9 @@ class infoViewer(QMainWindow):
             case "Chinese New Year":
                 cny.buildGUI(self)
                 cny.update(self)
+            case "Season Equinox":
+                ei.buildGUI(self)
+                ei.update(self)           
                 
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):

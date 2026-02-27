@@ -37,6 +37,11 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 V2026.48		[27 February 2026]
 
+	Added another window - Vernal Equinox dates.  Gives the star of the seasons.
+
+	
+V2026.48		[27 February 2026]
+
 	Added the ability to apply a global style sheet in the form of a .qss file.
 		The name of the .qss file is held in the config.toml configuration file.
 		If this is changed, pyKlock has to be restarted.
