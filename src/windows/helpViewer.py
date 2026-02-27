@@ -19,7 +19,7 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget
 from PyQt6.QtPdfWidgets import QPdfView
 from PyQt6.QtPdf import QPdfDocument
 
@@ -32,7 +32,14 @@ class HelpViewer(QWidget):
     def __init__(self, parent):
         super().__init__()
 
-        self.setGeometry(300, 300, 800, 800)
+        self.height     = 800
+        self.width      = 800
+        self.screenSize = QApplication.primaryScreen().availableGeometry()
+        self.xPos       = int((self.screenSize.width() / 2)  - (self.width / 2))
+        self.yPos       = int((self.screenSize.height() / 2) - (self.height / 2))
+
+        self.setGeometry(self.xPos, self.yPos, self.width, self.height)
+        self.setFixedSize(self.width, self.height)
         self.setWindowTitle("pyKlock Help")
 
         self.parent = parent

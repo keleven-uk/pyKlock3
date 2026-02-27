@@ -143,7 +143,6 @@ class Menu(QMenuBar):
         # Set up main menu
         self.logger.info(" Building Menu")
         menu = QMenuBar()
-        menu.setStyleSheet(self.styles.MENU_STYLE)
 
         mnuFile    = menu.addMenu("&File")
         mnuTime    = menu.addMenu("&Time")
@@ -211,7 +210,6 @@ class Menu(QMenuBar):
         """  Set up the context
         """
         self.logger.info(" Building Context menu")
-        self.context_menu.setStyleSheet("background   : transparent;")
         self.context_menu.addAction(self.actToggleMenuBar)
         self.context_menu.addAction(self.actToggleToolBar)
         self.context_menu.addSeparator()
@@ -232,14 +230,6 @@ class Menu(QMenuBar):
         index = self.combo.findText(self.config.TIME_FORMAT)
         if index >= 0:
             self.combo.setCurrentIndex(index)
-
-        self.combo.setStyleSheet("QComboBox"
-                                 "{"
-                                 "color        : self.foregroundColour;"
-                                 "background   : transparent;"
-                                 "border-radius: 3px;"
-                                 "}")
-
     # ----------------------------------------------------------------------------------------------------------------------- openFriendsViewer() ---
     def openFriendsViewer(self):
         """   Open the friends viewer.

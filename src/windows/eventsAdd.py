@@ -69,7 +69,6 @@ class AddEvents(QMainWindow):
         """
         #  Create a central widget.
         centralWidget = QFrame()
-        centralWidget.setStyleSheet("margin:0px; border:0px")
         self.setCentralWidget(centralWidget)
         centralLayout = QVBoxLayout()
         entryLayout   = QGridLayout()
@@ -88,7 +87,6 @@ class AddEvents(QMainWindow):
         cbCategory.setObjectName("Category")
         cbCategory.insertItems(0, self.categories)
         cbCategory.currentTextChanged.connect(self.addElement)
-        cbCategory.setStyleSheet(self.styles.QComboBox_STYLE)
         entryLayout.addWidget(lblCategory, 0, 2, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(cbCategory,  0, 3, Qt.AlignmentFlag.AlignCenter)
 
@@ -98,7 +96,6 @@ class AddEvents(QMainWindow):
         dteDateDue.setDate(self.today)
         dteDateDue.setObjectName("Date Due")
         dteDateDue.dateTimeChanged.connect(self.addElement)
-        dteDateDue.setStyleSheet(self.styles.QDateEdit_STYLE)
         dteDateDue.setTime(QTime(0, 0))
         entryLayout.addWidget(lblDateDue, 1, 0, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(dteDateDue, 1, 1, Qt.AlignmentFlag.AlignCenter)
@@ -111,7 +108,6 @@ class AddEvents(QMainWindow):
         teTimeDue.editingFinished.connect(self.addElement)
         teTimeDue.setDisplayFormat("HH:mm")
         teTimeDue.setTime(QTime(0, 0))
-        teTimeDue.setStyleSheet(self.styles.QTimeEdit_STYLE)
         entryLayout.addWidget(lblTimeDue, 1, 2, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(teTimeDue, 1, 3, Qt.AlignmentFlag.AlignCenter)
 
@@ -120,7 +116,6 @@ class AddEvents(QMainWindow):
         tgRecurring.setChecked(False)
         tgRecurring.stateChanged.connect(self.addElement)
         tgRecurring.setObjectName("Recurring")
-        tgRecurring.setStyleSheet(self.styles.QToggle_STYLE)
         entryLayout.addWidget(lblRecurring, 2, 0, Qt.AlignmentFlag.AlignCenter)
         entryLayout.addWidget(tgRecurring,  2, 1, Qt.AlignmentFlag.AlignCenter)
 

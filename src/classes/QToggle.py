@@ -188,12 +188,14 @@ if __name__ == "__main__":
     checkbox2.setText("Checkbox 2 - Checked, custom height, animation duration, colors and font")
     checkbox2.setFixedHeight(24)
     checkbox2.setFont(QFont("Segoe Print", 10))
-    checkbox2.setStyleSheet("QToggle{"
-                            "qproperty-bg_color:#FAA;"
-                            "qproperty-circle_color:#DDF;"
-                            "qproperty-active_color:#AAF;"
-                            "qproperty-disabled_color:#777;"
-                            "qproperty-text_color:#A0F;}")
+
+    # Removed, now uses the global style sheet.
+    # checkbox2.setStyleSheet("QToggle{"
+    #                         "qproperty-bg_color:#FAA;"
+    #                         "qproperty-circle_color:#DDF;"
+    #                         "qproperty-active_color:#AAF;"
+    #                         "qproperty-disabled_color:#777;"
+    #                         "qproperty-text_color:#A0F;}")
     checkbox2.setDuration(2000)
     checkbox2.setChecked(True)
     layout.addWidget(checkbox2)

@@ -35,6 +35,20 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.48		[27 February 2026]
+
+	Added the ability to apply a global style sheet in the form of a .qss file.
+		The name of the .qss file is held in the config.toml configuration file.
+		If this is changed, pyKlock has to be restarted.
+		Two .qss files so far are included.
+
+		Combinear.qss    - https://qss-stock.devsecstudio.com/
+		MaterialDark.qss - https://github.com/GTRONICK/QSS/blob/master/MaterialDark.qss
+
+		The old style module still retained, styles for the progress bar.
+
+	Corrected a bug where the info windows did not update when a different year was selected.
+
 
 V2026.47		[26 February 2026]
 

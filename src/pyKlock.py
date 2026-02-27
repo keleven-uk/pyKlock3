@@ -42,6 +42,7 @@ import src.windows.textViewer as tw
 import src.windows.helpViewer as hp
 import src.windows.settings as stngs
 
+from src.projectPaths import STYLE_PATH
 
 class KlockWindow(QMainWindow):
     def __init__(self, myConfig, myLogger):
@@ -83,8 +84,8 @@ class KlockWindow(QMainWindow):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         if self.transparent:
             self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-            self.setStyleSheet("background   : transparent;")
-
+            self.setStyleSheet("background : transparent;")
+            
         #  result is the Boolean result of the conversion, True = success and False = error.
         result = QFont.fromString(self.timeFont, self.config.TIME_FONT)
 
@@ -153,7 +154,6 @@ class KlockWindow(QMainWindow):
 
         #  Create a central widget.
         self.centralWidget = QFrame()
-        self.centralWidget.setStyleSheet("margin:0px; border:0px")
         self.setCentralWidget(self.centralWidget)
         self.centralLayout = QVBoxLayout()
 

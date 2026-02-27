@@ -59,7 +59,6 @@ class FriendsViewer(QMainWindow):
         """
         #  Create a central widget.
         self.centralWidget = QFrame()
-        self.centralWidget.setStyleSheet("margin:0px; border:0px")
         self.setCentralWidget(self.centralWidget)
         self.centralLayout = QVBoxLayout()
         self.ButtonLayout  = QHBoxLayout()

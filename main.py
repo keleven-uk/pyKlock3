@@ -35,10 +35,24 @@ import src.pyKlock as pyKlock
 import src.config  as Config
 import src.logger  as Logger
 
-from src.projectPaths import LOGGER_PATH, CONFIG_PATH, RESOURCE_PATH, FROZEN
+from src.projectPaths import LOGGER_PATH, CONFIG_PATH, RESOURCE_PATH, FROZEN, STYLE_PATH
+
+def loadQSS(app, myConfig):
+    """  Load the global style sheet.
+
+            Style sheet from https://qss-stock.devsecstudio.com/
+    """
+    fileName = f"{STYLE_PATH}\{myConfig.STYLE_SHEET}"
+    try:
+        with open (fileName, "r", encoding="utf-8") as file:
+            qss = file.read()
+        app.setStyleSheet(qss)
+        myLogger.info(f" Using style sheet file {fileName}")
+    except FileNotFoundError:
+        smyLogger.error(f" Style sheet file not found {fileName}")
+        print(f" ERROR :: Style sheet file not found {fileName}")
 
 ############################################################################################### __main__ ######
-
 if __name__ == "__main__":
 
     #  Print out any deprecation warnings for functions used in your code
@@ -77,6 +91,10 @@ if __name__ == "__main__":
     path = f"{RESOURCE_PATH}/tea.ico"
     app.setWindowIcon(QIcon(path))
     window = pyKlock.KlockWindow(myConfig, myLogger)
+    
+    loadQSS(app, myConfig)
+
     window.show()
 
     sys.exit(app.exec())
+

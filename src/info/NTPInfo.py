@@ -36,7 +36,6 @@ def buildGUI(self):
     """
     #  Create a central widget.
     self.centralWidget = QFrame()
-    self.centralWidget.setStyleSheet("margin:0px; border:0px")
     self.setCentralWidget(self.centralWidget)
     self.centralLayout = QVBoxLayout()
     self.ButtonLayout  = QHBoxLayout()
@@ -65,7 +64,6 @@ def buildGUI(self):
     self.ntpLayout.addWidget(self.delayText,  4, 0, Qt.AlignmentFlag.AlignCenter)
     self.ntpLayout.addWidget(self.delayLabel, 4, 1, Qt.AlignmentFlag.AlignLeft)
 
-    self.ntpGroup.setStyleSheet(self.styles.QGroupBox_STYLE)
     self.ntpGroup.setLayout(self.ntpLayout)
 
     btnClose = QPushButton(text="Close", parent=self)
@@ -83,6 +81,7 @@ def buildGUI(self):
     updateTime(self)
 
     #  Set up short timer to update the clock every second
+    #  callback needed to pass self as argument to update()
     timerCallback = functools.partial(updateTime, self)
     self.Timer = QTimer(self)
     self.Timer.timeout.connect(timerCallback)

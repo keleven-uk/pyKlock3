@@ -21,6 +21,7 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
+import functools
 import datetime
 
 from pymeeus.Moon import Moon
@@ -37,7 +38,6 @@ def buildGUI(self):
     #  Create a central widget.
 
     self.centralWidget = QFrame()
-    self.centralWidget.setStyleSheet("margin:0px; border:0px")
     self.setCentralWidget(self.centralWidget)
     self.centralLayout = QVBoxLayout()
     self.ButtonLayout  = QHBoxLayout()
@@ -81,11 +81,11 @@ def buildGUI(self):
     self.sbYear.setMinimum(1)
     self.sbYear.setMaximum(3000)
     self.sbYear.setValue(currentYear)
-    self.sbYear.setStyleSheet(self.styles.QSpinBox_STYLE)
 
-    self.sbYear.valueChanged.connect(self.update)
+    #  callback needed to pass self as argument to update()
+    sbYearCallback = functools.partial(update, self)
+    self.sbYear.valueChanged.connect(sbYearCallback)
 
-    self.cnyGroup.setStyleSheet(self.styles.QGroupBox_STYLE)
     self.cnyGroup.setLayout(self.cnyLayout)
 
     btnClose = QPushButton(text="Close", parent=self)

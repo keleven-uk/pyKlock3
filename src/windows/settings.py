@@ -138,13 +138,11 @@ class Settings(QDialog):
         self.tgToolBar.setChecked(self.config.TOOL_BAR)
         self.tgToolBar.stateChanged.connect(self.appSettingsUpdate)
         self.tgToolBar.setObjectName("TOOL_BAR")
-        self.tgToolBar.setStyleSheet(self.styles.QToggle_STYLE)
 
         self.tgConfirmExit = QToggle(self)
         self.tgConfirmExit.setChecked(self.config.CONFIRM_EXIT)
         self.tgConfirmExit.stateChanged.connect(self.appSettingsUpdate)
         self.tgConfirmExit.setObjectName("CONFIRM_EXIT")
-        self.tgConfirmExit.setStyleSheet(self.styles.QToggle_STYLE)
 
         layout.addRow("Display Tool Bar ", self.tgToolBar)
         layout.addRow("Confirm Exit ",     self.tgConfirmExit)
@@ -191,7 +189,6 @@ class Settings(QDialog):
         self.tgInfoLine.setChecked(self.config.INFO_LINE)
         self.tgInfoLine.stateChanged.connect(self.displaySettingsUpdate)
         self.tgInfoLine.setObjectName("INFO_LINE")
-        self.tgInfoLine.setStyleSheet(self.styles.QToggle_STYLE)
 
         layout.addRow("Foreground Colour ", self.btnForeColour)
         layout.addRow("Background Colour ", self.btnBackColour)
@@ -267,7 +264,6 @@ class Settings(QDialog):
             lineEdit = QLineEdit(str(value), self)
             lineEdit.setObjectName(setting)
             lineEdit.editingFinished.connect(self.timeSettingsUpdate)
-            lineEdit.setStyleSheet(self.styles.QEdit_STYLE)
 
             layout.addRow(title, lineEdit)
 
@@ -326,8 +322,7 @@ class Settings(QDialog):
             self.toggles[setting].setChecked(checked)
             self.toggles[setting].stateChanged.connect(self.displaySoundUpdate)
             self.toggles[setting].setObjectName(setting)
-            self.toggles[setting].setStyleSheet(self.styles.QToggle_STYLE)
-
+  
             layout.addRow(title, self.toggles[setting])
 
         self.sldVolume = QSlider(Qt.Orientation.Horizontal, self)

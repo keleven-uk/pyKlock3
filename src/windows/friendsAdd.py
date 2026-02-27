@@ -71,7 +71,6 @@ class AddFriends(QMainWindow):
         """
         #  Create a central widget.
         centralWidget = QFrame()
-        centralWidget.setStyleSheet("margin:0px; border:0px")
         self.setCentralWidget(centralWidget)
         centralLayout = QVBoxLayout()
         entryLayout   = QGridLayout()
@@ -124,7 +123,6 @@ class AddFriends(QMainWindow):
                     self.dteElement.setDate(QDate.currentDate())
                     self.dteElement.setObjectName(header)
                     self.dteElement.dateTimeChanged.connect(self.addElement)
-                    self.dteElement.setStyleSheet(self.styles.QDateEdit_STYLE)
                     entryLayout.addWidget(self.lblElement, row, 2, Qt.AlignmentFlag.AlignCenter)
                     entryLayout.addWidget(self.dteElement, row, 3, Qt.AlignmentFlag.AlignCenter)
 

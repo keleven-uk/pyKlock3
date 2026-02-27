@@ -21,6 +21,7 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
+import functools
 import datetime
 
 import src.utils.easterDates as ed 
@@ -34,7 +35,6 @@ def buildGUI(self):
     """
     #  Create a central widget.
     self.centralWidget = QFrame()
-    self.centralWidget.setStyleSheet("margin:0px; border:0px")
     self.setCentralWidget(self.centralWidget)
     self.centralLayout = QVBoxLayout()
     self.ButtonLayout  = QHBoxLayout()
@@ -50,23 +50,25 @@ def buildGUI(self):
     self.lblEasterMonday = QLabel("06 April 2026")
     self.txtTypeOfEaster = QLabel("Type of Easter")
     self.cbTypeOfEaster  = QComboBox()
-
     self.txtYearOfEaster = QLabel("Year")
     self.sbYearOfEaster  = QSpinBox(self)
 
     self.cbTypeOfEaster.insertItems(3, ["Hebrew Calendar", "Julian Calendar", "Gregorian Calendar"])
-    self.cbTypeOfEaster.setStyleSheet(self.styles.QComboBox_STYLE)
     self.cbTypeOfEaster.setCurrentIndex(2)
+
+    #  callback needed to pass self as argument to update()
+    cbTypeOfEasterCallback = functools.partial(update, self)
+    self.cbTypeOfEaster.currentTextChanged.connect(cbTypeOfEasterCallback)
 
     currentYear = datetime.datetime.now().year
 
     self.sbYearOfEaster.setMinimum(1)
     self.sbYearOfEaster.setMaximum(3000)
     self.sbYearOfEaster.setValue(currentYear)
-    self.sbYearOfEaster.setStyleSheet(self.styles.QSpinBox_STYLE)
 
-    self.cbTypeOfEaster.currentTextChanged.connect(self.update)
-    self.sbYearOfEaster.valueChanged.connect(self.update)
+    #  callback needed to pass self as argument to update()
+    sbYearOfEasterCallback = functools.partial(update, self)
+    self.sbYearOfEaster.valueChanged.connect(sbYearOfEasterCallback)
 
     self.ntpLayout.addWidget(self.txtGoodFriday,   0, 0, Qt.AlignmentFlag.AlignCenter)
     self.ntpLayout.addWidget(self.lblGoodFriday,   0, 1, Qt.AlignmentFlag.AlignLeft)
@@ -79,7 +81,6 @@ def buildGUI(self):
     self.ntpLayout.addWidget(self.txtYearOfEaster, 5, 0, Qt.AlignmentFlag.AlignCenter)
     self.ntpLayout.addWidget(self.sbYearOfEaster,  5, 1, Qt.AlignmentFlag.AlignLeft)
 
-    self.ntpGroup.setStyleSheet(self.styles.QGroupBox_STYLE)
     self.ntpGroup.setLayout(self.ntpLayout)
 
     btnClose = QPushButton(text="Close", parent=self)

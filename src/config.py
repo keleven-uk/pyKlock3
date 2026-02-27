@@ -206,6 +206,18 @@ class Config():
         self.config["APPLICATION"]["toolBar"] = value
 
     @property
+    def STYLE_SHEET(self):
+        """  Returns the global style sheet.
+        """
+        return self.config["APPLICATION"].get("style", "MaterialDark.qss")
+
+    @STYLE_SHEET.setter
+    def STYLE_SHEET(self, value):
+        """  Sets the global style sheet.
+        """
+        self.config["APPLICATION"]["style"] = value
+
+    @property
     def TIME_MODE(self):
         """  Returns the Time mode.
              Either Digital of Text.
@@ -502,7 +514,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.47",
+        config["INFO"] = {"myVERSION": "2026.48",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -511,7 +523,8 @@ class Config():
                                  "height"     : 45,
                                  "confirmExit": False,
                                  "menu"       : True,
-                                 "toolBar"    : True}
+                                 "toolBar"    : True,
+                                 "style"      : "MaterialDark.qss"}
 
         config["DISPLAY"] = {"foreground" : "#00ff00",
                              "background" : "#000000",
