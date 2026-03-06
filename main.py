@@ -49,7 +49,7 @@ def loadQSS(app, myConfig):
         app.setStyleSheet(qss)
         myLogger.info(f" Using style sheet file {fileName}")
     except FileNotFoundError:
-        smyLogger.error(f" Style sheet file not found {fileName}")
+        myLogger.error(f" Style sheet file not found {fileName}")
         print(f" ERROR :: Style sheet file not found {fileName}")
 
 ############################################################################################### __main__ ######

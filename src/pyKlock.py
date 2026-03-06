@@ -42,8 +42,6 @@ import src.windows.textViewer as tw
 import src.windows.helpViewer as hp
 import src.windows.settings as stngs
 
-from src.projectPaths import STYLE_PATH
-
 class KlockWindow(QMainWindow):
     def __init__(self, myConfig, myLogger):
         super().__init__()
@@ -366,23 +364,23 @@ class KlockWindow(QMainWindow):
             self.self.txtHeight += 40
 
         if self.txtWidth > self.minimumWidth:
-            klockWidth = self.txtWidth
+            pyklockWidth = self.txtWidth
         else:
-            klockWidth = self.minimumWidth
+            pyklockWidth = self.minimumWidth
 
         if self.config.TIME_ALIGNMENT:
             match self.config.TIME_ALIGNMENT:
                 case "Left":                                                                        #  align to left hand of the screen.
-                    self.setGeometry(5, self.Ypos, klockWidth, self.txtHeight)
+                    self.setGeometry(5, self.Ypos, pyklockWidth, self.txtHeight)
                 case "Right":  
                     screenSize = QApplication.primaryScreen().availableGeometry()                   #  align to right hand of the screen.
-                    xpos = screenSize.width() - klockWidth - 30
-                    self.setGeometry(xpos, self.Ypos, klockWidth, self.txtHeight)
+                    xpos = screenSize.width() - pyklockWidth - 30
+                    self.setGeometry(xpos, self.Ypos, pyklockWidth, self.txtHeight)
         else:
-            self.setGeometry(self.Xpos, self.Ypos, klockWidth, self.txtHeight)
+            self.setGeometry(self.Xpos, self.Ypos, pyklockWidth, self.txtHeight)
 
-        self.statusBar.geometry().setWidth(klockWidth)
-        self.infoLayout.geometry().setWidth(klockWidth)
+        self.statusBar.geometry().setWidth(pyklockWidth)
+        self.infoLayout.geometry().setWidth(pyklockWidth)
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------
     def updateColour(self):
         """  Update the foreground and background colour of both the main form and the statusbar.

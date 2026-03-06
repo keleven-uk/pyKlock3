@@ -20,9 +20,16 @@
 #                                                                                                             #
 ###############################################################################################################
 
+import datetime
+import zoneinfo
 import win32api
 import win32con
 import ctypes
+import re
+
+from functools import lru_cache
+
+from src.projectPaths import RESOURCE_PATH
 
 import src.classes.systemInfo as si
 
@@ -140,8 +147,48 @@ def getDiscUsage():
     return f"{progressBar} {percent:.1f}% ({usedSpace:.1f} / {totalSpace:.1f})"
     #return f"{progressBar} {percent:.1f}%)"
 
+@lru_cache(maxsize=None)
+def deprecatedAliases():
+    """  Produces a list of deprecated time zones
+
+         The file backward needs to be downloaded from https://www.iana.org/time-zones.
+    """
+    fileName = f"{RESOURCE_PATH}/timeZones/backward"
+    aliases = set()
+    try:
+        with open(fileName, "r") as fp:
+            for lineFull in fp:
+                line = lineFull.strip()
+                if not line.startswith("Link\t"):
+                    continue
+                _link, _dest, source = re.split("\t+", line)
+                aliases.add(source)
+    except FileNotFoundError:
+            print("backward file not found.")
+
+    return aliases
+
+@lru_cache(maxsize=None)
+def getTimezones():
+    """  Returns a sorted set of current time zones.
+         The list that is produced is large and uses a fair amount of resources.
+         So, we cache the list ion the first run and re-use on further calls.
 
 
+         Number of timeZones : 598 :: number of deprecated aliases : 256  :: Current Time Zones : 342  -  as of 5 March 2026
 
+         See https://adamj.eu/tech/2021/05/06/how-to-list-all-timezones-in-python/
+    """
+    zones = zoneinfo.available_timezones()
+    deprecated = deprecatedAliases()
+    currentZones = zones - deprecated
+    #print(f" Number of timeZones : {len(zones)} :: number of deprecated aliases : {len(deprecated)}  :: Current Time Zones : {len(currentZones)}")
+    return sorted(currentZones)
+
+@lru_cache(maxsize=None)
+def getTimezone():
+    nw = datetime.datetime.now()
+    print(nw)
+    return nw.tzinfo
 
 

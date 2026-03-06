@@ -35,9 +35,14 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.49		[6 March 2026]
+
+	Added another info window - World Klock.  The time from around the world can be displayed.
+
+
 V2026.48		[27 February 2026]
 
-	Added another window - Vernal Equinox dates.  Gives the star of the seasons.
+	Added another info window - Vernal Equinox dates.  Gives the start of the seasons.
 
 	
 V2026.48		[27 February 2026]
@@ -179,9 +184,9 @@ V2026.33		[21 January 2026]
 V2026.32		[19 January 2026]
 
 	Added Sound.
-		Klock will, if configured, play Westminster Chimes on the Hour, quarter past, half pas and a quarter to the hour.
-		Klock will, if configured, play the Cuckoo noise on the Hour, quarter past, half pas and a quarter to the hour.
-		Klock will, if configured, play "the pips" on the hour.
+		pyKlock will, if configured, play Westminster Chimes on the Hour, quarter past, half pas and a quarter to the hour.
+		pyKlock will, if configured, play the Cuckoo noise on the Hour, quarter past, half pas and a quarter to the hour.
+		pyKlock will, if configured, play "the pips" on the hour.
 		The settings have been added to config.toml - but not the configure pyKlock, yet.
 
 
@@ -463,9 +468,9 @@ V2025.4		[29 October 2025]
 V2025.3		[27 October 2025]
 
 	Added properties for x_pos, y_pos, width & height of the main form.
-		These are saved in the config file and restored when Klock is re-run.
+		These are saved in the config file and restored when pyKlock is re-run.
 
-	Klock now asks "Are you sure you want to close the application?" on closure.
+	pyKlock now asks "Are you sure you want to close the application?" on closure.
 
 
 V2025.2		[26 October 2025]

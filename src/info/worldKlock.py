@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    NTOInfo   Copyright (C) <2026>  <Kevin Scott>                                                            #
+#   worldKlock.py   Copyright (C) <2026>  <Kevin Scott>                                                       #
 #                                                                                                             #
-#    The methods for displaying NTP info.                                                                     #
+#    The methods for displaying a world Klock.                                                                #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -21,16 +21,17 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-import time
 import functools
+import datetime
 
-import ntplib
+import zoneinfo as zi
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QFrame,
-                            QGroupBox, QGridLayout, QLabel)
+                            QGroupBox, QGridLayout, QLabel, QComboBox)
 from PyQt6.QtCore    import Qt, QTimer
 
-# ----------------------------------------------------------------------------------------------------------------------- updateTime() --------------
+import src.utils.klock_utils as utils
+
 def buildGUI(self):
     """  Build the GUI elements.
     """
@@ -40,47 +41,48 @@ def buildGUI(self):
     self.centralLayout = QVBoxLayout()
     self.ButtonLayout  = QHBoxLayout()
 
-    self.ntpGroup   = QGroupBox("NTP Server Time")
-    self.ntpLayout  = QGridLayout(self.ntpGroup)
-    self.txtLegend  = QLabel("Shows the Response from a NTP server.")
-    self.ntpText    = QLabel("NTP Server Time")
-    self.ntpLabel   = QLabel("12:34:56:789")
-    self.pcText     = QLabel("PC Time")
-    self.pcLabel    = QLabel("12:34:56:789")
-    self.difText    = QLabel("Difference Time")
-    self.difLabel   = QLabel("0.00 Seconds")
-    self.offText    = QLabel("NTP Offset")
-    self.offLabel   = QLabel("0.00 Seconds")
-    self.delayText  = QLabel("NTP Root Delay")
-    self.delayLabel = QLabel("0.00 Seconds")
+    self.wkGroup  = QGroupBox("World Klock")
+    self.wkLayout = QGridLayout(self.wkGroup)
 
-    self.ntpLayout.addWidget(self.txtLegend,   0, 0, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.ntpText,    1, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.ntpLabel,   1, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.pcText,     2, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.pcLabel,    2, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.difText,    3, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.difLabel,   3, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.offText,    4, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.offLabel,   5, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.delayText,  6, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.delayLabel, 6, 1, Qt.AlignmentFlag.AlignLeft)
+    self.txtLegend    = QLabel("Shows the local time for the selected time zone.")
+    self.txtLocalTime = QLabel("Local Time")
+    self.txtLocalTime.setStyleSheet("font-size: 24pt;")
+    self.lblLocalTime = QLabel("12:34:56")
+    self.lblLocalTime.setStyleSheet("font-size: 24pt;")
+    self.txtWorldTime = QLabel("World Klock Time")
+    self.txtWorldTime.setStyleSheet("font-size: 24pt;")
+    self.lblWorldTime = QLabel("12:34:56")
+    self.lblWorldTime.setStyleSheet("font-size: 24pt;")
+    self.txtTimeZone  = QLabel("Time Zone")
+    self.txtTimeZone.setStyleSheet("font-size: 24pt;")
+    self.cbTimeZone   = QComboBox()
 
-    self.ntpGroup.setLayout(self.ntpLayout)
+    self.cbTimeZone.insertItems(0, utils.getTimezones())
+    self.cbTimeZone.setCurrentText("GMT")
+
+    #  callback needed to pass self as argument to update()
+    cbTypeOfEasterCallback = functools.partial(update, self)
+    self.cbTimeZone.currentTextChanged.connect(cbTypeOfEasterCallback)
+
+    self.wkLayout.addWidget(self.txtLegend,    0, 0, Qt.AlignmentFlag.AlignLeft)
+    self.wkLayout.addWidget(self.txtLocalTime, 1, 0, Qt.AlignmentFlag.AlignLeft)
+    self.wkLayout.addWidget(self.lblLocalTime, 1, 1, Qt.AlignmentFlag.AlignCenter)
+    self.wkLayout.addWidget(self.txtWorldTime, 2, 0, Qt.AlignmentFlag.AlignLeft)
+    self.wkLayout.addWidget(self.lblWorldTime, 2, 1, Qt.AlignmentFlag.AlignCenter)
+    self.wkLayout.addWidget(self.txtTimeZone,  4, 0, Qt.AlignmentFlag.AlignCenter)
+    self.wkLayout.addWidget(self.cbTimeZone,   4, 1, Qt.AlignmentFlag.AlignLeft)
+
+    self.wkGroup.setLayout(self.wkLayout)
 
     btnClose = QPushButton(text="Close", parent=self)
     btnClose.clicked.connect(self.close)
 
     self.ButtonLayout.addWidget(btnClose)
 
-    self.centralLayout.addWidget(self.ntpGroup)
+    self.centralLayout.addWidget(self.wkGroup)
     self.centralLayout.addLayout(self.ButtonLayout)
 
     self.centralWidget.setLayout(self.centralLayout)
-
-    self.client = ntplib.NTPClient()
-
-    update(self)
 
     #  Set up short timer to update the clock every second
     #  callback needed to pass self as argument to update()
@@ -89,29 +91,18 @@ def buildGUI(self):
     self.Timer.timeout.connect(timerCallback)
     self.Timer.start(1000)
 
-# ----------------------------------------------------------------------------------------------------------------------- updateTime() --------------
+# ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
 def update(self):
-    """  Update the time every second.
+    """    Updated the labels.
     """
-    try:
-        response = self.client.request("time.enhost.uk")
-        ntpTime  = response.tx_time
-        offset   = response.offset
-        delay    = response.root_delay
+    localNow = datetime.datetime.now()
+    worldNow = datetime.datetime.now(zi.ZoneInfo(self.cbTimeZone.currentText()))
 
-        pcTime = time.time()
-        diff   = pcTime - ntpTime
-        self.ntpLabel.setText(time.ctime(ntpTime))
-        self.pcLabel.setText(time.ctime(pcTime))
-        self.difLabel.setText(f" {diff:.2f} seconds")
-        self.offLabel.setText(f" {offset:.2f} seconds")
-        self.delayLabel.setText(f" {delay:.2f} seconds")
-    except ntplib.NTPException:
-        print("No response from server")
+    self.lblLocalTime.setText(localNow.strftime("%H %M %S"))
+    self.lblWorldTime.setText(worldNow.strftime("%H %M %S"))
 # ----------------------------------------------------------------------------------------------------------------------- close() -------------------
 def close(self):
     """  Close down the time when not needed.
     """
     if self.Timer:
         self.Timer.stop()
-

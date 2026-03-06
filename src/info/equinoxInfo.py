@@ -24,11 +24,10 @@
 import functools
 import datetime
 
-from pymeeus.Epoch import Epoch
 from pymeeus.Sun import Sun
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QFrame,
-                            QGroupBox, QGridLayout, QLabel, QComboBox, QSpinBox)
+                            QGroupBox, QGridLayout, QLabel, QSpinBox)
 from PyQt6.QtCore    import Qt
 
 def buildGUI(self):
@@ -40,9 +39,10 @@ def buildGUI(self):
     self.centralLayout = QVBoxLayout()
     self.ButtonLayout  = QHBoxLayout()
 
-    self.ntpGroup  = QGroupBox("Easter Dates")
-    self.ntpLayout = QGridLayout(self.ntpGroup)
+    self.seGroup  = QGroupBox("Seasons Equinox")
+    self.seLayout = QGridLayout(self.seGroup)
 
+    self.txtLegend        = QLabel("Shows the date of the seasonal equinox.")
     self.txtSpring        = QLabel("Spring Equinox")
     self.lblSpring        = QLabel("03 April 2026")
     self.txtSummer        = QLabel("Summer Equinox")
@@ -64,25 +64,26 @@ def buildGUI(self):
     sbYearOfEquinoxCallback = functools.partial(update, self)
     self.sbYearOfEquinox.valueChanged.connect(sbYearOfEquinoxCallback)
 
-    self.ntpLayout.addWidget(self.txtSpring,        0, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.lblSpring,        0, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.txtSummer,        1, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.lblSummer,        1, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.txtAutumn,        2, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.lblAutumn,        2, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.txtWinter,        3, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.lblWinter,        3, 1, Qt.AlignmentFlag.AlignLeft)
-    self.ntpLayout.addWidget(self.txtYearOfEquinox, 5, 0, Qt.AlignmentFlag.AlignCenter)
-    self.ntpLayout.addWidget(self.sbYearOfEquinox,  5, 1, Qt.AlignmentFlag.AlignLeft)
+    self.seLayout.addWidget(self.txtLegend,        0, 0, Qt.AlignmentFlag.AlignLeft)
+    self.seLayout.addWidget(self.txtSpring,        1, 0, Qt.AlignmentFlag.AlignCenter)
+    self.seLayout.addWidget(self.lblSpring,        1, 1, Qt.AlignmentFlag.AlignLeft)
+    self.seLayout.addWidget(self.txtSummer,        2, 0, Qt.AlignmentFlag.AlignCenter)
+    self.seLayout.addWidget(self.lblSummer,        2, 1, Qt.AlignmentFlag.AlignLeft)
+    self.seLayout.addWidget(self.txtAutumn,        3, 0, Qt.AlignmentFlag.AlignCenter)
+    self.seLayout.addWidget(self.lblAutumn,        3, 1, Qt.AlignmentFlag.AlignLeft)
+    self.seLayout.addWidget(self.txtWinter,        4, 0, Qt.AlignmentFlag.AlignCenter)
+    self.seLayout.addWidget(self.lblWinter,        4, 1, Qt.AlignmentFlag.AlignLeft)
+    self.seLayout.addWidget(self.txtYearOfEquinox, 5, 0, Qt.AlignmentFlag.AlignCenter)
+    self.seLayout.addWidget(self.sbYearOfEquinox,  5, 1, Qt.AlignmentFlag.AlignLeft)
 
-    self.ntpGroup.setLayout(self.ntpLayout)
+    self.seGroup.setLayout(self.seLayout)
 
     btnClose = QPushButton(text="Close", parent=self)
     btnClose.clicked.connect(self.close)
 
     self.ButtonLayout.addWidget(btnClose)
 
-    self.centralLayout.addWidget(self.ntpGroup)
+    self.centralLayout.addWidget(self.seGroup)
     self.centralLayout.addLayout(self.ButtonLayout)
 
     self.centralWidget.setLayout(self.centralLayout)
@@ -93,16 +94,16 @@ def update(self):
     """
     epoch = Sun.get_equinox_solstice(self.sbYearOfEquinox.value(), target="spring")
     y, m, d, h, mi, s = epoch.get_full_date()
-    self.lblSpring.setText(f" {d}/{m}/{y}  {h}:{mi}")
+    self.lblSpring.setText(f" {d}/{m}/{y}  {h:02}:{mi:02}")
 
     epoch = Sun.get_equinox_solstice(self.sbYearOfEquinox.value(), target="summer")
     y, m, d, h, mi, s = epoch.get_full_date()
-    self.lblSummer.setText(f" {d}/{m}/{y}  {h}:{mi}")
+    self.lblSummer.setText(f" {d}/{m}/{y}  {h:02}:{mi:02}")
 
     epoch = Sun.get_equinox_solstice(self.sbYearOfEquinox.value(), target="autumn")
     y, m, d, h, mi, s = epoch.get_full_date()
-    self.lblAutumn.setText(f" {d}/{m}/{y}  {h}:{mi}")
+    self.lblAutumn.setText(f" {d}/{m}/{y}  {h:02}:{mi:02}")
 
     epoch = Sun.get_equinox_solstice(self.sbYearOfEquinox.value(), target="winter")
     y, m, d, h, mi, s = epoch.get_full_date()
-    self.lblWinter.setText(f" {d}/{m}/{y}  {h}:{mi}")
+    self.lblWinter.setText(f" {d}/{m}/{y}  {h:02}:{mi:02}")

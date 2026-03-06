@@ -92,7 +92,7 @@ class About(QDialog):
         title = QLabel("A Clock with a K",)
         name  = QLabel(f"{self.config.NAME}  Version {self.config.VERSION}")
         copy  = QLabel("(c) Kevin Scott 2025")
-        email = QLabel("klock@keleven.co.uk")
+        email = QLabel("pyklock@keleven.co.uk")
         built = QLabel(f"Built using python {platform.python_version()} and QT {PYQT_VERSION_STR}")
 
         self.topGroup  = QGroupBox("Application")

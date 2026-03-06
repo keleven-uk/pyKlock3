@@ -75,6 +75,12 @@ class Menu(QMenuBar):
         self.actTextTime.triggered.connect(self.parent.setTextTime)
         self.actTextTime.setCheckable(False)
 
+        path = f"{RESOURCE_PATH}/world.png"
+        self.actWorldKlock = QAction(QIcon(path),"World Klock", self)
+        self.actWorldKlock.setObjectName("World Klock")
+        self.actWorldKlock.triggered.connect(self.openInfoViewer)
+        self.actWorldKlock.setCheckable(False)
+
         path = f"{RESOURCE_PATH}/font.png"
         self.actFont = QAction(QIcon(path),"Change Font", self)
         self.actFont.triggered.connect(self.parent.openFontDialog)
@@ -169,6 +175,7 @@ class Menu(QMenuBar):
 
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
+        mnuTime.addAction(self.actWorldKlock)
 
         mnuThings.addAction(self.actViewFriends)
         mnuThings.addAction(self.actViewEvents)

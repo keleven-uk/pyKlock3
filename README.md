@@ -38,13 +38,13 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 * The background can also be set to transparent.
 
-* Klock can play sounds on the hour - Westminster Chimes, Cuckoo Chimes or the classic Pips.
+* pyKlock can play sounds on the hour - Westminster Chimes, Cuckoo Chimes or the classic Pips.
 
-* Klock can also some useful [maybe] information - a NTP server response, Easter Dates, Chinese New Year dates.
+* pyKlock can also some useful [maybe] information - a NTP server response, Easter Dates, Chinese New Year dates.
 
-* Klock includes the ability to display a table of Friends.
+* pyKlock includes the ability to display a table of Friends.
 
-* Klock includes the ability to display a table of Events, although no checking - YET.
+* pyKlock includes the ability to display a table of Events, although no checking - YET.
 
 The status bar includes Date, Key Status, Time Type and Idle Time.  
     Key status is the status of Caps Lock, Insert, Scroll lock and Num lock. 
