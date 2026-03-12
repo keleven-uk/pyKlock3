@@ -23,10 +23,10 @@
 # -*- coding: utf-8 -*-
 
 import src.info.chineseYearInfo as cny
+import src.info.publicHolidays as ph
 import src.info.easterInfo as estr
 import src.info.equinoxInfo as ei
 import src.info.worldKlock as wk
-
 import src.info.NTPInfo as ntp
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
@@ -50,6 +50,11 @@ class infoViewer(QMainWindow):
                 self.setWindow(400, 500)
                 estr.buildGUI(self)
                 estr.update(self)
+            case "Public Holidays":
+                self.setWindow(400, 500)
+                ph.init(self)
+                ph.buildGUI(self)
+                ph.update(self)
             case "NTP Server":
                 self.setWindow(400, 500)
                 self.timerStarted = True

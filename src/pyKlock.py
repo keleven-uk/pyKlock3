@@ -112,6 +112,10 @@ class KlockWindow(QMainWindow):
         self.updateBattery()
         self.eventsStore.updateEvents()
 
+        #  This returns a QRect(x, y, width, height)
+        print(QApplication.primaryScreen().availableVirtualGeometry())
+        print(QApplication.primaryScreen().availableGeometry() )
+
     def updateValues(self):
         """  Set up run time values from the config file.
              Also called if the config file changes.
@@ -372,13 +376,13 @@ class KlockWindow(QMainWindow):
             match self.config.TIME_ALIGNMENT:
                 case "Left":                                                                        #  align to left hand of the screen.
                     self.setGeometry(5, self.Ypos, pyklockWidth, self.txtHeight)
-                case "Right":  
-                    screenSize = QApplication.primaryScreen().availableGeometry()                   #  align to right hand of the screen.
-                    xpos = screenSize.width() - pyklockWidth - 30
+                case "Right": 
+                    screenSize = QApplication.primaryScreen().availableGeometry()  
+                    xpos = screenSize.width() - pyklockWidth - 30                     #  align to right hand of the screen.
                     self.setGeometry(xpos, self.Ypos, pyklockWidth, self.txtHeight)
         else:
             self.setGeometry(self.Xpos, self.Ypos, pyklockWidth, self.txtHeight)
-
+       
         self.statusBar.geometry().setWidth(pyklockWidth)
         self.infoLayout.geometry().setWidth(pyklockWidth)
     # ----------------------------------------------------------------------------------------------------------------------- updateColour() --------

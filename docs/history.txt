@@ -35,12 +35,60 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
-V2026.49		[6 March 2026]
+V2026.51		[12 March 2026]
+
+	Added another info window - Public Holidays.  Public Holidays dates for a given year and country.
+		Easter Dates may ne be depreciated.
+
+------------------------------------------------------------------------------------------------
+File                                                         blank        comment           code
+------------------------------------------------------------------------------------------------
+pyKlock\pyKlock3\src\pyKlock.py                                 68            129            346
+pyKlock\pyKlock3\src\config.py                                  94            189            286
+pyKlock\pyKlock3\src\windows\settings.py                        73             64            266
+pyKlock\pyKlock3\src\classes\selectTime.py                     132            155            235
+pyKlock\pyKlock3\src\windows\friendsAdd.py                      27             45            188
+pyKlock\pyKlock3\src\classes\systemInfo.py                      80            121            182
+pyKlock\pyKlock3\src\classes\menu.py                            42             60            166
+pyKlock\pyKlock3\src\windows\eventsAdd.py                       27             44            153
+pyKlock\pyKlock3\src\classes\QToggle.py                         35             36            134
+pyKlock\pyKlock3\src\info\chineseYearInfo.py                    24             39            133
+pyKlock\pyKlock3\src\classes\eventsStore.py                     29            106            127
+pyKlock\pyKlock3\src\windows\eventsViewer.py                    34             56            118
+pyKlock\pyKlock3\src\windows\friendsViewer.py                   32             56            118
+pyKlock\pyKlock3\src\utils\klock_utils.py                       34             60            100
+pyKlock\pyKlock3\src\windows\about.py                           29             23            100
+pyKlock\pyKlock3\src\classes\sounds.py                          24             54             97
+pyKlock\pyKlock3\src\utils\timeCodes.py                          5             20             78
+pyKlock\pyKlock3\src\info\NTPInfo.py                            17             34             66
+pyKlock\pyKlock3\main.json                                       0              0             65
+pyKlock\pyKlock3\src\info\easterInfo.py                         20             30             65
+pyKlock\pyKlock3\src\info\equinoxInfo.py                        19             29             61
+pyKlock\pyKlock3\src\info\worldKlock.py                         18             34             56
+pyKlock\pyKlock3\src\classes\friendsStore.py                    21             60             53
+pyKlock\pyKlock3\src\windows\infoViewer.py                      13             32             49
+pyKlock\pyKlock3\main.py                                        20             32             48
+pyKlock\pyKlock3\config.toml                                     5              5             42
+pyKlock\pyKlock3\src\windows\textViewer.py                      15             27             40
+pyKlock\pyKlock3\src\windows\helpViewer.py                      15             26             36
+pyKlock\pyKlock3\ruff.toml                                       7              8             31
+pyKlock\pyKlock3\src\projectPaths.py                             3             24             22
+pyKlock\pyKlock3\src\utils\easterDates.py                        5             34             22
+pyKlock\pyKlock3\src\logger.py                                  11             27             18
+pyKlock\pyKlock3\src\classes\styles.py                           9             84             16
+pyKlock\pyKlock3\cspell.json                                     0              0             14
+pyKlock\pyKlock3\copyStuff.bat                                   5              0              8
+pyKlock\pyKlock3\.vscode\settings.json                           0              0              5
+------------------------------------------------------------------------------------------------
+SUM:                                                           992           1743           3544
+------------------------------------------------------------------------------------------------
+
+V2026.50		[6 March 2026]
 
 	Added another info window - World Klock.  The time from around the world can be displayed.
 
 
-V2026.48		[27 February 2026]
+V2026.49		[27 February 2026]
 
 	Added another info window - Vernal Equinox dates.  Gives the start of the seasons.
 

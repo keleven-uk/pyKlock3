@@ -54,7 +54,6 @@ class Menu(QMenuBar):
         self.parent      = parent
         self.eventsStore = eventsStore
 
-        self.toolbar      = QToolBar("Time Toolbar")
         self.context_menu = QMenu(self)
         self.selectTime   = st.SelectTime()
         self.styles       = styles.Styles()
@@ -120,6 +119,9 @@ class Menu(QMenuBar):
         self.actViewEaster = QAction("Easter Dates", self)
         self.actViewEaster.setObjectName("Easter Dates")
         self.actViewEaster.triggered.connect(self.openInfoViewer)
+        self.actPublicHolidays = QAction("Public Holidays", self)
+        self.actPublicHolidays.setObjectName("Public Holidays")
+        self.actPublicHolidays.triggered.connect(self.openInfoViewer)
         self.actViewCNY = QAction("Chinese New Year", self)
         self.actViewCNY.setObjectName("Chinese New Year")
         self.actViewCNY.triggered.connect(self.openInfoViewer)
@@ -182,6 +184,7 @@ class Menu(QMenuBar):
 
         mnuInfo.addAction(self.actViewNTP)
         mnuInfo.addAction(self.actViewEaster)
+        mnuInfo.addAction(self.actPublicHolidays)
         mnuInfo.addAction(self.actViewCNY)
         mnuInfo.addAction(self.actEquinox)
 
@@ -199,6 +202,8 @@ class Menu(QMenuBar):
              Uses the menu actions.
         """
         self.logger.info(" Building Tool Bar")
+
+        self.toolbar = QToolBar("Time Toolbar")
         self.toolbar.setIconSize(QSize(16, 16))
         self.toolbar.toggleViewAction().setEnabled(False)               #  to prevent this toolbar being removed.
 
