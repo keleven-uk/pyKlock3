@@ -40,7 +40,7 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 * pyKlock can play sounds on the hour - Westminster Chimes, Cuckoo Chimes or the classic Pips.
 
-* pyKlock can also some useful [maybe] information - a NTP server response, Easter Dates, Chinese New Year dates.
+* pyKlock can also some useful [maybe] information - a NTP server response, Public Holidays, Chinese New Year dates.
 
 * pyKlock includes the ability to display a table of Friends.
 
@@ -56,4 +56,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.51
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.52

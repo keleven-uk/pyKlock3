@@ -26,8 +26,8 @@ import datetime
 
 import workalendar.registry
 
-from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QFrame,
-                            QGroupBox, QGridLayout, QLabel, QComboBox, QSpinBox, QListWidget)
+from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QSpacerItem, QSizePolicy,
+                            QSizePolicy, QGroupBox, QGridLayout, QLabel, QComboBox, QSpinBox, QListWidget)
 from PyQt6.QtCore    import Qt
 
 def init(self):
@@ -41,10 +41,9 @@ def init(self):
         self.countryCodes.append(code.replace("'", ""))
         self.countryNames.append(f"{calendar_class.name!r}".replace("'", ""))
 
-    self.countryCodes = sorted(self.countryCodes)
-    self.countryNames = sorted(self.countryNames)
+    self.displayNames = sorted(self.countryNames)
     
-    self.UK = self.countryNames.index("United Kingdom")
+    self.UK = self.displayNames.index("United Kingdom")
 
 def buildGUI(self):
     """  Build the GUI elements.
@@ -61,12 +60,13 @@ def buildGUI(self):
     self.txtLegend  = QLabel("Displaying Public Holidays dates for a given year and country. ")
     self.lwHolidays = QListWidget(self)
     self.lwDates    = QListWidget(self)
+    self.spacer     = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
     self.txtCountry = QLabel("Country")
     self.cbCountry  = QComboBox()
     self.txtYear    = QLabel("Year")
     self.sbYear     = QSpinBox(self)
 
-    self.cbCountry.insertItems(self.UK, self.countryNames)
+    self.cbCountry.insertItems(self.UK, self.displayNames)
     self.cbCountry.setCurrentIndex(self.UK)
 
     #  callback needed to pass self as argument to update()
@@ -83,13 +83,14 @@ def buildGUI(self):
     sbYearCallback = functools.partial(update, self)
     self.sbYear.valueChanged.connect(sbYearCallback)
 
-    self.phLayout.addWidget(self.txtLegend,    0, 0, 0, 2, Qt.AlignmentFlag.AlignLeft)
+    self.phLayout.addWidget(self.txtLegend,    1, 0, 1, 2, Qt.AlignmentFlag.AlignLeft)
     self.phLayout.addWidget(self.lwHolidays,   2, 0, Qt.AlignmentFlag.AlignLeft)
     self.phLayout.addWidget(self.lwDates,      2, 1, Qt.AlignmentFlag.AlignLeft)
-    self.phLayout.addWidget(self.txtCountry,  12, 0, Qt.AlignmentFlag.AlignCenter)
-    self.phLayout.addWidget(self.cbCountry,   12, 1, Qt.AlignmentFlag.AlignLeft)
-    self.phLayout.addWidget(self.txtYear,     14, 0, Qt.AlignmentFlag.AlignCenter)
-    self.phLayout.addWidget(self.sbYear,      14, 1, Qt.AlignmentFlag.AlignLeft)
+    self.phLayout.addItem(self.spacer)                                                  #  Removed the extra space after the list boxes.
+    self.phLayout.addWidget(self.txtCountry,   4, 0, Qt.AlignmentFlag.AlignCenter)
+    self.phLayout.addWidget(self.cbCountry,    4, 1, Qt.AlignmentFlag.AlignLeft)
+    self.phLayout.addWidget(self.txtYear,      6, 0, Qt.AlignmentFlag.AlignCenter)
+    self.phLayout.addWidget(self.sbYear,       6, 1, Qt.AlignmentFlag.AlignLeft)
 
     self.phGroup.setLayout(self.phLayout)
 
@@ -109,8 +110,7 @@ def update(self):
     """
     self.lwHolidays.clear()
     self.lwDates.clear()
-    holidays = []
-    dates    = []
+
     year     = self.sbYear.value()
     country  = self.cbCountry.currentText()
     index    = self.countryNames.index(self.cbCountry.currentText())
@@ -118,13 +118,9 @@ def update(self):
     self.txtLegend.setText(f"Displaying Public Holidays dates for {country} in {year}. ")
 
     CalendarClass = workalendar.registry.registry.get(self.countryCodes[index])
-    calendar = CalendarClass()
-    hols = calendar.holidays(year)
-    for hol in hols:
-        ph = hol[1].replace("'", "")
-        pd = hol[0].strftime("%d %B %Y")
-        holidays.append(ph)
-        dates.append(pd)
+    calendar      = CalendarClass()
+    hols          = calendar.holidays(year)
 
-    self.lwHolidays.addItems(holidays)
-    self.lwDates.addItems(dates)
+    for hol in hols:
+        self.lwHolidays.addItem(hol[1].replace("'", ""))
+        self.lwDates.addItem(hol[0].strftime("%d %B %Y"))

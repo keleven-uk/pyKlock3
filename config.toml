@@ -1,14 +1,14 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Thursday 12 March 2026  22:06:40
+#   (c) Kevin Scott   Written Friday 13 March 2026  21:38:55
 #
 #   true and false are lower case 
 #
 [INFO]
-myVERSION = "2026.51"
+myVERSION = "2026.52"
 myNAME = "pyKlock"
 
 [APPLICATION]
-x_pos = 1006
+x_pos = 2910
 y_pos = 53
 width = 473
 height = 0

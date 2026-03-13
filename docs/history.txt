@@ -35,6 +35,14 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.52		[12 March 2026]
+
+	Removed Easter Dates.
+	Tidied up Public Holidays in both layout and logic.
+	When pyKlock is closed all extra windows, if they exist, will now close.
+
+
+
 V2026.51		[12 March 2026]
 
 	Added another info window - Public Holidays.  Public Holidays dates for a given year and country.

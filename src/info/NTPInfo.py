@@ -54,7 +54,7 @@ def buildGUI(self):
     self.delayText  = QLabel("NTP Root Delay")
     self.delayLabel = QLabel("0.00 Seconds")
 
-    self.ntpLayout.addWidget(self.txtLegend,   0, 0, Qt.AlignmentFlag.AlignLeft)
+    self.ntpLayout.addWidget(self.txtLegend,  0, 0, Qt.AlignmentFlag.AlignLeft)
     self.ntpLayout.addWidget(self.ntpText,    1, 0, Qt.AlignmentFlag.AlignCenter)
     self.ntpLayout.addWidget(self.ntpLabel,   1, 1, Qt.AlignmentFlag.AlignLeft)
     self.ntpLayout.addWidget(self.pcText,     2, 0, Qt.AlignmentFlag.AlignCenter)

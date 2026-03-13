@@ -116,9 +116,6 @@ class Menu(QMenuBar):
         self.actViewNTP = QAction("NTP Server", self)
         self.actViewNTP.setObjectName("NTP Server")
         self.actViewNTP.triggered.connect(self.openInfoViewer)
-        self.actViewEaster = QAction("Easter Dates", self)
-        self.actViewEaster.setObjectName("Easter Dates")
-        self.actViewEaster.triggered.connect(self.openInfoViewer)
         self.actPublicHolidays = QAction("Public Holidays", self)
         self.actPublicHolidays.setObjectName("Public Holidays")
         self.actPublicHolidays.triggered.connect(self.openInfoViewer)
@@ -183,7 +180,6 @@ class Menu(QMenuBar):
         mnuThings.addAction(self.actViewEvents)
 
         mnuInfo.addAction(self.actViewNTP)
-        mnuInfo.addAction(self.actViewEaster)
         mnuInfo.addAction(self.actPublicHolidays)
         mnuInfo.addAction(self.actViewCNY)
         mnuInfo.addAction(self.actEquinox)

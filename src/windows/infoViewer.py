@@ -24,7 +24,6 @@
 
 import src.info.chineseYearInfo as cny
 import src.info.publicHolidays as ph
-import src.info.easterInfo as estr
 import src.info.equinoxInfo as ei
 import src.info.worldKlock as wk
 import src.info.NTPInfo as ntp
@@ -46,12 +45,8 @@ class infoViewer(QMainWindow):
         self.setWindowTitle(info)  
         
         match info:
-            case "Easter Dates":
-                self.setWindow(400, 500)
-                estr.buildGUI(self)
-                estr.update(self)
             case "Public Holidays":
-                self.setWindow(400, 500)
+                self.setWindow(500, 500)
                 ph.init(self)
                 ph.buildGUI(self)
                 ph.update(self)

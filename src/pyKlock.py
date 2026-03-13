@@ -511,6 +511,9 @@ class KlockWindow(QMainWindow):
             self.endBit()
             event.accept()          #  Close the app.
             self.close()
+
+        QApplication.closeAllWindows()      #  Should close any other windows that have been opened.
+                                            #  The window needs to have implemented the closeEvent()
     # ----------------------------------------------------------------------------------------------------------------------- endBit() --------------
     def endBit(self):
         """  Save config file, stop the timer and print Goodbye.
