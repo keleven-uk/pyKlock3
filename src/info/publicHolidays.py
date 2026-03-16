@@ -27,7 +27,7 @@ import datetime
 import workalendar.registry
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QSpacerItem, QSizePolicy,
-                            QSizePolicy, QGroupBox, QGridLayout, QLabel, QComboBox, QSpinBox, QListWidget)
+                            QGroupBox, QGridLayout, QLabel, QComboBox, QSpinBox, QListWidget)
 from PyQt6.QtCore    import Qt
 
 def init(self):

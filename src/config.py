@@ -99,19 +99,19 @@ class Config():
 
     @property
     def TRANSPARENT(self):
-        """  Returns if the window should be transparent.
+        """  Returns if the window should be transparency.
         """
         return self.config["DISPLAY"].get("transparent", True)
 
     @TRANSPARENT.setter
     def TRANSPARENT(self, value):
-        """  Sets if the window should be transparent.
+        """  Sets if the window should be transparency.
         """
         self.config["DISPLAY"]["transparent"] = value
 
     @property
     def INFO_LINE(self):
-        """  Returns if the window should be transparent.
+        """  Returns if the window should be transparency.
         """
         return self.config["DISPLAY"].get("infoLine", True)
 
@@ -485,9 +485,56 @@ class Config():
         """  Sets the colour for events now due.
         """
         self.config["EVENTS"]["nowColour"] = value
+#---------------------------------------------------------------------------------------------- KLOCKS -----------------------
+    @property
+    def TK_ON_COLOUR(self):
+        """  Returns the colour for the text Klock foreground.
+        """
+        return self.config["KLOCKS"].get("tk_foreground", "#00ff00")
 
+    @TK_ON_COLOUR.setter
+    def TK_ON_COLOUR(self, value):
+        """  Sets the colour for the text Klock on colour.
+        """
+        self.config["KLOCKS"]["tk_foreground"] = value
 
+    @property
+    def TK_OFFOLOUR(self):
+        """  Returns the colour for the text Klock on colour.
+        """
+        return self.config["KLOCKS"].get("tk_foreground", "#808080")
 
+    @TK_OFFOLOUR.setter
+    def TK_OFFOLOUR(self, value):
+        """  Sets the colour for the text Klock off colour.
+        """
+        self.config["KLOCKS"]["tk_foreground"] = value
+        
+    @property
+    def TK_BACKGROUND(self):
+        """  Returns the colour for the text Klock off colour.
+        """
+        return self.config["KLOCKS"].get("tk_background", "black")
+
+    @TK_BACKGROUND.setter
+    def TK_BACKGROUND(self, value):
+        """  Sets the colour for the text Klock transparency.
+        """
+        self.config["KLOCKS"]["tk_background"] = value
+
+    @property
+    def TK_TRANSPARENT(self):
+        """  Returns the colour for the text Klock background.
+        """
+        return self.config["KLOCKS"].get("tk_transparent", "black")
+
+    @TK_TRANSPARENT.setter
+    def TK_TRANSPARENT(self, value):
+        """  Sets the colour for the text Klock transparency.
+        """
+        self.config["KLOCKS"]["tk_transparent"] = value
+        
+        
     def writeConfig(self):
         """ Write the current config file.
         """
@@ -547,13 +594,18 @@ class Config():
                             "cuckoo"        : False,
                             "sound_volume"  : 25}
 
-        config["EVENTS"] = {"stage1Days"   : 5,
-                            "stage2Days"   : 10,
-                            "stage3Days"   : 30,
-                            "stage1Colour" : "red",
-                            "stage2Colour" : "yellow",
-                            "stage3Colour" : "green",
-                            "nowColour"    : "blue"}
+        config["EVENTS"] = {"stage1Days"  : 5,
+                            "stage2Days"  : 10,
+                            "stage3Days"  : 30,
+                            "stage1Colour": "red",
+                            "stage2Colour": "yellow",
+                            "stage3Colour": "green",
+                            "nowColour"   : "blue"}
+
+        config["KLOCKS"] = {"tk_onColour"   : "#00ff00",
+                            "tk_offColour"  : "#00ff00",
+                            "tk_background" : "#000000",
+                            "tk_transparent": True}
 
         st_toml = toml.dumps(config)
 

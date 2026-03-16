@@ -56,6 +56,26 @@
   {
    "optionDest": "bootloader_ignore_signals",
    "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/resources;resources/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/env_3.14/Lib/site-packages/workalendar;workalendar/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/README.md;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/LICENCE.txt;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/usr/shed/Projects/python/pyKlock/pyKlock3/docs/history.txt;."
   }
  ],
  "nonPyinstallerOptions": {

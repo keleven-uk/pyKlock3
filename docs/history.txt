@@ -35,10 +35,18 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.53		[16 March 2026]
+
+	Added a text klock, where the time in words are display within a matrix of characters.
+		Added properties for on colour, off colour and transparency.
+		About two thirds of the layout done so far.
+
+
 V2026.52		[12 March 2026]
 
 	Removed Easter Dates.
 	Tidied up Public Holidays in both layout and logic.
+		Corrected a bug where the wrong country code was being used.
 	When pyKlock is closed all extra windows, if they exist, will now close.
 
 

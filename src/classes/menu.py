@@ -31,6 +31,8 @@ import src.windows.friendsViewer as fv
 import src.windows.eventsViewer as ev
 import src.windows.infoViewer as info
 
+import src.klocks.textKlock as tk
+
 from src.projectPaths import RESOURCE_PATH
 
 class Menu(QMenuBar):
@@ -79,6 +81,12 @@ class Menu(QMenuBar):
         self.actWorldKlock.setObjectName("World Klock")
         self.actWorldKlock.triggered.connect(self.openInfoViewer)
         self.actWorldKlock.setCheckable(False)
+
+        self.actTextKlock = QAction("Text Klock", self)
+        self.actTextKlock.setObjectName("Text Klock")
+        self.actTextKlock.triggered.connect(self.openTextKlock)
+        self.actTextKlock.setCheckable(False)
+
 
         path = f"{RESOURCE_PATH}/font.png"
         self.actFont = QAction(QIcon(path),"Change Font", self)
@@ -175,6 +183,7 @@ class Menu(QMenuBar):
         mnuTime.addAction(self.actDigitalTime)
         mnuTime.addAction(self.actTextTime)
         mnuTime.addAction(self.actWorldKlock)
+        mnuTime.addAction(self.actTextKlock)
 
         mnuThings.addAction(self.actViewFriends)
         mnuThings.addAction(self.actViewEvents)
@@ -254,7 +263,7 @@ class Menu(QMenuBar):
         """
         self.eventsViewer = ev.EventsViewer(self.logger, self.config, self.eventsStore)
         self.eventsViewer.show()
-    # ----------------------------------------------------------------------------------------------------------------------- openEasterViewer() -------
+    # ----------------------------------------------------------------------------------------------------------------------- openInfoViewer() ------
     def openInfoViewer(self):
         """   Open the info viewer.
 
@@ -267,3 +276,11 @@ class Menu(QMenuBar):
 
         self.infoViewer = info.infoViewer(self.logger, self.config, senderName)
         self.infoViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openTextKlock() -------
+    def openTextKlock(self):
+        """   Open the info viewer.
+
+              senderName will contain the chosen menu item and indicate to the viewer which info to display.
+        """
+        self.textKlock = tk.textKlock(self.config)
+        self.textKlock.show()

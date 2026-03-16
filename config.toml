@@ -1,5 +1,5 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Friday 13 March 2026  21:38:55
+#   (c) Kevin Scott   Written Monday 16 March 2026  22:30:33
 #
 #   true and false are lower case 
 #
@@ -8,8 +8,8 @@ myVERSION = "2026.52"
 myNAME = "pyKlock"
 
 [APPLICATION]
-x_pos = 2910
-y_pos = 53
+x_pos = 2783
+y_pos = 64
 width = 473
 height = 0
 confirmExit = false
@@ -50,3 +50,9 @@ stage1Colour = "red"
 stage2Colour = "yellow"
 stage3Colour = "green"
 nowColour = "blue"
+
+[KLOCKS]
+tk_onColour = "#00ff00"
+tk_offColour = "#808080"
+tk_background = "#1e1d23"
+tk_transparent = true
