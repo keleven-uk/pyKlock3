@@ -282,5 +282,5 @@ class Menu(QMenuBar):
 
               senderName will contain the chosen menu item and indicate to the viewer which info to display.
         """
-        self.textKlock = tk.textKlock(self.config)
+        self.textKlock = tk.textKlock(self.config, self.parent)
         self.textKlock.show()

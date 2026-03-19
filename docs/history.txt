@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.54		[19 March 2026]
+
+	Finished layout and added the status bar.
+		Moved the text element on/off logic into a separate file.
+
+
 V2026.53		[16 March 2026]
 
 	Added a text klock, where the time in words are display within a matrix of characters.

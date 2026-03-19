@@ -20,19 +20,34 @@
 # -*- coding: utf-8 -*-
 
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QGridLayout, QPushButton, QApplication, QFrame, QMainWindow, 
-                             QGroupBox, QLabel)
+                             QGroupBox, QLabel, QProgressBar)
+from PyQt6.QtCore    import QTimer, QDateTime
+from PyQt6.QtCore    import Qt
+
+import src.classes.selectTime as st
+import src.classes.styles as styles
+import src.classes.systemInfo as si
+
+import src.utils.textKlockCodes as tkc
+import src.utils.klock_utils as utils
 
 
 class textKlock(QMainWindow):
     """  A class that displays the time within a matrix of words.
     """
-    def __init__(self, myConfig):
+    def __init__(self, myConfig, parent):
         super().__init__()
 
         self.config     = myConfig
+        self.selectTime = st.SelectTime()
+        self.styles     = styles.Styles()             #  Styles for the battery progress bar.
+        self.systemInfo = si.SysInfo()
+        self.parent     = parent
         self.onColour   = self.config.TK_ON_COLOUR
         self.offColour  = self.config.TK_OFFOLOUR
         self.backColour = self.config.TK_BACKGROUND
+
+        self.parent.hide()
 
         height     = 600
         width      = 400
@@ -44,23 +59,11 @@ class textKlock(QMainWindow):
         self.setWindowTitle("pyKlock")
 
         self.buildGUI()
+        self.buildStatusBar()
 
-        self.it("ON")
-        self.iss("ON")
-        self.half("ON")
-        self.quarter("ON")
-        self.one("ON")
-        self.two("ON")
-        self.three("ON")
-        self.four("ON")
-        self.five("ON")
-        self.six("ON")
-        self.seven("ON")
-        self.eight("ON")
-        self.nine("ON")
-        self.ten("ON")
-        self.eleven("ON")
-        self.twelve("ON")
+        self.updateTime
+        self.allOn()
+
 
     def buildGUI(self):
         """  Build the GUI elements.
@@ -92,6 +95,36 @@ class textKlock(QMainWindow):
 
         centralWidget.setLayout(centralLayout)
 
+        #  Set up short timer to update the clock every second
+        self.Timer = QTimer(self)
+        self.Timer.timeout.connect(self.updateTime)
+        self.Timer.start(1000)
+
+    def buildStatusBar(self):
+        """  Create a status bar
+        """
+        self.statusBar = self.statusBar()
+        self.statusBar.setSizeGripEnabled(False)
+
+        self.stsDate    = QLabel("Thursday 23 October 2025")
+        self.stsBattery = QProgressBar()
+        self.stsState   = QLabel("cisN")
+        self.stsIdle    = QLabel("idle : 7s")
+
+        self.stsDate.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.stsBattery.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsState.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stsIdle.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        self.statusBar.addPermanentWidget(self.stsDate,  1)
+        self.statusBar.addPermanentWidget(self.stsBattery,  1)
+        self.statusBar.addPermanentWidget(self.stsState, 1)
+        self.statusBar.addPermanentWidget(self.stsIdle,  1)
+
+        #self.stsBattery.setGeometry(0, 0, 8, 1)
+        self.stsBattery.setFixedHeight(14)
+        self.stsBattery.setFixedWidth(100)
+        self.stsBattery.adjustSize()
     # ----------------------------------------------------------------------------------------------------------------------- addRow() --------------
     def addRow(self, layout, row, rowCount):
         column = 0
@@ -104,286 +137,109 @@ class textKlock(QMainWindow):
             label.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
             layout.addWidget(label, rowCount, column)
             column += 1
+    # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
+    def updateTime(self):
+        """  Update the time and status bar every second.
+        """
+        dtCurrent = QDateTime.currentDateTime()
+        txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
+
+        self.stsDate.setText(txtDate)
+        self.stsState.setText(f"{utils.getState()}")
+        self.stsIdle.setText(utils.getIdleDuration())
+
+        self.updateBattery()
+    # ----------------------------------------------------------------------------------------------------------------------- updateBattery() -------
+    def updateBattery(self):
+        """  Updates the battery icon in the status bar.
+
+             The colour of the progress bar indicated the state of the battery.
+
+             Running on mains      - light blue.
+             battery low           - red
+             Running on Battery    - yellow
+             Battery charging      - blue
+             Battery fully charged - green
+
+        """
+        state  = self.systemInfo.onBattery
+        charge = self.systemInfo.batteryCharge
+
+        match state:
+            case True:
+                if charge == 100:                           #  Fully Charged
+                    self.stsBattery.setValue(charge)
+                    self.stsBattery.setStyleSheet(self.styles.BATTERY_FULL_STYLE)
+                else:                                       #  Battery charging
+                    self.stsBattery.setValue(charge)
+                    self.stsBattery.setStyleSheet(self.styles.CHARGING_STYLE)
+            case False:                                     #  Running on battery
+                self.stsBattery.setValue(charge)
+                if charge < 10:
+                        self.stsBattery.setStyleSheet(self.styles.BATTERY_LOW_STYLE)
+                else:
+                    self.stsBattery.setStyleSheet(self.styles.RUNNING_ON_BATTERY_STYLE)
+            case _:
+                self.stsBattery.setStyleSheet(self.styles.RUNNING_ON_AC_STYLE)
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
+        self.parent.show()
         event.accept()
-    # ----------------------------------------------------------------------------------------------------------------------- one() -----------------
-    def one(self, mode):
-        o = self.findChild(QLabel, "5:2")
-        n = self.findChild(QLabel, "6:2")
-        e = self.findChild(QLabel, "7:2")
-
-        if mode == "ON":
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- two() -----------------
-    def two(self, mode):
-        t = self.findChild(QLabel, "9:2")
-        w = self.findChild(QLabel, "10:2")
-        o = self.findChild(QLabel, "11:2")
-
-        if mode == "ON":
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            w.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            w.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- three() ---------------
-    def three(self, mode):
-        t = self.findChild(QLabel, "13:2")
-        h = self.findChild(QLabel, "14:2")
-        r = self.findChild(QLabel, "15:2")
-        e = self.findChild(QLabel, "16:2")
-        f = self.findChild(QLabel, "17:2")      #  Second e
-
-        if mode == "ON":
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            r.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            r.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- four() ----------------
-    def four(self, mode):
-        f = self.findChild(QLabel, "19:2")
-        o = self.findChild(QLabel, "20:2")
-        u = self.findChild(QLabel, "21:2")
-        r = self.findChild(QLabel, "22:2")
-
-        if mode == "ON":
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            u.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            r.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            u.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            r.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- five() ----------------
-    def five(self, mode):
-        f = self.findChild(QLabel, "0:3")
-        i = self.findChild(QLabel, "1:3")
-        v = self.findChild(QLabel, "2:3")
-        e = self.findChild(QLabel, "3:3")
-
-        if mode == "ON":
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- six() -----------------
-    def six(self, mode):
-        s = self.findChild(QLabel, "5:3")
-        i = self.findChild(QLabel, "6:3")
-        x = self.findChild(QLabel, "7:3")
-
-        if mode == "ON":
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            x.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            x.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- seven() ---------------
-    def seven(self, mode):
-        s = self.findChild(QLabel, "9:3")
-        e = self.findChild(QLabel, "10:3")
-        v = self.findChild(QLabel, "11:3")
-        f = self.findChild(QLabel, "12:3")      #  Second e
-        n = self.findChild(QLabel, "13:3")
-
-        if mode == "ON":
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- eight() ---------------
-    def eight(self, mode):
-        e = self.findChild(QLabel, "15:3")
-        i = self.findChild(QLabel, "16:3")
-        g = self.findChild(QLabel, "17:3")
-        h = self.findChild(QLabel, "18:3")
-        t = self.findChild(QLabel, "19:3")
-
-        if mode == "ON":
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            g.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            g.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- nine() ----------------
-    def nine(self, mode):
-        n = self.findChild(QLabel, "0:4")
-        i = self.findChild(QLabel, "1:4")
-        o = self.findChild(QLabel, "2:4")      #  Second n
-        e = self.findChild(QLabel, "3:4")
-
-        if mode == "ON":
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- ten() -----------------
-    def ten(self, mode):
-        t = self.findChild(QLabel, "21:3")
-        e = self.findChild(QLabel, "22:3")
-        n = self.findChild(QLabel, "23:3")
-
-        if mode == "ON":
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- eleven() --------------
-    def eleven(self, mode):
-        e = self.findChild(QLabel, "5:4")
-        l = self.findChild(QLabel, "6:4")
-        f = self.findChild(QLabel, "7:4")      #  Second e
-        v = self.findChild(QLabel, "8:4")
-        g = self.findChild(QLabel, "9:4")      #  Third e
-        n = self.findChild(QLabel, "10:4")
-
-        if mode == "ON":
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            g.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            g.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- twelve() --------------
-    def twelve(self, mode):
-        t = self.findChild(QLabel, "12:4")
-        w = self.findChild(QLabel, "13:4")
-        e = self.findChild(QLabel, "14:4")
-        l = self.findChild(QLabel, "15:4")
-        v = self.findChild(QLabel, "16:4")
-        f = self.findChild(QLabel, "17:4")      #  Second e
-
-        if mode == "ON":
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            w.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            w.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- it() ------------------
-    def it(self, mode):
-        i = self.findChild(QLabel, "0:0")
-        t = self.findChild(QLabel, "1:0")
-
-        if mode == "ON":
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- is() ------------------
-    def iss(self, mode):
-        """  is = reserved word in python.
+    # ----------------------------------------------------------------------------------------------------------------------- allOn() ---------------
+    def allOn(self):
+        """  Switches all the test element on.
         """
-        i = self.findChild(QLabel, "4:0")
-        s = self.findChild(QLabel, "5:0")
+        tkc.it(self, "ON")
+        tkc.iss(self, "ON")
+        tkc.half(self, "ON")
+        tkc.quarter(self, "ON")
+        tkc.one(self, "ON")
+        tkc.two(self, "ON")
+        tkc.three(self, "ON")
+        tkc.four(self, "ON")
+        tkc.five(self, "ON")
+        tkc.six(self, "ON")
+        tkc.seven(self, "ON")
+        tkc.eight(self, "ON")
+        tkc.nine(self, "ON")
+        tkc.ten(self, "ON")
+        tkc.eleven(self, "ON")
+        tkc.twelve(self, "ON")
+        tkc.inn(self, "ON")
+        tkc.the(self, "ON")
+        tkc.on(self, "ON")
+        tkc.after(self, "ON")
+        tkc.noon(self, "ON")
+        tkc.morning(self, "ON")
+        tkc.evening(self, "ON")
+        tkc.midnight(self, "ON")
+    # ----------------------------------------------------------------------------------------------------------------------- allOff() --------------
+    def allOff(self):
+        """  Switches all the test element off.
+        """
+        tkc.it(self, "OFF")
+        tkc.iss(self, "OFF")
+        tkc.half(self, "OFF")
+        tkc.quarter(self, "OFF")
+        tkc.one(self, "OFF")
+        tkc.two(self, "OFF")
+        tkc.three(self, "OFF")
+        tkc.four(self, "OFF")
+        tkc.five(self, "OFF")
+        tkc.six(self, "OFF")
+        tkc.seven(self, "OFF")
+        tkc.eight(self, "OFF")
+        tkc.nine(self, "OFF")
+        tkc.ten(self, "OFF")
+        tkc.eleven("OFF")
+        tkc.twelve(self, "OFF")
+        tkc.inn(self, "OFF")
+        tkc.the(self, "OFF")
+        tkc.on(self, "OFF")
+        tkc.after(self, "OFF")
+        tkc.noon(self, "OFF")
+        tkc.morning(self, "OFF")
+        tkc.evening(self, "OFF")
+        tkc.midnight(self, "OFF")
+ 
 
-        if mode == "ON":
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            i.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- half() ----------------
-    def half(self, mode):
-        h = self.findChild(QLabel, "11:0")
-        a = self.findChild(QLabel, "12:0")
-        l = self.findChild(QLabel, "13:0")
-        f = self.findChild(QLabel, "14:0")
-
-        if mode == "ON":
-            h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            a.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            a.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-    # ----------------------------------------------------------------------------------------------------------------------- quarter() ----------------
-    def quarter(self, mode):
-        q = self.findChild(QLabel, "15:0")
-        u = self.findChild(QLabel, "16:0")
-        a = self.findChild(QLabel, "17:0")
-        r = self.findChild(QLabel, "18:0")
-        t = self.findChild(QLabel, "19:0")
-        e = self.findChild(QLabel, "20:0")
-        s = self.findChild(QLabel, "21:0")      #  Second e
-
-        if mode == "ON":
-            q.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            u.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            a.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            r.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        else:
-            q.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            u.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            a.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            r.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            s.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")

@@ -254,6 +254,9 @@ class KlockWindow(QMainWindow):
     def updateTime(self):
         """  Update the time, info line  and status bar every second.
         """
+        if not self.isVisible():            #  Only update the time etc if the klock is visible.
+            return
+
         dtCurrent = QDateTime.currentDateTime()
         txtTime   = dtCurrent.toString("HH:mm:ss")
         
