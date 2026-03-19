@@ -35,6 +35,11 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.55		[19 March 2026]
+
+	Finished the text Klock logic - all seems to work so far.
+
+
 V2026.54		[19 March 2026]
 
 	Finished layout and added the status bar.

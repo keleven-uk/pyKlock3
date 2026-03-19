@@ -22,9 +22,8 @@
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QGridLayout, QPushButton, QApplication, QFrame, QMainWindow, 
                              QGroupBox, QLabel, QProgressBar)
 from PyQt6.QtCore    import QTimer, QDateTime
-from PyQt6.QtCore    import Qt
+from PyQt6.QtCore    import Qt, QSize
 
-import src.classes.selectTime as st
 import src.classes.styles as styles
 import src.classes.systemInfo as si
 
@@ -39,7 +38,6 @@ class textKlock(QMainWindow):
         super().__init__()
 
         self.config     = myConfig
-        self.selectTime = st.SelectTime()
         self.styles     = styles.Styles()             #  Styles for the battery progress bar.
         self.systemInfo = si.SysInfo()
         self.parent     = parent
@@ -49,8 +47,8 @@ class textKlock(QMainWindow):
 
         self.parent.hide()
 
-        height     = 600
-        width      = 400
+        height     = 500
+        width      = 300
         screenSize = QApplication.primaryScreen().availableGeometry()
         xPos       = int((screenSize.width() / 2)  - (width / 2))
         yPos       = int((screenSize.height() / 2) - (height / 2))
@@ -61,10 +59,8 @@ class textKlock(QMainWindow):
         self.buildGUI()
         self.buildStatusBar()
 
-        self.updateTime
-        self.allOn()
-
-
+        self.updateTime()
+        
     def buildGUI(self):
         """  Build the GUI elements.
         """
@@ -76,6 +72,10 @@ class textKlock(QMainWindow):
         tkGroup  = QGroupBox("Text Klock")
         tkLayout = QGridLayout(tkGroup)
         
+        tkLayout.setColumnMinimumWidth(0, 8)
+        tkLayout.setColumnMinimumWidth(1, 8)
+        tkLayout.setColumnMinimumWidth(2, 8)
+
         self.addRow(tkLayout, ["I", "T", "E", "E", "I", "S", "K", "A", "T", "E", "N", "H", "A", "L", "F", "Q", "U", "A", "R", "T", "E", "R", "I", "X"], 0)
         self.addRow(tkLayout, ["T", "W", "E", "N", "T", "Y", "K", "F", "I", "V", "E", "J", "A", "B", "O", "U", "T", "P", "T", "O", "S", "F", "E", "W"], 1)
         self.addRow(tkLayout, ["P", "A", "S", "T", "K", "O", "N", "E", "L", "T", "W", "O", "O", "T", "H", "R", "E", "E", "C", "F", "O", "U", "R", "K"], 2)
@@ -132,7 +132,8 @@ class textKlock(QMainWindow):
             label = QLabel(element)
             name = f"{column}:{rowCount}"
             label.setObjectName(name)
-            #label.setFixedWidth(self.size)
+            hint = QSize(8, 10)
+            label.setFixedSize(hint)
             label.adjustSize()
             label.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
             layout.addWidget(label, rowCount, column)
@@ -143,6 +144,13 @@ class textKlock(QMainWindow):
         """
         dtCurrent = QDateTime.currentDateTime()
         txtDate   = dtCurrent.toString("dddd dd MMMM yyyy")
+        txtTime   = dtCurrent.toString("HH:mm:ss")
+        hours     = int(txtTime[0:2])
+        minutes   = int(txtTime[3:5])
+
+        tkc.allOff(self)           #  Switch all text elements off.
+        self.setHours(hours, minutes)
+        self.setMinutes(minutes)
 
         self.stsDate.setText(txtDate)
         self.stsState.setText(f"{utils.getState()}")
@@ -181,65 +189,145 @@ class textKlock(QMainWindow):
                     self.stsBattery.setStyleSheet(self.styles.RUNNING_ON_BATTERY_STYLE)
             case _:
                 self.stsBattery.setStyleSheet(self.styles.RUNNING_ON_AC_STYLE)
+    # ----------------------------------------------------------------------------------------------------------------------- setHours() ------------
+    def setHours(self, hours, minutes):
+        """  Switches on the appropriate text to display the hour.
+        """
+        tkc.it(self, "ON")
+        tkc.iss(self, "ON")
+        tkc.inn(self, "ON")
+        tkc.the(self, "ON")
+
+        if minutes > 30:     #  Increment hours if time is close to the hour.
+            hours += 1
+
+        match hours:
+            case 0 | 24:
+                if minutes in [58, 59, 0, 1]:
+                    tkc.midnight(self, "ON")
+                else:
+                    tkc.twelve(self, "ON")
+                    if minutes > 30:
+                        tkc.evening(self, "ON")
+                    else:
+                        tkc.morning(self, "ON")
+            case 1:
+                tkc.one(self, "ON")
+                tkc.morning(self, "ON")
+            case 2:
+                tkc.two(self, "ON")
+                tkc.morning(self, "ON")
+            case 3:
+                tkc.three(self, "ON")
+                tkc.morning(self, "ON")
+            case 4:
+                tkc.four(self, "ON")
+                tkc.morning(self, "ON")
+            case 5:
+                tkc.fiveHour(self, "ON")
+                tkc.morning(self, "ON")
+            case 6:
+                tkc.six(self, "ON")
+                tkc.morning(self, "ON")
+            case 7:
+                tkc.seven(self, "ON")
+                tkc.morning(self, "ON")
+            case 8:
+                tkc.eight(self, "ON")
+                tkc.morning(self, "ON")
+            case 9:
+                tkc.nine(self, "ON")
+                tkc.morning(self, "ON")
+            case 10:
+                tkc.tenHour(self, "ON")
+                tkc.morning(self, "ON")
+            case 11:
+                tkc.e3leven(self, "ON")
+                tkc.morning(self, "ON")
+            case 12:
+                if minutes in [58, 59, 0, 1]:
+                    tkc.noon(self, "ON")
+                else:
+                    self.twelve(self, "ON")
+                    if minutes > 30:
+                        tkc.morning(self, "ON")
+                    else:
+                        tkc.after(self, "ON")
+                        tkc.noon(self, "ON")
+            case 13:
+                tkc.one(self, "ON")
+                tkc.after(self, "ON")
+                tkc.noon(self, "ON")
+            case 14:
+                tkc.two(self, "ON")
+                tkc.after(self, "ON")
+                tkc.noon(self, "ON")
+            case 15:
+                tkc.three(self, "ON")
+                tkc.after(self, "ON")
+                tkc.noon(self, "ON")
+            case 16:
+                tkc.four(self, "ON")
+                tkc.after(self, "ON")
+                tkc.noon(self, "ON")
+            case 17:
+                tkc.fiveHour(self, "ON")
+                tkc.after(self, "ON")
+                tkc.noon(self, "ON")
+            case 18:
+                tkc.six(self, "ON")
+                tkc.evening(self, "ON")
+            case 19:
+                tkc.seven(self, "ON")
+                tkc.after(self, "ON")
+                tkc.noon(self, "ON")
+            case 20:
+                tkc.eight(self, "ON")
+                tkc.evening(self, "ON")
+            case 21:
+                tkc.nine(self, "ON")
+                tkc.evening(self, "ON")
+            case 22:
+                tkc.tenHour(self, "ON")
+                tkc.evening(self, "ON")
+            case 23:
+                tkc.eleven(self, "ON")
+                tkc.evening(self, "ON")
+    # ----------------------------------------------------------------------------------------------------------------------- setMinutes() ----------
+    def setMinutes(self, minutes):
+        """  Switches on the appropriate text to display the minutes.
+        """
+        if minutes > 30:
+            minutes = 60 - minutes
+            tkc.to(self, "ON")
+        else:
+            tkc.past(self, "ON")
+
+        match minutes:
+            case minutes if (0 <= minutes <= 2):
+                tkc.to(self, "OFF")
+                tkc.past(self, "OFF")
+            case minutes if (2 < minutes <= 7):
+                tkc.fiveMinute(self, "ON")
+            case minutes if (7 < minutes <= 12):
+                tkc.tenMinute(self, "ON")
+            case minutes if (13 < minutes <= 17):
+                tkc.a(self, "ON")
+                tkc.quarter(self, "ON")
+            case minutes if (17 < minutes <= 22):
+                tkc.twenty(self, "ON")
+            case minutes if (22 < minutes <= 27):
+                tkc.twenty(self, "ON")
+                tkc.fiveMinute(self, "ON")
+            case minutes if (27 < minutes <= 30):
+                tkc.to(self, "OFF")
+                tkc.past(self, "ON")
+                tkc.half(self, "ON")
+
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         self.parent.show()
         event.accept()
-    # ----------------------------------------------------------------------------------------------------------------------- allOn() ---------------
-    def allOn(self):
-        """  Switches all the test element on.
-        """
-        tkc.it(self, "ON")
-        tkc.iss(self, "ON")
-        tkc.half(self, "ON")
-        tkc.quarter(self, "ON")
-        tkc.one(self, "ON")
-        tkc.two(self, "ON")
-        tkc.three(self, "ON")
-        tkc.four(self, "ON")
-        tkc.five(self, "ON")
-        tkc.six(self, "ON")
-        tkc.seven(self, "ON")
-        tkc.eight(self, "ON")
-        tkc.nine(self, "ON")
-        tkc.ten(self, "ON")
-        tkc.eleven(self, "ON")
-        tkc.twelve(self, "ON")
-        tkc.inn(self, "ON")
-        tkc.the(self, "ON")
-        tkc.on(self, "ON")
-        tkc.after(self, "ON")
-        tkc.noon(self, "ON")
-        tkc.morning(self, "ON")
-        tkc.evening(self, "ON")
-        tkc.midnight(self, "ON")
-    # ----------------------------------------------------------------------------------------------------------------------- allOff() --------------
-    def allOff(self):
-        """  Switches all the test element off.
-        """
-        tkc.it(self, "OFF")
-        tkc.iss(self, "OFF")
-        tkc.half(self, "OFF")
-        tkc.quarter(self, "OFF")
-        tkc.one(self, "OFF")
-        tkc.two(self, "OFF")
-        tkc.three(self, "OFF")
-        tkc.four(self, "OFF")
-        tkc.five(self, "OFF")
-        tkc.six(self, "OFF")
-        tkc.seven(self, "OFF")
-        tkc.eight(self, "OFF")
-        tkc.nine(self, "OFF")
-        tkc.ten(self, "OFF")
-        tkc.eleven("OFF")
-        tkc.twelve(self, "OFF")
-        tkc.inn(self, "OFF")
-        tkc.the(self, "OFF")
-        tkc.on(self, "OFF")
-        tkc.after(self, "OFF")
-        tkc.noon(self, "OFF")
-        tkc.morning(self, "OFF")
-        tkc.evening(self, "OFF")
-        tkc.midnight(self, "OFF")
+
  
 
