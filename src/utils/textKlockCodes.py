@@ -222,7 +222,7 @@ def tenHour(self, mode):
 # ----------------------------------------------------------------------------------------------------------------------- eleven() --------------
 def eleven(self, mode):
     e = self.findChild(QLabel, "5:4")
-    l = self.findChild(QLabel, "6:4")
+    m = self.findChild(QLabel, "6:4")      #  ruff doesn't like single l
     f = self.findChild(QLabel, "7:4")      #  Second e
     v = self.findChild(QLabel, "8:4")
     g = self.findChild(QLabel, "9:4")      #  Third e
@@ -230,14 +230,14 @@ def eleven(self, mode):
 
     if mode == "ON":
         e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
+        m.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         g.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
     else:
         e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-        l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
+        m.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         g.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
@@ -247,7 +247,7 @@ def twelve(self, mode):
     t = self.findChild(QLabel, "12:4")
     w = self.findChild(QLabel, "13:4")
     e = self.findChild(QLabel, "14:4")
-    l = self.findChild(QLabel, "15:4")
+    m = self.findChild(QLabel, "15:4")      #  ruff doesn't like single l
     v = self.findChild(QLabel, "16:4")
     f = self.findChild(QLabel, "17:4")      #  Second e
 
@@ -255,14 +255,14 @@ def twelve(self, mode):
         t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         w.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
+        m.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
     else:
         t.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         w.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-        l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
+        m.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         v.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
 # ----------------------------------------------------------------------------------------------------------------------- twenty() --------------
@@ -335,18 +335,18 @@ def a(self, mode):
 def half(self, mode):
     h = self.findChild(QLabel, "11:0")
     a = self.findChild(QLabel, "12:0")
-    l = self.findChild(QLabel, "13:0")
+    m = self.findChild(QLabel, "13:0")      #  ruff doesn't like single l
     f = self.findChild(QLabel, "14:0")
 
     if mode == "ON":
         h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         a.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
+        m.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
         f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
     else:
         h.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         a.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-        l.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
+        m.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
         f.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
 # ----------------------------------------------------------------------------------------------------------------------- half() ----------------
 def past(self, mode):
@@ -580,6 +580,7 @@ def allOn(self):
     morning(self, "ON")
     evening(self, "ON")
     midnight(self, "ON")
+    past(self, "ON")
 # ----------------------------------------------------------------------------------------------------------------------- allOff() --------------
 def allOff(self):
     """  Switches all the test element off.
@@ -613,3 +614,4 @@ def allOff(self):
     morning(self, "OFF")
     evening(self, "OFF")
     midnight(self, "OFF")
+    past(self, "OFF")

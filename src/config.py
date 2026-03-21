@@ -490,25 +490,25 @@ class Config():
     def TK_ON_COLOUR(self):
         """  Returns the colour for the text Klock foreground.
         """
-        return self.config["KLOCKS"].get("tk_foreground", "#00ff00")
+        return self.config["KLOCKS"].get("tk_onColour", "#00ff00")
 
     @TK_ON_COLOUR.setter
     def TK_ON_COLOUR(self, value):
         """  Sets the colour for the text Klock on colour.
         """
-        self.config["KLOCKS"]["tk_foreground"] = value
+        self.config["KLOCKS"]["tk_onColour"] = value
 
     @property
-    def TK_OFFOLOUR(self):
+    def TK_OFF_COLOUR(self):
         """  Returns the colour for the text Klock on colour.
         """
-        return self.config["KLOCKS"].get("tk_foreground", "#808080")
+        return self.config["KLOCKS"].get("tk_ffColour", "#808080")
 
-    @TK_OFFOLOUR.setter
-    def TK_OFFOLOUR(self, value):
+    @TK_OFF_COLOUR.setter
+    def TK_OFF_COLOUR(self, value):
         """  Sets the colour for the text Klock off colour.
         """
-        self.config["KLOCKS"]["tk_foreground"] = value
+        self.config["KLOCKS"]["tk_offColour"] = value
         
     @property
     def TK_BACKGROUND(self):
@@ -526,7 +526,7 @@ class Config():
     def TK_TRANSPARENT(self):
         """  Returns the colour for the text Klock background.
         """
-        return self.config["KLOCKS"].get("tk_transparent", "black")
+        return self.config["KLOCKS"].get("tk_transparent", False)
 
     @TK_TRANSPARENT.setter
     def TK_TRANSPARENT(self, value):
@@ -561,7 +561,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.55",
+        config["INFO"] = {"myVERSION": "2026.56",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,

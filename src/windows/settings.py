@@ -79,7 +79,7 @@ class Settings(QDialog):
 
         self.twTab = QTabWidget()
 
-        funcs = [self.Info, self.Application, self.Display, self.Time, self.Sound]
+        funcs = [self.Info, self.Application, self.Display, self.Time, self.Klocks, self.Sound]
 
         for func in funcs:          #  Add the individual tabs.  For a tab to be added - insert title into the list funcs.
             func()
@@ -298,6 +298,71 @@ class Settings(QDialog):
                 if ok:
                     self.timeFont = font.toString()
                     self.newSettings[name] = self.timeFont
+    # ----------------------------------------------------------------------------------------------------------------------- Klocks() ----------------
+    def Klocks(self):
+        self.onColour    = self.config.TK_ON_COLOUR
+        self.offColour   = self.config.TK_OFF_COLOUR
+        self.backColour  = self.config.TK_BACKGROUND
+        self.transparent = self.config.TK_TRANSPARENT
+
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        layout.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
+        page.setLayout(layout)
+
+        # create a button.
+        path = f"{RESOURCE_PATH}/colour.png"
+        self.btnOnColour = QPushButton()
+        self.btnOnColour.setIcon(QIcon(path))
+        self.btnOnColour.setStyleSheet(f"color: {self.onColour}")
+        self.btnOnColour.clicked.connect(self.klocksSettingsUpdate)
+        self.btnOnColour.setObjectName("TK_ON_COLOUR")
+        path = f"{RESOURCE_PATH}/colour.png"
+        self.btnOffColour = QPushButton()
+        self.btnOffColour.setIcon(QIcon(path))
+        self.btnOffColour.setStyleSheet(f"color: {self.offColour}")
+        self.btnOffColour.clicked.connect(self.klocksSettingsUpdate)
+        self.btnOffColour.setObjectName("TK_OFF_COLOUR")
+        path = f"{RESOURCE_PATH}/colour-swatch.png"
+        self.btnBackColour = QPushButton()
+        self.btnBackColour.setIcon(QIcon(path))
+        self.btnBackColour.setStyleSheet(f"background-color: {self.backColour}")
+        self.btnBackColour.clicked.connect(self.klocksSettingsUpdate)
+        self.btnBackColour.setObjectName("TK_BACKGROUND")
+
+        value = self.config.__getattribute__("TK_TRANSPARENT")       #  Dirty way of getting the property value using a string.
+        checked = True if value else False
+
+        self.tgTransparent = QToggle(self)
+        self.tgTransparent.setChecked(checked)
+        self.tgTransparent.stateChanged.connect(self.klocksSettingsUpdate)
+        self.tgTransparent.setObjectName("TK_TRANSPARENT")
+
+        layout.addRow("On Colour ",         self.btnOnColour)
+        layout.addRow("Off Colour ",        self.btnOffColour)
+        layout.addRow("Background Colour ", self.btnBackColour)
+        layout.addRow("Transparency",       self.tgTransparent)
+
+        self.twTab.addTab(page, "Klocks")
+
+    def klocksSettingsUpdate(self, checked=None):
+        """  When a button is pressed or the toggle toggled, add amended value to new Settings dictionary.
+        """
+        action = self.sender()
+        name   = action.objectName()
+
+        match name:
+            case "TK_ON_COLOUR" | "TK_OFF_COLOUR" | "TK_BACKGROUND":        #  colour dialog
+                self.current_color = QColor(self.foregroundColour)
+                colour = QColorDialog.getColor(self.current_color, self, f"Choose {name} Colour")
+
+                if colour.isValid():
+                    self.newSettings[name] = colour.name()
+            case "TK_TRANSPARENT":
+                checked = True if checked == 2 else False
+                self.tgTransparent.setChecked(checked)
+                self.newSettings[name] = checked
     # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
     def Sound(self):
         page = QWidget(self.twTab)

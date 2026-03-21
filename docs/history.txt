@@ -34,6 +34,16 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
+V2026.56		[21 March 2026]
+
+	Added the config options for text klock to the settings window.
+		on_colour, off_colour, background and transparent.
+	Implements the transparency logic into text klock.
+		It will only work if a frameless window.
+		Need to implement a close and move options.
+
+	Corrected bugs in config.py and textKlock.py
+
 
 V2026.55		[19 March 2026]
 

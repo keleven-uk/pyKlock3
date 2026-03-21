@@ -37,15 +37,25 @@ class textKlock(QMainWindow):
     def __init__(self, myConfig, parent):
         super().__init__()
 
-        self.config     = myConfig
-        self.styles     = styles.Styles()             #  Styles for the battery progress bar.
-        self.systemInfo = si.SysInfo()
-        self.parent     = parent
-        self.onColour   = self.config.TK_ON_COLOUR
-        self.offColour  = self.config.TK_OFFOLOUR
-        self.backColour = self.config.TK_BACKGROUND
+        self.config      = myConfig
+        self.styles      = styles.Styles()             #  Styles for the battery progress bar.
+        self.systemInfo  = si.SysInfo()
+        self.parent      = parent
+        self.onColour    = self.config.TK_ON_COLOUR
+        self.offColour   = self.config.TK_OFF_COLOUR
+        self.backColour  = self.config.TK_BACKGROUND
+        self.transparent = self.config.TK_TRANSPARENT
 
         self.parent.hide()
+
+        if self.transparent:
+            print("Transparent")
+            self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+            self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+            self.setStyleSheet("background : transparent;")
+        else:
+            print("Not Transparent")
+            self.setStyleSheet("background : {self.backColour};")
 
         height     = 500
         width      = 300
@@ -132,11 +142,11 @@ class textKlock(QMainWindow):
             label = QLabel(element)
             name = f"{column}:{rowCount}"
             label.setObjectName(name)
-            hint = QSize(8, 10)
+            hint = QSize(10, 10)
             label.setFixedSize(hint)
             label.adjustSize()
             label.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-            layout.addWidget(label, rowCount, column)
+            layout.addWidget(label, rowCount, column, Qt.AlignmentFlag.AlignCenter)
             column += 1
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
@@ -242,7 +252,7 @@ class textKlock(QMainWindow):
                 tkc.tenHour(self, "ON")
                 tkc.morning(self, "ON")
             case 11:
-                tkc.e3leven(self, "ON")
+                tkc.eleven(self, "ON")
                 tkc.morning(self, "ON")
             case 12:
                 if minutes in [58, 59, 0, 1]:
