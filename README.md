@@ -40,11 +40,13 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 * pyKlock can play sounds on the hour - Westminster Chimes, Cuckoo Chimes or the classic Pips.
 
+* pyKlock can display a stop watch.
+
 * pyKlock can also some useful [maybe] information - a NTP server response, Public Holidays, Chinese New Year dates.
 
 * pyKlock includes the ability to display a table of Friends.
 
-* pyKlock includes the ability to display a table of Events, although no checking - YET.
+* pyKlock includes the ability to display a table of Events.  A notification is displayed when the event is due.
 
 The status bar includes Date, Key Status, Time Type and Idle Time.  
     Key status is the status of Caps Lock, Insert, Scroll lock and Num lock. 
@@ -56,4 +58,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.56
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.57

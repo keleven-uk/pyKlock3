@@ -22,7 +22,7 @@
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QGridLayout, QPushButton, QApplication, QFrame, QMainWindow, 
                              QGroupBox, QLabel, QProgressBar)
 from PyQt6.QtCore    import QTimer, QDateTime
-from PyQt6.QtCore    import Qt, QSize
+from PyQt6.QtCore    import Qt, QSize, QPoint
 
 import src.classes.styles as styles
 import src.classes.systemInfo as si
@@ -50,7 +50,7 @@ class textKlock(QMainWindow):
 
         if self.transparent:
             print("Transparent")
-            self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+            self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
             self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
             self.setStyleSheet("background : transparent;")
         else:
@@ -333,7 +333,21 @@ class textKlock(QMainWindow):
                 tkc.to(self, "OFF")
                 tkc.past(self, "ON")
                 tkc.half(self, "ON")
-
+    # ----------------------------------------------------------------------------------------------------------------------- mousePressEvent -------
+    #  The three following methods are in place of the default mouse events - so pyKlock can be dragged
+    #  by holding the left mouse button [anywhere in pyKlock] and moving the mouse.
+    #  Stole from - https://stackoverflow.com/questions/37718329/pyqt5-draggable-frameless-window
+    def mousePressEvent(self, event):
+        self.oldPos = event.position().toPoint()
+    # ----------------------------------------------------------------------------------------------------------------------- mouseMoveEvent --------
+    def mouseMoveEvent(self, event):
+        delta = QPoint(event.position().toPoint() - self.oldPos)
+        self.move(self.x() + delta.x(), self.y() + delta.y())
+    # ----------------------------------------------------------------------------------------------------------------------- mouseReleaseEvent -----
+    def mouseReleaseEvent(self, event):
+        self.oldPos = event.position().toPoint()
+        self.Xpos = self.x()
+        self.Ypos = self.y()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         self.parent.show()

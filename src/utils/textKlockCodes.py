@@ -27,14 +27,19 @@ def one(self, mode):
     n = self.findChild(QLabel, "6:2")
     e = self.findChild(QLabel, "7:2")
 
-    if mode == "ON":
-        o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
-        e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {self.backColour}")
+    if self.transparent:
+        background = "transparent"
     else:
-        o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-        n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
-        e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {self.backColour}")
+        background = self.backColour
+        
+    if mode == "ON":
+        o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {background}")
+        n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {background}")
+        e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.onColour}; background-color: {background}")
+    else:
+        o.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {background}")
+        n.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {background}")
+        e.setStyleSheet(f"padding: 0px; margin: 0px; color: {self.offColour}; background-color: {background}")
 # ----------------------------------------------------------------------------------------------------------------------- two() -----------------
 def two(self, mode):
     t = self.findChild(QLabel, "9:2")

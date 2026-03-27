@@ -27,6 +27,7 @@ from PyQt6.QtCore    import QSize
 import src.classes.styles as styles
 import src.classes.selectTime as st
 
+import src.windows.stopWatchViewer as sw
 import src.windows.friendsViewer as fv
 import src.windows.eventsViewer as ev
 import src.windows.infoViewer as info
@@ -117,9 +118,10 @@ class Menu(QMenuBar):
 
         self.actViewFriends = QAction("Friends", self)
         self.actViewFriends.triggered.connect(self.openFriendsViewer)
-
         self.actViewEvents = QAction("Events", self)
         self.actViewEvents.triggered.connect(self.openEventsViewer)
+        self.actStopWatch = QAction("Stop Watch", self)
+        self.actStopWatch.triggered.connect(self.openStopWatchViewer)
 
         self.actViewNTP = QAction("NTP Server", self)
         self.actViewNTP.setObjectName("NTP Server")
@@ -187,6 +189,7 @@ class Menu(QMenuBar):
 
         mnuThings.addAction(self.actViewFriends)
         mnuThings.addAction(self.actViewEvents)
+        mnuThings.addAction(self.actStopWatch)
 
         mnuInfo.addAction(self.actViewNTP)
         mnuInfo.addAction(self.actPublicHolidays)
@@ -263,6 +266,12 @@ class Menu(QMenuBar):
         """
         self.eventsViewer = ev.EventsViewer(self.logger, self.config, self.eventsStore)
         self.eventsViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openStopWatchViewer() -
+    def openStopWatchViewer(self):
+        """   Open the Stop Watch viewer.
+        """
+        self.StopWatchViewer = sw.StopWatch()
+        self.StopWatchViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openInfoViewer() ------
     def openInfoViewer(self):
         """   Open the info viewer.
