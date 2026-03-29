@@ -1,8 +1,10 @@
 ###############################################################################################################
-#     stopwatch.py   Copyright (C) <2022>  <Kevin Scott>                                                      #                                                                                                             #                                                                                                             #
+#     stopwatch.py   Copyright (C) <2022-26>  <Kevin Scott>                                                   #
 #     A simple class that implements a stopwatch.                                                             #
 #                                                                                                             #
 #     For changes see history.txt                                                                             #
+#                                                                                                             #
+#     March 2026    Changed the timer to use timer.perf_Counter()                                             #
 #                                                                                                             #
 ###############################################################################################################
 #    Copyright (C) <2022>  <Kevin Scott>                                                                      #
@@ -22,70 +24,59 @@
 
 import time
 
+from datetime import timedelta
+
 class timer():
     """  A Simple class that implements a stopwatch.
-
-         The stopwatch currently only ticks once every second.
 
     usage:
         stopwatch = timer()
         stopwatch.start()           Starts the stopwatch.
         stopwatch.stop()            Stops the stopwatch, stops the ticks.
         stopwatch.pause()           Pauses the stopwatch, the ticks still continue.
-        stopwatch.elapsed_time      Return the current value of the stopwatch.
-        stopwatch.timer_running     Returns True if the stopwatch has been started.
+        stopwatch.elapsedTime       Return the current value of the stopwatch.
+        stopwatch.timerRunning      Returns True if the stopwatch has been started.
     """
 
     def __init__(self):
-        self.is_running   = False
-        self.start_time   = 0
-        self.time_elapsed = 0
+        self.isRunning= False
+        self.startTime   = 0
 
     def start(self):
-        self.is_running = True
-        self.start_time = time.time()
+        self.isRunning= True
+        self.startTime  = time.perf_counter()
 
     def stop(self):
-        self.is_running = False
+        self.isRunning= False
 
     def clear(self):
-        self.is_running = False
+        self.isRunning= False
         self.start_time = 0
+        self.duration = "00:00:00.000000"
 
     def pause(self):
-        self.is_running = False
-        self.pauseTime = time.time()
+        self.isRunning= False
 
     def resume(self):
-        self.is_running = True
+        self.isRunning= True
 
     @property
-    def timer_running(self):
-        return self.is_running
+    def timerRunning(self):
+        return self.isRunning
 
     @property
-    def elapsed_time(self):
+    def elapsedTime(self):
             """  Returns the current value [ticks] in hours, minutes seconds {00:00:00}
-                The stopwatch currently only ticks once every second.
 
-                id the stopwatch is paused return the paused time.
+                If the stopwatch is paused return the paused time.
 
-                If the stopwatch is not running "00:00:00" is returned.
+                If the stopwatch is not running "00:00:00.00" is returned.
+                    The [-4] is used to truncate to 2 decimal places.
             """
-            if self.timer_running:
-                time_elapsed     = int(time.time() - self.start_time)
-                minutes, seconds = divmod(time_elapsed, 60)
-                hours, minutes   = divmod(minutes, 60)
-
-                elps = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-
-                return elps
-            if self.start_time == 0:
-                return "00:00:00"
+            if self.timerRunning:
+                self.duration = str(timedelta(seconds=time.perf_counter()- self.startTime))
+                return self.duration[:-4]
+            if self.startTime == 0:
+                return "00:00:00.00"
             else:
-                time_elapsed     = int(self.pauseTime - self.start_time)
-                minutes, seconds = divmod(time_elapsed, 60)
-                hours, minutes   = divmod(minutes, 60)
-
-                elps = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-                return elps
+                return self.duration[:-4]

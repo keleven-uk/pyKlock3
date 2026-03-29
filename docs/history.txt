@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.58		[27 March 2026]
+
+	Amended stop watch to use timer.perf_Counter() to give the second to 2 decimal places.
+		Although the stop watch still only ticks every second or so,  Is this my PC or QT?
+		
+
 V2026.57		[27 March 2026]
 
 	Added a new thing - a stop watch.

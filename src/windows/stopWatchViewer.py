@@ -35,13 +35,13 @@ class StopWatch(QMainWindow):
 
         self.stopWatch = sw.timer()
 
-        height     = 500
-        width      = 300
+        height     = 400
+        width      = 900
         screenSize = QApplication.primaryScreen().availableGeometry()
         xPos       = int((screenSize.width() / 2)  - (width / 2))
         yPos       = int((screenSize.height() / 2) - (height / 2))
 
-        self.setGeometry(xPos, yPos, height, width)
+        self.setGeometry(xPos, yPos, width, height)
         self.setWindowTitle("pyStopWatch")
 
         self.buildGUI()
@@ -59,8 +59,8 @@ class StopWatch(QMainWindow):
 
         #  Create an lcd Number display.
         self.lcdTime = QLCDNumber()
-        self.lcdTime.setDigitCount(8)                                 # Display 8 digits
-        self.lcdTime.display("00:00:00")                              # Show some initial value
+        self.lcdTime.setDigitCount(11)                                # Display 8 digits
+        self.lcdTime.display("00:00:00.00")                           # Show some initial value
         self.lcdTime.setSegmentStyle(QLCDNumber.SegmentStyle.Filled)  # Use filled segment style
 
         self.btnStart = QPushButton(text="Start", parent=self)
@@ -103,7 +103,7 @@ class StopWatch(QMainWindow):
 
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
-        self.lcdTime.display(self.stopWatch.elapsed_time)
+        self.lcdTime.display(self.stopWatch.elapsedTime)
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def startTimer(self, event):
         self.stopWatch.start()
@@ -129,6 +129,7 @@ class StopWatch(QMainWindow):
         self.btnResume.setEnabled(False)
         self.btnClear.setEnabled(True)
         self.btnStop.setEnabled(False)
+        self.Timer.stop()
     # ----------------------------------------------------------------------------------------------------------------------- clearTimer() ----------
     def clearTimer(self, event):
         self.stopWatch.clear()
@@ -138,6 +139,7 @@ class StopWatch(QMainWindow):
         self.btnStop.setEnabled(False)
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
+        self.Timer.stop()
         event.accept()
 
  
