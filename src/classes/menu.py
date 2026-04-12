@@ -270,7 +270,7 @@ class Menu(QMenuBar):
     def openStopWatchViewer(self):
         """   Open the Stop Watch viewer.
         """
-        self.StopWatchViewer = sw.StopWatch()
+        self.StopWatchViewer = sw.StopWatch(self.parent)
         self.StopWatchViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openInfoViewer() ------
     def openInfoViewer(self):

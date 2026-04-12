@@ -21,25 +21,27 @@
 
 import src.classes.stopWatch as sw
 
-from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QGridLayout, QPushButton, QApplication, QFrame, QMainWindow, 
-                             QGroupBox, QLabel, QLCDNumber)
-from PyQt6.QtCore    import QTimer, QDateTime
-from PyQt6.QtCore    import Qt, QSize, QPoint
+from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QPushButton, QApplication, QFrame, QMainWindow, 
+                             QGroupBox, QLCDNumber)
+from PyQt6.QtCore    import QTimer
 
 
 class StopWatch(QMainWindow):
-    """  A class that displays the time within a matrix of words.
+    """  A class that displays as digital stop watch.
     """
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
 
         self.stopWatch = sw.timer()
+        self.parent    = parent
 
         height     = 400
         width      = 900
         screenSize = QApplication.primaryScreen().availableGeometry()
         xPos       = int((screenSize.width() / 2)  - (width / 2))
         yPos       = int((screenSize.height() / 2) - (height / 2))
+
+        self.parent.hide()
 
         self.setGeometry(xPos, yPos, width, height)
         self.setWindowTitle("pyStopWatch")
@@ -99,7 +101,7 @@ class StopWatch(QMainWindow):
         #  Set up short timer to update the clock every second
         self.Timer = QTimer(self)
         self.Timer.timeout.connect(self.updateTime)
-        self.Timer.start(1000)
+        self.Timer.start(10)
 
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
@@ -129,7 +131,6 @@ class StopWatch(QMainWindow):
         self.btnResume.setEnabled(False)
         self.btnClear.setEnabled(True)
         self.btnStop.setEnabled(False)
-        self.Timer.stop()
     # ----------------------------------------------------------------------------------------------------------------------- clearTimer() ----------
     def clearTimer(self, event):
         self.stopWatch.clear()
@@ -140,6 +141,7 @@ class StopWatch(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         self.Timer.stop()
+        self.parent.show()
         event.accept()
 
  

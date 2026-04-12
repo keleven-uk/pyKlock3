@@ -350,6 +350,7 @@ class textKlock(QMainWindow):
         self.Ypos = self.y()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
+        self.Timer.stop()
         self.parent.show()
         event.accept()
 

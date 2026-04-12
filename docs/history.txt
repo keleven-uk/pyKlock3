@@ -35,6 +35,15 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.58		[12 April 2026]
+
+	Of course, the stop watch was running every second because I programmed it that way.
+		The stop watch timer is not running every 10mS.
+
+	Updated pyQT to version 6.11.0.
+	Updated all required libraries and requirements.txt
+
+
 V2026.58		[27 March 2026]
 
 	Amended stop watch to use timer.perf_Counter() to give the second to 2 decimal places.
