@@ -35,12 +35,18 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
-V2026.58		[12 April 2026]
+V2026.60		[13 April 2026]
+
+	Added a new thing - a count down timer.
+		Only implemented the speed buttons - 15, 30 45 or 60 minutes countdown.
+		
+
+V2026.59		[12 April 2026]
 
 	Of course, the stop watch was running every second because I programmed it that way.
 		The stop watch timer is not running every 10mS.
 
-	Updated pyQT to version 6.11.0.
+	Updated pyQt to version 6.11.0.
 	Updated all required libraries and requirements.txt
 
 

@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    stepWatchViewer.py    Copyright (C) <2026>  <Kevin Scott>                                                #
+#    countDownViewer.py    Copyright (C) <2026>  <Kevin Scott>                                                #
 #                                                                                                             #
-#    A class that displays a stop watch timer.                                                                #
+#    A class that displays A count down timer.                                                                #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
@@ -19,20 +19,20 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-import src.classes.stopWatch as sw
+import src.classes.countDown as cd
 
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QPushButton, QApplication, QFrame, QMainWindow, 
                              QGroupBox, QLCDNumber)
 from PyQt6.QtCore    import QTimer
 
 
-class StopWatch(QMainWindow):
-    """  A class that displays as digital stop watch.
+class CountDown(QMainWindow):
+    """  A class that displays as digital count down timer.
     """
     def __init__(self, parent):
         super().__init__()
 
-        self.stopWatch = sw.timer()
+        self.countDown = cd.countdown(self)
         self.parent    = parent
 
         height     = 400
@@ -44,7 +44,7 @@ class StopWatch(QMainWindow):
         self.parent.hide()
 
         self.setGeometry(xPos, yPos, width, height)
-        self.setWindowTitle("Stop Watch")
+        self.setWindowTitle("Count Down Timer")
 
         self.buildGUI()
         
@@ -57,37 +57,42 @@ class StopWatch(QMainWindow):
         ButtonLayout  = QHBoxLayout()
         timerLayout   = QVBoxLayout()
 
-        swGroup  = QGroupBox("Stop Watch")
+        swGroup  = QGroupBox("Count Down Timer")
 
         #  Create an lcd Number display.
         self.lcdTime = QLCDNumber()
-        self.lcdTime.setDigitCount(11)                                # Display 8 digits
-        self.lcdTime.display("00:00:00.00")                           # Show some initial value
+        self.lcdTime.setDigitCount(8)                                 # Display 8 digits
+        self.lcdTime.display("00:00:00")                              # Show some initial value
         self.lcdTime.setSegmentStyle(QLCDNumber.SegmentStyle.Filled)  # Use filled segment style
 
-        self.btnStart = QPushButton(text="Start", parent=self)
-        self.btnStart.clicked.connect(self.startTimer)
-        self.btnStart.setEnabled(True)
-        self.btnPause = QPushButton(text="Pause", parent=self)
-        self.btnPause.clicked.connect(self.pauseTimer)
-        self.btnPause.setEnabled(False)
-        self.btnResume = QPushButton(text="Resume", parent=self)
-        self.btnResume.clicked.connect(self.resumeTimer)
-        self.btnResume.setEnabled(False)
+        self.btn15min = QPushButton(text="15", parent=self)
+        self.btn15min.setObjectName("15")
+        self.btn15min.clicked.connect(self.startTimer)
+        self.btn15min.setEnabled(True)
+        self.btn30min = QPushButton(text="30", parent=self)
+        self.btn30min.setObjectName("30")
+        self.btn30min.clicked.connect(self.startTimer)
+        self.btn30min.setEnabled(True)
+        self.btn45min = QPushButton(text="45", parent=self)
+        self.btn45min.setObjectName("45")
+        self.btn45min.clicked.connect(self.startTimer)
+        self.btn45min.setEnabled(True)
+        self.btn60min = QPushButton(text="60", parent=self)
+        self.btn60min.setObjectName("60")
+        self.btn60min.clicked.connect(self.startTimer)
+        self.btn60min.setEnabled(True)
         self.btnStop = QPushButton(text="Stop", parent=self)
         self.btnStop.clicked.connect(self.stopTimer)
         self.btnStop.setEnabled(False)
-        self.btnClear = QPushButton(text="Clear", parent=self)
-        self.btnClear.clicked.connect(self.clearTimer)
-        self.btnClear.setEnabled(False)
         self.btnClose = QPushButton(text="Close", parent=self)
         self.btnClose.clicked.connect(self.close)
+        self.btnClose.setEnabled(True)
 
-        ButtonLayout.addWidget(self.btnStart)
-        ButtonLayout.addWidget(self.btnPause)
-        ButtonLayout.addWidget(self.btnResume)
+        ButtonLayout.addWidget(self.btn15min)
+        ButtonLayout.addWidget(self.btn30min)
+        ButtonLayout.addWidget(self.btn45min)
+        ButtonLayout.addWidget(self.btn60min)
         ButtonLayout.addWidget(self.btnStop)
-        ButtonLayout.addWidget(self.btnClear)
         ButtonLayout.addWidget(self.btnClose)
 
         timerLayout.addWidget(self.lcdTime)
@@ -101,42 +106,41 @@ class StopWatch(QMainWindow):
         #  Set up short timer to update the clock every second
         self.Timer = QTimer(self)
         self.Timer.timeout.connect(self.updateTime)
-        self.Timer.start(10)
+        self.Timer.start(1000)
 
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
-        self.lcdTime.display(self.stopWatch.elapsedTime)
+        if self.countDown.countdownRunning:
+            self.lcdTime.display(self.countDown.elapsedTime)
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def startTimer(self, event):
-        self.stopWatch.start()
-        self.btnStart.setEnabled(False)
-        self.btnPause.setEnabled(True)
+        action    = self.sender()
+        name      = action.objectName()
+
+        match name:
+            case "15":
+                target = 15
+            case "30":
+                target = 30
+            case "45":
+                target = 45
+            case "60":
+                target = 60
+
+        self.countDown.start(target)
+        self.btn15min.setEnabled(False)
+        self.btn30min.setEnabled(False)
+        self.btn45min.setEnabled(False)
+        self.btn60min.setEnabled(False)
         self.btnStop.setEnabled(True)
-    # ----------------------------------------------------------------------------------------------------------------------- pauseTimer() ----------
-    def pauseTimer(self, event):
-        self.stopWatch.pause()
-        self.btnPause.setEnabled(False)
-        self.btnResume.setEnabled(True)
-        self.btnClear.setEnabled(True)
-    # ----------------------------------------------------------------------------------------------------------------------- resumeTimer() ---------
-    def resumeTimer(self, event):
-        self.stopWatch.resume()
-        self.btnPause.setEnabled(True)
-        self.btnResume.setEnabled(False)
     # ----------------------------------------------------------------------------------------------------------------------- stopTimer() -----------
     def stopTimer(self, event):
-        self.stopWatch.stop()
-        self.btnStart.setEnabled(True)
-        self.btnPause.setEnabled(False)
-        self.btnResume.setEnabled(False)
-        self.btnClear.setEnabled(True)
-        self.btnStop.setEnabled(False)
-    # ----------------------------------------------------------------------------------------------------------------------- clearTimer() ----------
-    def clearTimer(self, event):
-        self.stopWatch.clear()
-        self.btnPause.setEnabled(False)
-        self.btnStop.setEnabled(False)
-        self.btnStart.setEnabled(True)
+        self.countDown.clear()
+        self.lcdTime.display("00:00:00")
+        self.btn15min.setEnabled(True)
+        self.btn30min.setEnabled(True)
+        self.btn45min.setEnabled(True)
+        self.btn60min.setEnabled(True)
         self.btnStop.setEnabled(False)
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):

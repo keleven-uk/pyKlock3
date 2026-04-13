@@ -28,6 +28,7 @@ import src.classes.styles as styles
 import src.classes.selectTime as st
 
 import src.windows.stopWatchViewer as sw
+import src.windows.countDownViewer as cd
 import src.windows.friendsViewer as fv
 import src.windows.eventsViewer as ev
 import src.windows.infoViewer as info
@@ -44,7 +45,7 @@ class Menu(QMenuBar):
          self.menu.buildToolBar()               -  Builds the tool Bar.
          menu.buildContextMenu()                -  Builds the Context Menu.
 
-         To add the mai9n menu - setMenuBar(self.myMenu)  I save a reference, so I can alter the visibility of the menu.
+         To add the main menu  - setMenuBar(self.myMenu)  I save a reference, so I can alter the visibility of the menu.
          To add the Tool bar   - self.addToolBar(self.menu.buildToolBar())  Creates a reference to the tool bar.
 
     """
@@ -88,7 +89,6 @@ class Menu(QMenuBar):
         self.actTextKlock.triggered.connect(self.openTextKlock)
         self.actTextKlock.setCheckable(False)
 
-
         path = f"{RESOURCE_PATH}/font.png"
         self.actFont = QAction(QIcon(path),"Change Font", self)
         self.actFont.triggered.connect(self.parent.openFontDialog)
@@ -122,6 +122,8 @@ class Menu(QMenuBar):
         self.actViewEvents.triggered.connect(self.openEventsViewer)
         self.actStopWatch = QAction("Stop Watch", self)
         self.actStopWatch.triggered.connect(self.openStopWatchViewer)
+        self.actCountDown = QAction("Count Down", self)
+        self.actCountDown.triggered.connect(self.openCountDownViewer)
 
         self.actViewNTP = QAction("NTP Server", self)
         self.actViewNTP.setObjectName("NTP Server")
@@ -190,6 +192,7 @@ class Menu(QMenuBar):
         mnuThings.addAction(self.actViewFriends)
         mnuThings.addAction(self.actViewEvents)
         mnuThings.addAction(self.actStopWatch)
+        mnuThings.addAction(self.actCountDown)
 
         mnuInfo.addAction(self.actViewNTP)
         mnuInfo.addAction(self.actPublicHolidays)
@@ -270,8 +273,14 @@ class Menu(QMenuBar):
     def openStopWatchViewer(self):
         """   Open the Stop Watch viewer.
         """
-        self.StopWatchViewer = sw.StopWatch(self.parent)
-        self.StopWatchViewer.show()
+        self.stopWatchViewer = sw.StopWatch(self.parent)
+        self.stopWatchViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openStopWatchViewer() -
+    def openCountDownViewer(self):
+        """   Open the Stop CountDown.
+        """
+        self.countDownViewer = cd.CountDown(self.parent)
+        self.countDownViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openInfoViewer() ------
     def openInfoViewer(self):
         """   Open the info viewer.
