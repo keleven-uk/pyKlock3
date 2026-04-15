@@ -21,9 +21,10 @@
 
 import src.classes.countDown as cd
 
+from pyqttoast import Toast, ToastPreset
+
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QPushButton, QApplication, QFrame, QMainWindow, 
                              QGroupBox, QLCDNumber)
-from PyQt6.QtCore    import QTimer
 
 
 class CountDown(QMainWindow):
@@ -33,7 +34,10 @@ class CountDown(QMainWindow):
         super().__init__()
 
         self.countDown = cd.countdown(self)
-        self.parent    = parent
+        self.countDown.countDownTick.connect(self.updateTime)                 #  Signal is fired when the count down is running, update display.
+        self.countDown.countDownEnd.connect(self.endEvent)                    #  Signal is fired when the count down has ended.
+
+        self.parent = parent
 
         height     = 400
         width      = 900
@@ -82,7 +86,7 @@ class CountDown(QMainWindow):
         self.btn60min.clicked.connect(self.startTimer)
         self.btn60min.setEnabled(True)
         self.btnStop = QPushButton(text="Stop", parent=self)
-        self.btnStop.clicked.connect(self.stopTimer)
+        self.btnStop.clicked.connect(self.stop)
         self.btnStop.setEnabled(False)
         self.btnClose = QPushButton(text="Close", parent=self)
         self.btnClose.clicked.connect(self.close)
@@ -103,17 +107,17 @@ class CountDown(QMainWindow):
         centralLayout.addWidget(swGroup)
         centralWidget.setLayout(centralLayout)
 
-        #  Set up short timer to update the clock every second
-        self.Timer = QTimer(self)
-        self.Timer.timeout.connect(self.updateTime)
-        self.Timer.start(1000)
-
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
-        if self.countDown.countdownRunning:
-            self.lcdTime.display(self.countDown.elapsedTime)
+        """  Update the LCD display with the current count down value.
+        """
+        self.lcdTime.display(self.countDown.elapsedTime)
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def startTimer(self, event):
+        """  When a time interval is selected, start the count down timer with that value.
+
+             Switch off the unwanted buttons.
+        """
         action    = self.sender()
         name      = action.objectName()
 
@@ -128,25 +132,45 @@ class CountDown(QMainWindow):
                 target = 60
 
         self.countDown.start(target)
+        self.lcdTime.display(self.countDown.elapsedTime)
         self.btn15min.setEnabled(False)
         self.btn30min.setEnabled(False)
         self.btn45min.setEnabled(False)
         self.btn60min.setEnabled(False)
         self.btnStop.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- stopTimer() -----------
-    def stopTimer(self, event):
+    def stop(self, event):
+        """  Called when the stop button is called.
+        """
+        self.resetButtons()
+    # ----------------------------------------------------------------------------------------------------------------------- stopTimer() -----------
+    def endEvent(self):
+        """  Called when the count down ends - when toe time interval is fully elapsed.
+        """
+        self.resetButtons()
+
+        toast = Toast(self.parent)
+        toast.setDuration(0)        #  Do not timeout.
+        toast.applyPreset(ToastPreset.INFORMATION_DARK)
+        toast.setTitle("Count Down Timer")
+        toast.setText("Count Down Timer Finished.")
+        toast.show()
+    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
+    def closeEvent(self, event):
+        """  Called when the window is closed.
+        """
+        self.countDown.clear()
+        self.parent.show()
+        event.accept()
+
+    def resetButtons(self):
+        """  Resets the buttons to their initial state.
+        """
         self.countDown.clear()
         self.lcdTime.display("00:00:00")
+
         self.btn15min.setEnabled(True)
         self.btn30min.setEnabled(True)
         self.btn45min.setEnabled(True)
         self.btn60min.setEnabled(True)
         self.btnStop.setEnabled(False)
-    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
-    def closeEvent(self, event):
-        self.Timer.stop()
-        self.parent.show()
-        event.accept()
-
- 
-

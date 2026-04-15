@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.61		[15 April 2026]
+
+	Amended the cound down class to be fully self contained - with an internal timer.
+	The class uses PyQt signals and slots to communicate with the outside world.
+	
+
 V2026.60		[13 April 2026]
 
 	Added a new thing - a count down timer.
