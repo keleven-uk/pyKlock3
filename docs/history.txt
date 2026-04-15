@@ -35,11 +35,19 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.62		[15 April 2026]
+
+	Added a control line to the count down timer.
+		The end action of the count down timer can now be specified.
+			"Notification + Sound", "Notification", "Shutdown PC", "Reboot PC", "Log Out PC"
+		The notification message can now be specified.
+		Instead of using the speed buttons, a time interval can now be specified.
+
 V2026.61		[15 April 2026]
 
-	Amended the cound down class to be fully self contained - with an internal timer.
+	Amended the count down class to be fully self contained - with an internal timer.
 	The class uses PyQt signals and slots to communicate with the outside world.
-	
+
 
 V2026.60		[13 April 2026]
 

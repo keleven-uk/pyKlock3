@@ -5,6 +5,7 @@
 #    A class for managing sounds.                                                                             #
 #                                                                                                             #
 #    23 January 2026 - Amended playPips to play at a given volume.                                            #
+#    16 April 2026   - Added playAlarm().                                                                     #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
@@ -51,7 +52,7 @@ class Sounds():
          If SOUNDS_HOUR_PIPS is called then the BBC type pips are played on the hour.
     """
 
-    def __init__(self, myConfig, myLogger):
+    def __init__(self, myConfig, myLogger, check=True):
         self.myConfig = myConfig
         self.myLogger = myLogger
 
@@ -70,7 +71,8 @@ class Sounds():
             11 : "eleven",
             12 : "twelve"}
 
-        self.checkHourChimes()
+        if check:
+            self.checkHourChimes()
 # ------------------------------------------------------------------------------------- playSounds ----------------------
     def playSounds(self, timeText):
         """  Called to play the actual sounds.
@@ -118,6 +120,16 @@ class Sounds():
         """
         try:
             player = AudioPlayer(f"{pp.RESOURCE_PATH}\\Sounds\\thepips.mp3")
+            player.volume = volume
+            player.play(block=True)
+        except Exception as e:
+            self.myLogger.error(f"Error {e}")
+# ------------------------------------------------------------------------------------- playAlarm -----------------------
+    def playAlarm(self, volume):
+        """  Plays an alarm sound.
+        """
+        try:
+            player = AudioPlayer(f"{pp.RESOURCE_PATH}\\Sounds\\alarm.mp3")
             player.volume = volume
             player.play(block=True)
         except Exception as e:

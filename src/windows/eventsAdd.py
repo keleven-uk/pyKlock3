@@ -102,8 +102,6 @@ class AddEvents(QMainWindow):
 
         lblTimeDue = QLabel("Time Due")
         teTimeDue  = QTimeEdit(self)
-        teTimeDue.setDisplayFormat("HH-MM")
-        teTimeDue.setTime(QTime.currentTime())  
         teTimeDue.setObjectName("Time Due")
         teTimeDue.editingFinished.connect(self.addElement)
         teTimeDue.setDisplayFormat("HH:mm")

@@ -277,9 +277,9 @@ class Menu(QMenuBar):
         self.stopWatchViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openStopWatchViewer() -
     def openCountDownViewer(self):
-        """   Open the Stop CountDown.
+        """   Open the CountDown viewer.
         """
-        self.countDownViewer = cd.CountDown(self.parent)
+        self.countDownViewer = cd.CountDown(self.parent, self.logger, self.config)
         self.countDownViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openInfoViewer() ------
     def openInfoViewer(self):

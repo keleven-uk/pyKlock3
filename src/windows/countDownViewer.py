@@ -19,25 +19,31 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-import src.classes.countDown as cd
+import os 
 
 from pyqttoast import Toast, ToastPreset
 
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QPushButton, QApplication, QFrame, QMainWindow, 
-                             QGroupBox, QLCDNumber)
+                             QGroupBox, QLCDNumber, QLabel, QComboBox, QLineEdit, QSpinBox)
 
+import src.classes.sounds as snds
+import src.classes.countDown as cd
 
 class CountDown(QMainWindow):
     """  A class that displays as digital count down timer.
     """
-    def __init__(self, parent):
+    def __init__(self, parent, myConfig, myLogger):
         super().__init__()
+
+        self.config = myConfig
+        self.logger = myLogger
+        self.parent = parent
 
         self.countDown = cd.countdown(self)
         self.countDown.countDownTick.connect(self.updateTime)                 #  Signal is fired when the count down is running, update display.
         self.countDown.countDownEnd.connect(self.endEvent)                    #  Signal is fired when the count down has ended.
 
-        self.parent = parent
+        self.sounds = snds.Sounds(self.config, self.logger, False)
 
         height     = 400
         width      = 900
@@ -57,10 +63,12 @@ class CountDown(QMainWindow):
         """
         centralWidget = QFrame()
         self.setCentralWidget(centralWidget)
-        centralLayout = QVBoxLayout()
-        ButtonLayout  = QHBoxLayout()
-        timerLayout   = QVBoxLayout()
 
+        centralLayout = QVBoxLayout()
+        timerLayout   = QVBoxLayout()
+        buttonLayout  = QHBoxLayout()
+        controlLayout = QHBoxLayout()
+        
         swGroup  = QGroupBox("Count Down Timer")
 
         #  Create an lcd Number display.
@@ -92,15 +100,39 @@ class CountDown(QMainWindow):
         self.btnClose.clicked.connect(self.close)
         self.btnClose.setEnabled(True)
 
-        ButtonLayout.addWidget(self.btn15min)
-        ButtonLayout.addWidget(self.btn30min)
-        ButtonLayout.addWidget(self.btn45min)
-        ButtonLayout.addWidget(self.btn60min)
-        ButtonLayout.addWidget(self.btnStop)
-        ButtonLayout.addWidget(self.btnClose)
+        self.lblAction  = QLabel("Action")
+        self.cbAction   = QComboBox()
+        self.lblText    = QLabel("Text")
+        self.lneText    = QLineEdit("Count Down Timer Finished.", self)
+        self.lblMinutes = QLabel("Minute Interval")
+        self.sbMinutes  = QSpinBox(self)
+        self.btnStart   = QPushButton(text="Start", parent=self)
+
+        self.cbAction.insertItems(1, ["Notification + Sound", "Notification", "Shutdown PC", "Reboot PC", "Log Out PC"])
+        self.sbMinutes.setMinimum(1)
+        self.sbMinutes.setMaximum(3000)
+        self.sbMinutes.setValue(10)
+        self.btnStart.clicked.connect(self.start)
+        self.btnStart.setEnabled(True)
+
+        controlLayout.addWidget(self.lblAction)
+        controlLayout.addWidget(self.cbAction)
+        controlLayout.addWidget(self.lblText)
+        controlLayout.addWidget(self.lneText)
+        controlLayout.addWidget(self.lblMinutes)
+        controlLayout.addWidget(self.sbMinutes)
+        controlLayout.addWidget(self.btnStart)
+
+        buttonLayout.addWidget(self.btn15min)
+        buttonLayout.addWidget(self.btn30min)
+        buttonLayout.addWidget(self.btn45min)
+        buttonLayout.addWidget(self.btn60min)
+        buttonLayout.addWidget(self.btnStop)
+        buttonLayout.addWidget(self.btnClose)
 
         timerLayout.addWidget(self.lcdTime)
-        timerLayout.addLayout(ButtonLayout)
+        timerLayout.addLayout(controlLayout)
+        timerLayout.addLayout(buttonLayout)
 
         swGroup.setLayout(timerLayout)
 
@@ -110,11 +142,24 @@ class CountDown(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
         """  Update the LCD display with the current count down value.
+
+             Called using signal/slot from the countDown class every tick [1 second].
         """
         self.lcdTime.display(self.countDown.elapsedTime)
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
+    def start(self, event):
+        """  Start the count down timer with the data from the control line.
+        """
+        self.countDown.start(self.sbMinutes.value())
+        self.lcdTime.display(self.countDown.elapsedTime)
+        self.btn15min.setEnabled(False)
+        self.btn30min.setEnabled(False)
+        self.btn45min.setEnabled(False)
+        self.btn60min.setEnabled(False)
+        self.btnStop.setEnabled(True)
+    # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def startTimer(self, event):
-        """  When a time interval is selected, start the count down timer with that value.
+        """  When a time interval is selected from the speed keys, start the count down timer with that value.
 
              Switch off the unwanted buttons.
         """
@@ -146,14 +191,38 @@ class CountDown(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- stopTimer() -----------
     def endEvent(self):
         """  Called when the count down ends - when toe time interval is fully elapsed.
+
+             The shutdown / reboot assumes the default timeout of 30 seconds.
+
+             Called using signal/slot from the countDown class when finished.
         """
         self.resetButtons()
 
+        action = self.cbAction.currentText()
+        volume = 50
+
+        match action:
+            case "Notification + Sound":
+                self.displayToast()
+                self.sounds.playAlarm(volume)
+            case "Notification":
+                self.displayToast()
+            case "Shutdown PC":
+                os.system("shutdown /s")
+            case "Reboot PC":
+                os.system("shutdown /r")
+            case "Log Out PC":
+                os.system("shutdown /l")
+
+    # ----------------------------------------------------------------------------------------------------------------------- displayToast() --------
+    def displayToast(self):
+        """  Display a message above the system tray - a toast
+        """
         toast = Toast(self.parent)
         toast.setDuration(0)        #  Do not timeout.
         toast.applyPreset(ToastPreset.INFORMATION_DARK)
         toast.setTitle("Count Down Timer")
-        toast.setText("Count Down Timer Finished.")
+        toast.setText(self.lneText.text().strip())
         toast.show()
     # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
