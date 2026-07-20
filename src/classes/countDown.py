@@ -69,8 +69,8 @@ class countdown(QObject):
              The target time is passed in minutes and converted to seconds.
         """
         self.is_running = True
-        self.target     = target_time
-        self.Timer.start(1000)
+        self.target     = target_time * 60
+        self.Timer.start(self.target)
 
     @property
     def countdownRunning(self):

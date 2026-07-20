@@ -35,6 +35,17 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.63		[20 July 2026]
+
+	Using python 3.14.6 and QT 6.11.0.
+		updated all modules and requirements.txt
+
+	Corrected a couple of bugs in the Countdown timer.
+		When a speed button was used, is still used the value of the time interval.
+		The wrong interval was being passes to the timer.
+	Added the current time to the countdown screen.
+
+
 V2026.62		[15 April 2026]
 
 	Added a control line to the count down timer.

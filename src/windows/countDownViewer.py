@@ -25,6 +25,7 @@ from pyqttoast import Toast, ToastPreset
 
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QPushButton, QApplication, QFrame, QMainWindow, 
                              QGroupBox, QLCDNumber, QLabel, QComboBox, QLineEdit, QSpinBox)
+from PyQt6.QtCore    import QTime, Qt
 
 import src.classes.sounds as snds
 import src.classes.countDown as cd
@@ -69,7 +70,7 @@ class CountDown(QMainWindow):
         buttonLayout  = QHBoxLayout()
         controlLayout = QHBoxLayout()
         
-        swGroup  = QGroupBox("Count Down Timer")
+        self.swGroup  = QGroupBox("Count Down Timer")
 
         #  Create an lcd Number display.
         self.lcdTime = QLCDNumber()
@@ -96,6 +97,9 @@ class CountDown(QMainWindow):
         self.btnStop = QPushButton(text="Stop", parent=self)
         self.btnStop.clicked.connect(self.stop)
         self.btnStop.setEnabled(False)
+        self.btnStart = QPushButton(text="Start", parent=self)
+        self.btnStart.setEnabled(True)
+        self.btnStart.clicked.connect(self.start)
         self.btnClose = QPushButton(text="Close", parent=self)
         self.btnClose.clicked.connect(self.close)
         self.btnClose.setEnabled(True)
@@ -106,27 +110,24 @@ class CountDown(QMainWindow):
         self.lneText    = QLineEdit("Count Down Timer Finished.", self)
         self.lblMinutes = QLabel("Minute Interval")
         self.sbMinutes  = QSpinBox(self)
-        self.btnStart   = QPushButton(text="Start", parent=self)
-
+        
         self.cbAction.insertItems(1, ["Notification + Sound", "Notification", "Shutdown PC", "Reboot PC", "Log Out PC"])
         self.sbMinutes.setMinimum(1)
         self.sbMinutes.setMaximum(3000)
         self.sbMinutes.setValue(10)
-        self.btnStart.clicked.connect(self.start)
-        self.btnStart.setEnabled(True)
-
+        
         controlLayout.addWidget(self.lblAction)
         controlLayout.addWidget(self.cbAction)
         controlLayout.addWidget(self.lblText)
         controlLayout.addWidget(self.lneText)
         controlLayout.addWidget(self.lblMinutes)
         controlLayout.addWidget(self.sbMinutes)
-        controlLayout.addWidget(self.btnStart)
-
+        
         buttonLayout.addWidget(self.btn15min)
         buttonLayout.addWidget(self.btn30min)
         buttonLayout.addWidget(self.btn45min)
         buttonLayout.addWidget(self.btn60min)
+        buttonLayout.addWidget(self.btnStart)
         buttonLayout.addWidget(self.btnStop)
         buttonLayout.addWidget(self.btnClose)
 
@@ -134,9 +135,9 @@ class CountDown(QMainWindow):
         timerLayout.addLayout(controlLayout)
         timerLayout.addLayout(buttonLayout)
 
-        swGroup.setLayout(timerLayout)
+        self.swGroup.setLayout(timerLayout)
 
-        centralLayout.addWidget(swGroup)
+        centralLayout.addWidget(self.swGroup)
         centralWidget.setLayout(centralLayout)
 
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
@@ -146,6 +147,8 @@ class CountDown(QMainWindow):
              Called using signal/slot from the countDown class every tick [1 second].
         """
         self.lcdTime.display(self.countDown.elapsedTime)
+        time = QTime.currentTime()
+        self.swGroup.setTitle(time.toString(Qt.DateFormat.ISODate))
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def start(self, event):
         """  Start the count down timer with the data from the control line.
@@ -156,6 +159,7 @@ class CountDown(QMainWindow):
         self.btn30min.setEnabled(False)
         self.btn45min.setEnabled(False)
         self.btn60min.setEnabled(False)
+        self.btnStart.setEnabled(False)
         self.btnStop.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def startTimer(self, event):
@@ -182,6 +186,7 @@ class CountDown(QMainWindow):
         self.btn30min.setEnabled(False)
         self.btn45min.setEnabled(False)
         self.btn60min.setEnabled(False)
+        self.btnStart.setEnabled(False)
         self.btnStop.setEnabled(True)
     # ----------------------------------------------------------------------------------------------------------------------- stopTimer() -----------
     def stop(self, event):

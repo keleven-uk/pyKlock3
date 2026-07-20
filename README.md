@@ -4,6 +4,8 @@ A multifunction timing thingy, where some [but not necessary all] of the things 
 
 pyKlock serves as a vehicle by which I learn and tinker with programming.
 
+pyKlock is now over 8000 lines of code.
+
 Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and Free Basic - and may again.
 
 <2012 - 2016>	klock.net - written in Visual Basic.
@@ -22,7 +24,7 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 
 A klock built using Python and QT6 GUI Framework.
 
-Using python 3.14.3 and QT 6.10.2.
+Using python 3.14.6 and QT 6.11.0
 
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
@@ -58,4 +60,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.62
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.63

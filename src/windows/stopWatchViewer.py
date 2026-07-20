@@ -23,7 +23,7 @@ import src.classes.stopWatch as sw
 
 from PyQt6.QtWidgets import (QHBoxLayout, QVBoxLayout, QPushButton, QApplication, QFrame, QMainWindow, 
                              QGroupBox, QLCDNumber)
-from PyQt6.QtCore    import QTimer
+from PyQt6.QtCore    import QTimer, QTime, Qt
 
 
 class StopWatch(QMainWindow):
@@ -57,7 +57,7 @@ class StopWatch(QMainWindow):
         ButtonLayout  = QHBoxLayout()
         timerLayout   = QVBoxLayout()
 
-        swGroup  = QGroupBox("Stop Watch")
+        self.swGroup  = QGroupBox("Stop Watch")
 
         #  Create an lcd Number display.
         self.lcdTime = QLCDNumber()
@@ -93,9 +93,9 @@ class StopWatch(QMainWindow):
         timerLayout.addWidget(self.lcdTime)
         timerLayout.addLayout(ButtonLayout)
 
-        swGroup.setLayout(timerLayout)
+        self.swGroup.setLayout(timerLayout)
 
-        centralLayout.addWidget(swGroup)
+        centralLayout.addWidget(self.swGroup)
         centralWidget.setLayout(centralLayout)
 
         #  Set up short timer to update the clock every second
@@ -106,6 +106,8 @@ class StopWatch(QMainWindow):
     # ----------------------------------------------------------------------------------------------------------------------- updateTime() ----------
     def updateTime(self):
         self.lcdTime.display(self.stopWatch.elapsedTime)
+        time = QTime.currentTime()
+        self.swGroup.setTitle(time.toString(Qt.DateFormat.ISODate))
     # ----------------------------------------------------------------------------------------------------------------------- startTimer() ----------
     def startTimer(self, event):
         self.stopWatch.start()

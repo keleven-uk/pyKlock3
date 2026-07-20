@@ -39,26 +39,26 @@ class timer():
     """
 
     def __init__(self):
-        self.isRunning= False
-        self.startTime   = 0
+        self.isRunning = False
+        self.startTime = 0
 
     def start(self):
-        self.isRunning= True
-        self.startTime  = time.perf_counter()
+        self.isRunning = True
+        self.startTime = time.perf_counter()
 
     def stop(self):
-        self.isRunning= False
+        self.isRunning = False
 
     def clear(self):
-        self.isRunning= False
+        self.isRunning  = False
         self.start_time = 0
-        self.duration = "00:00:00.000000"
+        self.duration   = "00:00:00.000000"
 
     def pause(self):
-        self.isRunning= False
+        self.isRunning = False
 
     def resume(self):
-        self.isRunning= True
+        self.isRunning = True
 
     @property
     def timerRunning(self):
