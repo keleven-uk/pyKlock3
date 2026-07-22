@@ -1,5 +1,5 @@
 ###############################################################################################################
-#    pyKlock1_utils   Copyright (C) <2024-26>  <Kevin Scott>                                                  #
+#    pyKlock_utils   Copyright (C) <2024-26>  <Kevin Scott>                                                   #
 #                                                                                                             #
 #    Contains utility functions for pyKlock.                                                                  #
 #                                                                                                             #

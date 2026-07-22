@@ -25,6 +25,7 @@
 import src.info.chineseYearInfo as cny
 import src.info.publicHolidays as ph
 import src.info.equinoxInfo as ei
+import src.info.weatherInfo as wi
 import src.info.worldKlock as wk
 import src.info.NTPInfo as ntp
 
@@ -62,6 +63,10 @@ class infoViewer(QMainWindow):
             case "Season Equinox":
                 self.setWindow(500, 500)
                 ei.buildGUI(self)
+            case "Current Weather":
+                self.setWindow(500, 500)
+                wi.initWeather(self, self.config, self.logger)          #  Initialise the weather data class
+                wi.buildGUI(self)
             case "World Klock":
                 self.setWindow(600, 500)
                 self.timerStarted = True

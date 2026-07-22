@@ -137,6 +137,10 @@ class Menu(QMenuBar):
         self.actEquinox = QAction("Season Equinox", self)
         self.actEquinox.setObjectName("Season Equinox")
         self.actEquinox.triggered.connect(self.openInfoViewer)
+        self.actWeather = QAction("Current Weather", self)
+        self.actWeather.setObjectName("Current Weather")
+        self.actWeather.triggered.connect(self.openInfoViewer)
+
 
         self.actHelp = QAction("Help", self)
         self.actHelp.triggered.connect(self.parent.openHelpFile)
@@ -198,6 +202,8 @@ class Menu(QMenuBar):
         mnuInfo.addAction(self.actPublicHolidays)
         mnuInfo.addAction(self.actViewCNY)
         mnuInfo.addAction(self.actEquinox)
+        mnuInfo.addSeparator()
+        mnuInfo.addAction(self.actWeather)
 
         mnuHelp.addAction(self.actHelp)
         mnuHelp.addSeparator()

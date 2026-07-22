@@ -140,6 +140,7 @@ pyKlock3.code-workspace
 ruff.toml
 data/
 .vscode/
+.cache.sqlite
 
 
 

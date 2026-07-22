@@ -1,5 +1,5 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Monday 20 July 2026  22:08:49
+#   (c) Kevin Scott   Written Wednesday 22 July 2026  22:34:07
 #
 #   true and false are lower case 
 #
@@ -8,8 +8,8 @@ myVERSION = "2026.63"
 myNAME = "pyKlock"
 
 [APPLICATION]
-x_pos = 2887
-y_pos = 216
+x_pos = 2868
+y_pos = 14
 width = 473
 height = 0
 confirmExit = false
@@ -19,7 +19,7 @@ menuBar = true
 style = "MaterialDark.qss"
 
 [DISPLAY]
-foreground = "#00ff00"
+foreground = "#aa0000"
 background = "#000000"
 transparent = true
 infoLine = true

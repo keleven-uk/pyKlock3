@@ -49,12 +49,10 @@ class textKlock(QMainWindow):
         self.parent.hide()
 
         if self.transparent:
-            print("Transparent")
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
             self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
             self.setStyleSheet("background : transparent;")
         else:
-            print("Not Transparent")
             self.setStyleSheet("background : {self.backColour};")
 
         height     = 500
