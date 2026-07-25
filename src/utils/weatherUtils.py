@@ -22,6 +22,7 @@
 
 import openmeteo_requests
 
+import requests
 import requests_cache
 from retry_requests import retry
 
@@ -34,7 +35,7 @@ class Weather():
     def connect(self):
         #  Initialize session with caching and automated retries
         try:
-            cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+            cache_session = requests_cache.CachedSession(".cache", expire_after=3600)
             retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
             self.openmeteo = openmeteo_requests.Client(session=retry_session)
             self.logger.info(" Network connection to openMeteo.com successful.")
@@ -48,55 +49,91 @@ class Weather():
         # The order of variables in hourly or daily is important to assign them correctly below
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-        "latitude": 53.743192,
-        "longitude": -0.198817,
-        "current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day", "wind_direction_10m", 
-                    "wind_speed_10m", "wind_gusts_10m", "precipitation", "showers", "rain", "weather_code", "cloud_cover", 
-                    "pressure_msl", "surface_pressure"],
-        "timezone": "auto"}
+            "latitude": 53.743192,
+            "longitude": -0.198817,
+            "current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day", "wind_direction_10m", 
+                        "wind_speed_10m", "wind_gusts_10m", "precipitation", "showers", "rain", "weather_code", "cloud_cover", 
+                        "pressure_msl", "surface_pressure"],
+            "timezone": "auto"}
 
-        responses = self.openmeteo.weather_api(url, params = params)
+        #  Execute the API Request with network exception handling
+        try:
+            responses = self.openmeteo.weather_api(url, params=params)
+            
+            if not responses:
+                self.logger.error("Error: Received an empty response array from the API.")
+                return None
+                
+            response = responses[0]
+            print(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
+            self.logger.debug(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
+                        
+        except requests.exceptions.HTTPError as http_err:
+            self.logger.error(f"HTTP error occurred (Check coordinates or parameters): {http_err}")
+            return None
+        except requests.exceptions.ConnectionError as conn_err:
+            self.logger.error(f"Network connection error occurred: {conn_err}")
+            return None
+        except requests.exceptions.Timeout as timeout_err:
+            self.logger.error(f"The request timed out: {timeout_err}")
+            return None
+        except Exception as err:
+            self.logger.error(f"An unexpected API error occurred: {err}")
+            return None
 
-        # Process first location. Add a for-loop for multiple locations or weather models
-        response = responses[0]
-        print(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
-        print(f"Elevation: {response.Elevation()} m asl")
-        print(f"Timezone difference to GMT+0: {response.UtcOffsetSeconds()}s")
+        return responses[0]
 
-        # Process current data. The order of variables needs to be the same as requested.
-        current = response.Current()
-        current_temperature_2m = current.Variables(1).Value()
-        current_relative_humidity_2m = current.Variables(2).Value()
-        current_apparent_temperature = current.Variables(2).Value()
-        current_is_day = current.Variables(3).Value()
-        current_wind_direction_10m = current.Variables(4).Value()
-        current_wind_speed_10m = current.Variables(5).Value()
-        current_wind_gusts_10m = current.Variables(6).Value()
-        current_precipitation = current.Variables(7).Value()
-        current_showers = current.Variables(8).Value()
-        current_rain = current.Variables(9).Value()
-        current_weather_code = current.Variables(10).Value()
-        current_cloud_cover = current.Variables(11).Value()
-        current_pressure_msl = current.Variables(12).Value()
-        current_surface_pressure = current.Variables(13).Value()
 
-        print(f"\nCurrent time: {current.Time()}")
-        print(f"Current temperature_2m: {current_temperature_2m}")
-        print(f"Current relative_humidity_2m: {current_relative_humidity_2m}")
-        print(f"Current apparent_temperature: {current_apparent_temperature}")
-        print(f"Current is_day: {current_is_day}")
-        print(f"Current wind_direction_10m: {current_wind_direction_10m}")
-        print(f"Current wind_speed_10m: {current_wind_speed_10m}")
-        print(f"Current wind_gusts_10m: {current_wind_gusts_10m}")
-        print(f"Current precipitation: {current_precipitation}")
-        print(f"Current showers: {current_showers}")
-        print(f"Current rain: {current_rain}")
-        print(f"Current weather_code: {current_weather_code}")
-        print(f"Current cloud_cover: {current_cloud_cover}")
-        print(f"Current pressure_msl: {current_pressure_msl}")
-        print(f"Current surface_pressure: {current_surface_pressure}")
+    def degreesToText(self, degrees):
+        """  Normalise degrees to be between 0 and 360
+        """
+        degrees = degrees % 360
+        
+        # 16 compass points
+        directions = [
+            "N", "NNE", "NE", "ENE", 
+            "E", "ESE", "SE", "SSE", 
+            "S", "SSW", "SW", "WSW", 
+            "W", "WNW", "NW", "NNW"
+        ]
+        
+        # Calculate index by dividing by 22.5 and rounding to nearest whole number
+        index = int((degrees + 11.25) / 22.5) % 16
+        
+        return directions[index]
 
-        return current
+    def weatherCodeToText(self, code):
+        """  Convert the  numeric weather code to text.
+        """
+        match code:
+            case 0:
+                return "Clear sky"
+            case 1 | 2 | 3:
+                return "Mainly clear, partly cloudy, and overcast"
+            case 45 | 48:
+                return "Fog and depositing rime fog"
+            case 51 | 53 | 55:
+                return "Drizzle: Light, moderate, and dense intensity"
+            case 56 | 57:
+                return "Freezing Drizzle: Light and dense intensity"
+            case 61 | 63| 65:
+                return "Rain: Slight, moderate and heavy intensity"
+            case 66 | 67:
+                return "Freezing Rain: Light and heavy intensity"
+            case 71 | 73 | 75:
+                return "Snow fall: Slight, moderate, and heavy intensity"
+            case 77:
+                return "Snow grains"
+            case 80 | 81 | 82:
+                return "Rain showers: Slight, moderate, and violent"
+            case 85 | 86:
+                return "Snow showers slight and heavy"
+            case 95:
+                return "Thunderstorm: Slight or moderate"
+            case 96 | 99:
+                return "Thunderstorm with slight and heavy hail"
+            case _:
+                return f"Invalid weather code {code}"
 
 # Code	Description
 # 0	Clear sky

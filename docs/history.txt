@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.65		[25 July 2026]
+
+	Added the function to display the current weather data.
+		May need to be presented better.
+
+
 V2026.64		[22 July 2026]
 
 	Started work on a new info page - Weather.

@@ -44,7 +44,8 @@ Note : I use the correct spelling of colour on my side of the code.  :-)
 
 * pyKlock can display a stop watch and a count down timer.
 
-* pyKlock can also display some useful [maybe] information - a NTP server response, Public Holidays, Chinese New Year dates.
+* pyKlock can also display some useful [maybe] information - 
+    a NTP server response, Public Holidays, Chinese New Year dates and Current Weather.
 
 * pyKlock includes the ability to display a table of Friends.
 
@@ -60,4 +61,4 @@ For changes see history.txt
 
 The software is issued under the GNU General Public License v3 (GPL-3).
 
-Kevin Scott (C) 2025-26 :: pyKlock3 V2026.63
+Kevin Scott (C) 2025-26 :: pyKlock3 V2026.65
