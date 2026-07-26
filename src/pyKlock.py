@@ -113,8 +113,8 @@ class KlockWindow(QMainWindow):
         self.eventsStore.updateEvents()
 
         #  This returns a QRect(x, y, width, height)
-        print(QApplication.primaryScreen().availableVirtualGeometry())
-        print(QApplication.primaryScreen().availableGeometry() )
+        # print(QApplication.primaryScreen().availableVirtualGeometry())
+        # print(QApplication.primaryScreen().availableGeometry() )
 
     def updateValues(self):
         """  Set up run time values from the config file.

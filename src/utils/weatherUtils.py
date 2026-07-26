@@ -33,11 +33,21 @@ class Weather():
         self.logger = myLogger
 
     def connect(self):
+        # #  Initialize session with caching and automated retries
+        # try:
+        #     cache_session = requests_cache.CachedSession(".cache", expire_after=3600)
+        #     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
+        #     self.openmeteo = openmeteo_requests.Client(session=retry_session)
+        #     self.logger.info(" Network connection to openMeteo.com successful.")
+        #     return True
+        # except Exception as e:
+        #     self.logger.error(f" Error initializing API client sessions: {e}")
+        #     return False
         #  Initialize session with caching and automated retries
+
+        #  Initialize without session with caching and automated retries
         try:
-            cache_session = requests_cache.CachedSession(".cache", expire_after=3600)
-            retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
-            self.openmeteo = openmeteo_requests.Client(session=retry_session)
+            self.openmeteo = openmeteo_requests.Client()
             self.logger.info(" Network connection to openMeteo.com successful.")
             return True
         except Exception as e:
@@ -65,7 +75,6 @@ class Weather():
                 return None
                 
             response = responses[0]
-            print(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
             self.logger.debug(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
                         
         except requests.exceptions.HTTPError as http_err:

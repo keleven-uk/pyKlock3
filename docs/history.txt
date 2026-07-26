@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.66		[26 July 2026]
+
+	Finished the presentation of the current weather data.
+	Changed the call to https://open-meteo.com/ not to be cached - will now update every 15 minutes.
+
+
 V2026.65		[25 July 2026]
 
 	Added the function to display the current weather data.

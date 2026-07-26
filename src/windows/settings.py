@@ -251,7 +251,7 @@ class Settings(QDialog):
         layout.addRow("Time Format ",      self.cbTimeMode)
         layout.addRow("Text Time Format ", self.cbTimeFmt)
         layout.addRow("Time Font ",        self.btnFont)
-        layout.addRow("Time Alignment ",  self.cbTimeAlign)
+        layout.addRow("Time Alignment ",   self.cbTimeAlign)
 
         titles   = ["Prefix Character ", "Postfix Character ", "Space Character "]
         settings = ["TIME_PREFIX", "TIME_POSTFIX", "TIME_SPACE"]

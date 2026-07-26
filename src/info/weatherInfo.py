@@ -21,7 +21,7 @@
 ###############################################################################################################
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import src.utils.weatherUtils as wu
 
@@ -77,9 +77,15 @@ def Current(self):
     layout.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
     page.setLayout(layout)
 
+    utcOffsetSec = response.UtcOffsetSeconds()
+    local_tz     = timezone(timedelta(seconds=utcOffsetSec))
+
+    layout.addRow("Current Weather",  QLabel(f"Updated every 15 minutes"))
+    layout.addRow("----------------------------",  QLabel(f"------------------------------------------------"))
     layout.addRow("Coordinates",                   QLabel(f"{response.Latitude()}°N : {response.Longitude()}°E"))
     layout.addRow("Elevation",                     QLabel(f"{response.Elevation()} m asl"))
-    layout.addRow("Timezone difference to GMT+0",  QLabel(f"{response.UtcOffsetSeconds()}"))
+    layout.addRow("Current Time",                  QLabel(f"{datetime.fromtimestamp(current.Time(), tz=local_tz)}"))
+    layout.addRow("Timezone difference to GMT+0",  QLabel(f"{response.UtcOffsetSeconds()} secs"))
     layout.addRow("Current Weather",               QLabel(f"{self.weatherData.weatherCodeToText(current.Variables(10).Value())}"))
 
     if current.Variables(3).Value():
@@ -88,7 +94,6 @@ def Current(self):
         layout.addRow("Day / Night", QLabel(f"Night"))
     layout.addRow("----------------------------",  QLabel(f"------------------------------------------------"))
 
-    layout.addRow("Current Time",                  QLabel(f"{datetime.utcfromtimestamp(current.Time())}"))
     layout.addRow("Current Temperature",           QLabel(f"{current.Variables(0).Value():.2f} °C"))
     layout.addRow("Current Apparent Temperature ", QLabel(f"{current.Variables(2).Value():.2f} °C"))
     layout.addRow("Current Relative Humidity",     QLabel(f"{current.Variables(1).Value():.2f}"))
