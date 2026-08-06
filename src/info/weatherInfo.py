@@ -23,6 +23,7 @@
 
 from datetime import datetime, timedelta, timezone
 
+import src.utils.klock_utils as utils                                 #  Need to install pywin32
 import src.utils.weatherUtils as wu
 
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QFormLayout, QFrame, QWidget, QTabWidget, 
@@ -80,20 +81,20 @@ def Current(self):
     utcOffsetSec = response.UtcOffsetSeconds()
     local_tz     = timezone(timedelta(seconds=utcOffsetSec))
 
-    layout.addRow("Current Weather",  QLabel(f"Updated every 15 minutes"))
-    layout.addRow("----------------------------",  QLabel(f"------------------------------------------------"))
-    layout.addRow("Coordinates",                   QLabel(f"{response.Latitude()}°N : {response.Longitude()}°E"))
-    layout.addRow("Elevation",                     QLabel(f"{response.Elevation()} m asl"))
+    layout.addRow("Current Weather",               QLabel("Updated every 15 minutes"))
+    layout.addRow("----------------------------",  QLabel("------------------------------------------------"))
+    layout.addRow("Coordinates",                   QLabel(f"{response.Latitude():.2f}°N : {response.Longitude():.2f}°E"))
+    layout.addRow("Elevation",                     QLabel(f"{response.Elevation()} m above sea level"))
     layout.addRow("Current Time",                  QLabel(f"{datetime.fromtimestamp(current.Time(), tz=local_tz)}"))
-    layout.addRow("Timezone difference to GMT+0",  QLabel(f"{response.UtcOffsetSeconds()} secs"))
+    layout.addRow("Timezone difference to GMT+0",  QLabel(f"{utils.formatSeconds(response.UtcOffsetSeconds())} secs"))
     layout.addRow("Current Weather",               QLabel(f"{self.weatherData.weatherCodeToText(current.Variables(10).Value())}"))
 
     if current.Variables(3).Value():
-        layout.addRow("Day / Night", QLabel(f"Day"))
+        layout.addRow("Day / Night", QLabel("Day"))
     else:
-        layout.addRow("Day / Night", QLabel(f"Night"))
-    layout.addRow("----------------------------",  QLabel(f"------------------------------------------------"))
+        layout.addRow("Day / Night", QLabel("Night"))
 
+    layout.addRow("----------------------------",  QLabel("------------------------------------------------"))
     layout.addRow("Current Temperature",           QLabel(f"{current.Variables(0).Value():.2f} °C"))
     layout.addRow("Current Apparent Temperature ", QLabel(f"{current.Variables(2).Value():.2f} °C"))
     layout.addRow("Current Relative Humidity",     QLabel(f"{current.Variables(1).Value():.2f}"))
@@ -111,11 +112,27 @@ def Current(self):
 # ----------------------------------------------------------------------------------------------------------------------- Info() ----------------
 def Forecast(self):
     """  Display Weather Forecast.
+
+         "hourly": ["temperature_2m", "precipitation_probability", "weather_code"],
     """
+    # response = self.weatherData.get7DayForcast()
+    # hourly   = response.Hourly()
+
+    self.weatherData.get7DayForcast()
+
     page   = QWidget(self.twTab)
     layout = QFormLayout()
     layout.setFormAlignment(Qt.AlignmentFlag.AlignCenter)
     page.setLayout(layout)
+
+    # utcOffsetSec = response.UtcOffsetSeconds()
+    # local_tz     = timezone(timedelta(seconds=utcOffsetSec))
+
+    # layout.addRow("7 day Forecast",  QLabel(f"Updated every 15 minutes"))
+    # layout.addRow("----------------------------",  QLabel(f"------------------------------------------------"))
+    # layout.addRow("Coordinates",                   QLabel(f"{response.Latitude()}°N : {response.Longitude()}°E"))
+    # layout.addRow("Elevation",                     QLabel(f"{response.Elevation()} m asl"))
+    # layout.addRow("Timezone difference to GMT+0",  QLabel(f"{response.UtcOffsetSeconds()} secs"))
 
     self.twTab.addTab(page, "Weather Forecast")
 # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------

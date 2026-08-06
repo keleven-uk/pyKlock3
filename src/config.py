@@ -533,8 +533,32 @@ class Config():
         """  Sets the colour for the text Klock transparency.
         """
         self.config["KLOCKS"]["tk_transparent"] = value
-        
-        
+    #---------------------------------------------------------------------------------------------- WEATHER ------------------    
+    @property
+    def LONGITUDE(self):
+        """  Returns the location longitude.
+        """
+        return self.config["WEATHER"].get("longitude", -0.3325)
+
+    @LONGITUDE.setter
+    def BACKGROUND(self, value):
+        """  Sets the location longitude.
+        """
+        self.config["WEATHER"]["longitude"] = value
+
+    @property
+    def LATITUDE(self):
+        """  Returns the location latitude.
+        """
+        return self.config["WEATHER"].get("latitude", 53.7443)
+
+    @LATITUDE.setter
+    def LATITUDE(self, value):
+        """  Sets Returns the location latitude.
+        """
+        self.config["WEATHER"]["latitude"] = value
+
+
     def writeConfig(self):
         """ Write the current config file.
         """
@@ -561,7 +585,7 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2026.66",
+        config["INFO"] = {"myVERSION": "2026.67",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
@@ -606,6 +630,9 @@ class Config():
                             "tk_offColour"  : "#00ff00",
                             "tk_background" : "#000000",
                             "tk_transparent": True}
+
+        config["WEATHER"] = {"longitude" : -0.3325,
+                             "latitude"  : 53.7443}
 
         st_toml = toml.dumps(config)
 

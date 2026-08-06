@@ -18,20 +18,19 @@
 #                                                                                                             #
 ###############################################################################################################
 
-# pip install openmeteo-requests, requests_cache, retry_requests
+# pip install openmeteo-requests
 
 import openmeteo_requests
 
 import requests
-import requests_cache
-from retry_requests import retry
+import pandas as pd
 
 class Weather():
 
     def __init__(self, myConfig, myLogger):
         self.config = myConfig
         self.logger = myLogger
-
+    # ----------------------------------------------------------------------------------------------------------------------- connect() -------------
     def connect(self):
         # #  Initialize session with caching and automated retries
         # try:
@@ -53,14 +52,14 @@ class Weather():
         except Exception as e:
             self.logger.error(f" Error initializing API client sessions: {e}")
             return False
-
+    # ----------------------------------------------------------------------------------------------------------------------- getCurrentWeathert() --
     def getCurrentWeather(self):
         # Make sure all required weather variables are listed here
         # The order of variables in hourly or daily is important to assign them correctly below
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": 53.743192,
-            "longitude": -0.198817,
+            "latitude": self.config.LATITUDE,
+            "longitude": self.config.LONGITUDE,
             "current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day", "wind_direction_10m", 
                         "wind_speed_10m", "wind_gusts_10m", "precipitation", "showers", "rain", "weather_code", "cloud_cover", 
                         "pressure_msl", "surface_pressure"],
@@ -91,8 +90,58 @@ class Weather():
             return None
 
         return responses[0]
+    # ----------------------------------------------------------------------------------------------------------------------- get7DayForcast() ------
+    def get7DayForcast(self):
+        """
+        """
+        # url = "https://api.open-meteo.com/v1/forecast"
+        # params = {
+        #     "latitude": 52.52,
+        #     "longitude": 13.41,
+        #     "hourly": ["temperature_2m", "precipitation_probability", "weather_code"],
+        # }
+        #         #  Execute the API Request with network exception handling
+        # try:
+        #     responses = self.openmeteo.weather_api(url, params=params)
+            
+        #     if not responses:
+        #         self.logger.error("Error: Received an empty response array from the API.")
+        #         return None
+                
+        #     response = responses[0]
+        #     self.logger.debug(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
+                        
+        # except requests.exceptions.HTTPError as http_err:
+        #     self.logger.error(f"HTTP error occurred (Check coordinates or parameters): {http_err}")
+        #     return None
+        # except requests.exceptions.ConnectionError as conn_err:
+        #     self.logger.error(f"Network connection error occurred: {conn_err}")
+        #     return None
+        # except requests.exceptions.Timeout as timeout_err:
+        #     self.logger.error(f"The request timed out: {timeout_err}")
+        #     return None
+        # except Exception as err:
+        #     self.logger.error(f"An unexpected API error occurred: {err}")
 
+        # return responses[0]
 
+        # Define API parameters for your location
+        params = {
+            "latitude": 53.7443,   # Example coordinates for Hull, UK
+            "longitude": -0.3325,
+            "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max"],
+            "timezone": "auto"
+        }
+
+        url = "https://api.open-meteo.com/v1/forecast"
+        response = requests.get(url, params=params).json()
+
+        # Parse the 7-day daily data structure
+        daily_data = response["daily"]
+        df = pd.DataFrame(daily_data)
+        print(df)
+
+    # ----------------------------------------------------------------------------------------------------------------------- degreesToText() -------
     def degreesToText(self, degrees):
         """  Normalise degrees to be between 0 and 360
         """
@@ -110,7 +159,7 @@ class Weather():
         index = int((degrees + 11.25) / 22.5) % 16
         
         return directions[index]
-
+    # ----------------------------------------------------------------------------------------------------------------------- weatherCodeToText(() --
     def weatherCodeToText(self, code):
         """  Convert the  numeric weather code to text.
         """

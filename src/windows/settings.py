@@ -79,7 +79,7 @@ class Settings(QDialog):
 
         self.twTab = QTabWidget()
 
-        funcs = [self.Info, self.Application, self.Display, self.Time, self.Klocks, self.Sound]
+        funcs = [self.Info, self.Application, self.Display, self.Time, self.Klocks, self.Sound, self.Weather]
 
         for func in funcs:          #  Add the individual tabs.  For a tab to be added - insert title into the list funcs.
             func()
@@ -427,6 +427,38 @@ class Settings(QDialog):
         """  Plays the Pips at the slider volume to test loudness.
         """
         self.sounds.playPips(self.sldVolume.value())
+    # ----------------------------------------------------------------------------------------------------------------------- Time() ----------------
+    def Weather(self):
+        page = QWidget(self.twTab)
+        layout = QFormLayout()
+        layout.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
+        layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
+        page.setLayout(layout)
+
+
+        titles   = ["Longitude ", "Latitude "]
+        settings = ["LONGITUDE", "LATITUDE"]
+
+        for le in zip(titles, settings, strict=True):
+            title   = le[0]
+            setting = le[1]
+
+            value    = self.config.__getattribute__(setting)       #  Dirty way of getting the property value using a string.
+            lineEdit = QLineEdit(str(value), self)
+            lineEdit.setObjectName(setting)
+            lineEdit.editingFinished.connect(self.weatherSettingsUpdate)
+
+            layout.addRow(title, lineEdit)
+
+        self.twTab.addTab(page, "Weather")
+
+    def weatherSettingsUpdate(self, checked=None):
+        """
+        """
+        action = self.sender()
+        name   = action.objectName()
+
+        self.newSettings[name] = float(action.text())
     # ----------------------------------------------------------------------------------------------------------------------- buttonClicked() -------
     def buttonClicked(self, button):
         """   Handles the pressed buttons, either Ok or Cancel.

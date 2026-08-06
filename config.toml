@@ -1,10 +1,10 @@
 #   Configure file for pyKlock.py 
-#   (c) Kevin Scott   Written Sunday 26 July 2026  21:08:49
+#   (c) Kevin Scott   Written Thursday 06 August 2026  16:52:04
 #
 #   true and false are lower case 
 #
 [INFO]
-myVERSION = "2026.66"
+myVERSION = "2026.67"
 myNAME = "pyKlock"
 
 [APPLICATION]
@@ -56,3 +56,7 @@ tk_onColour = "#ffaaff"
 tk_offColour = "#808080"
 tk_background = "#1e1d23"
 tk_transparent = true
+
+[WEATHER]
+latitude = 53.7443
+longitude = -0.3325
