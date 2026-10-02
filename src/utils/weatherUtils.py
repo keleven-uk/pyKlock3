@@ -94,52 +94,82 @@ class Weather():
     def get7DayForcast(self):
         """
         """
-        # url = "https://api.open-meteo.com/v1/forecast"
-        # params = {
-        #     "latitude": 52.52,
-        #     "longitude": 13.41,
-        #     "hourly": ["temperature_2m", "precipitation_probability", "weather_code"],
-        # }
-        #         #  Execute the API Request with network exception handling
-        # try:
-        #     responses = self.openmeteo.weather_api(url, params=params)
-            
-        #     if not responses:
-        #         self.logger.error("Error: Received an empty response array from the API.")
-        #         return None
-                
-        #     response = responses[0]
-        #     self.logger.debug(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
-                        
-        # except requests.exceptions.HTTPError as http_err:
-        #     self.logger.error(f"HTTP error occurred (Check coordinates or parameters): {http_err}")
-        #     return None
-        # except requests.exceptions.ConnectionError as conn_err:
-        #     self.logger.error(f"Network connection error occurred: {conn_err}")
-        #     return None
-        # except requests.exceptions.Timeout as timeout_err:
-        #     self.logger.error(f"The request timed out: {timeout_err}")
-        #     return None
-        # except Exception as err:
-        #     self.logger.error(f"An unexpected API error occurred: {err}")
-
-        # return responses[0]
-
-        # Define API parameters for your location
+        url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": 53.7443,   # Example coordinates for Hull, UK
-            "longitude": -0.3325,
-            "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max"],
-            "timezone": "auto"
+            "latitude": self.config.LATITUDE,
+            "longitude": self.config.LONGITUDE,
+            "hourly": ["temperature_2m", "precipitation_probability", "wind_speed_10m", "wind_direction_10m", "weather_code"],
+        }
+                #  Execute the API Request with network exception handling
+        try:
+            responses = self.openmeteo.weather_api(url, params = params)
+            
+            if not responses:
+                self.logger.error("Error: Received an empty response array from the API.")
+                return None
+                
+            self.logger.debug(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
+                        
+        except requests.exceptions.HTTPError as http_err:
+            self.logger.error(f"HTTP error occurred (Check coordinates or parameters): {http_err}")
+            return None
+        except requests.exceptions.ConnectionError as conn_err:
+            self.logger.error(f"Network connection error occurred: {conn_err}")
+            return None
+        except requests.exceptions.Timeout as timeout_err:
+            self.logger.error(f"The request timed out: {timeout_err}")
+            return None
+        except Exception as err:
+            self.logger.error(f"An unexpected API error occurred: {err}")
+
+        response = responses[0]
+        print(f"Coordinates: {response.Latitude()}°N {response.Longitude()}°E")
+        print(f"Elevation: {response.Elevation()} m asl")
+        print(f"Timezone difference to GMT+0: {response.UtcOffsetSeconds()}s")
+
+        # Process hourly data. The order of variables needs to be the same as requested.
+        hourly = response.Hourly()
+        hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
+        hourly_precipitation_probability = hourly.Variables(1).ValuesAsNumpy()
+        hourly_wind_speed_10m = hourly.Variables(2).ValuesAsNumpy()
+        hourly_wind_direction_10m = hourly.Variables(3).ValuesAsNumpy()
+        hourly_weather_code = hourly.Variables(4).ValuesAsNumpy()
+
+        hourly_data = {
+            "date": pd.date_range(
+                start = pd.to_datetime(hourly.Time(), unit = "s", utc = True),
+                end =  pd.to_datetime(hourly.TimeEnd(), unit = "s", utc = True),
+                freq = pd.Timedelta(seconds = hourly.Interval()),
+                inclusive = "left"
+            )
         }
 
-        url = "https://api.open-meteo.com/v1/forecast"
-        response = requests.get(url, params=params).json()
+        hourly_data["temperature_2m"] = hourly_temperature_2m
+        hourly_data["precipitation_probability"] = hourly_precipitation_probability
+        hourly_data["wind_speed_10m"] = hourly_wind_speed_10m
+        hourly_data["wind_direction_10m"] = hourly_wind_direction_10m
+        hourly_data["weather_code"] = hourly_weather_code
 
-        # Parse the 7-day daily data structure
-        daily_data = response["daily"]
-        df = pd.DataFrame(daily_data)
-        print(df)
+        hourly_dataframe = pd.DataFrame(data = hourly_data)
+        print("\nHourly data\n", hourly_dataframe)
+
+        print(hourly_dataframe.head())
+
+
+        # params = {
+        #     "latitude": self.config.LATITUDE,
+        #     "longitude": self.config.LONGITUDE,
+        #     "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_probability_max"],
+        #     "timezone": "auto"
+        # }
+
+        # url = "https://api.open-meteo.com/v1/forecast"
+        # response = requests.get(url, params=params).json()
+
+        # # Parse the 7-day daily data structure
+        # daily_data = response["daily"]
+        # df = pd.DataFrame(daily_data)
+        # print(df)
 
     # ----------------------------------------------------------------------------------------------------------------------- degreesToText() -------
     def degreesToText(self, degrees):

@@ -1,7 +1,7 @@
 ###############################################################################################################
 #    textKlockCodes.py    Copyright (C) <2026>  <Kevin Scott>                                                 #
 #                                                                                                             #
-#    AThe methods to switch ON/OFF the text for textKlock.                                                    #
+#    The methods to switch ON/OFF the text for textKlock.                                                     #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
