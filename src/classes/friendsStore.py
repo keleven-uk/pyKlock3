@@ -127,8 +127,7 @@ class friendsStore():
                     self.store[key] = item
 
         except FileNotFoundError:
-            print("File not found, will use an empty store.")
-
+            self.logger.info(" File not found, will use an empty Friends store.")
         toc = time.perf_counter()
 
         self.logger.info(f" Loaded {len(self.store)} friends into the FriendsStore in {toc - tic:0.4f} seconds.")

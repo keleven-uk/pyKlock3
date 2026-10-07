@@ -108,7 +108,7 @@ class Weather():
                 self.logger.error("Error: Received an empty response array from the API.")
                 return None
                 
-            self.logger.debug(f"Fetching data from Open-Meteo for Lat: {response.Latitude()}, Lon: {response.Longitude()}")
+            self.logger.debug(f"Fetching data from Open-Meteo for Lat: {responses.Latitude()}, Lon: {responses.Longitude()}")
                         
         except requests.exceptions.HTTPError as http_err:
             self.logger.error(f"HTTP error occurred (Check coordinates or parameters): {http_err}")

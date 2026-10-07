@@ -97,7 +97,7 @@ class EventsViewer(QMainWindow):
         """  Populate the table with events data.
              The finds data is a list of lists.
 
-             If table being drawn for thr first time, either after an add of initially - Do not add width offset.
+             If table being drawn for the first time, either after an add or initially - Do not add width offset.
         """
         row = 0
 

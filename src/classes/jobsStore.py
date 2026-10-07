@@ -43,11 +43,11 @@ import src.projectPaths as pp
 from pyqttoast import Toast, ToastPreset
 
 
-class eventsStore():
+class jobsStore():
     """  A class that implements a store for friends.
          The store is implemented as a dictionary - [key, item].
-         The key is a string - Event Name.
-         The item is a list  - Name, Date Due, Time, Due, Category, Notes, Time Left, Stage 1, stage 2, stage 3, NOW.
+         The key is a string - Job Name.
+         The item is a list  - Name, Time Period, job.
     """
 # ------------------------------------------------------------------------------------- __init__ ----------------------
     def __init__(self, parent, myLogger, myConfig):
@@ -55,20 +55,12 @@ class eventsStore():
         self.myConfig   = myConfig
         self.myLogger   = myLogger
         self.store      = {}         #  Create the store, an empty dictionary.
-        self.Headers    = ["Event Name", "Date Due", "Time Due", "Category", "Recurring", "Notes", "Left"]
-        self.Categories = ["", "Birthday", "Wedding Anniversary", "Anniversary", "Moto", "Holiday", "Appointment", "One Off Event", "Other"]
-        self.storeName  = pp.EV_DATA_PATH
+        self.Headers    = ["Job Name", "Time Period", "Job"]
+        self.Categories = ["", "Check Server"]
+        self.storeName  = pp.JB_DATA_PATH
 
-        self.loadEvents()
+        self.loadJobs()
 
-        self.stage1 = self.myConfig.EVENTS_STAGE_1_DAYS  * 86400    #   5 days in seconds, is really soon
-        self.stage2 = self.myConfig.EVENTS_STAGE_2_DAYS * 86400     #  10 days in seconds, Will very soon be here
-        self.stage3 = self.myConfig.EVENTS_STAGE_3_DAYS * 86400     #  30 days in seconds, will soon be here
-
-        self.stage1Colour = self.myConfig.EVENTS_STAGE_1_COLOUR
-        self.stage2Colour = self.myConfig.EVENTS_STAGE_2_COLOUR
-        self.stage3Colour = self.myConfig.EVENTS_STAGE_3_COLOUR
-        self.nowColour    = self.myConfig.EVENTS_NOW_COLOUR
 # ------------------------------------------------------------------------------------- getHeaders --------------------
     @property
     def getHeaders(self):
@@ -111,14 +103,14 @@ class eventsStore():
             return ["", "", "", "", "", "Record not found", ""]             #  May need to extend for extra fields,
                                                                              #  so the error message is always in the notes field.
 # ------------------------------------------------------------------------------------- getEvents ---------------------
-    def getEvents(self):
-        """  Retrieves events in list format.
+    def getJobs(self):
+        """  Retrieves jobss in list format.
         """
-        lstEvent = []
+        lstJobs = []
         for key in sorted(self.store):
-            lstEvent.append(self.store[key][0:7])                           #  Don't return stage flags.'
+            lstJobs.append(self.store[key]) 
 
-        return lstEvent
+        return lstJobs
 # ------------------------------------------------------------------------------------- updateEvents ------------------
     def updateEvents(self):
         """  For each event in the store, calculate the time between the due date and now.
@@ -217,16 +209,16 @@ class eventsStore():
         toast.show()
         self.saveEvents()
 # ------------------------------------------------------------------------------------- saveEvents --------------------
-    def saveEvents(self):
-        """  Saves the event store to a text file in csv format.
+    def savejobs(self):
+        """  Saves the jobs store to a text file in csv format.
         """
         with open (self.storeName, "w", newline="", encoding="utf-8") as csvFile:
             writer = csv.writer(csvFile, quoting=csv.QUOTE_ALL)
             for key in sorted(self.store):
                 writer.writerow(self.store[key])
 # ------------------------------------------------------------------------------------- loadEvents --------------------
-    def loadEvents(self):
-        """  Loads the event store from a text file in csv format.
+    def loadJobs(self):
+        """  Loads the jobs store from a text file in csv format.
         """
         try:
             with open (self.storeName, "r", encoding="utf-8") as csvFile:
@@ -237,7 +229,7 @@ class eventsStore():
                     self.store[key] = item
 
         except FileNotFoundError:
-            self.myLogger.info(" File not found, will use an empty Event store.")
+            self.myLogger.info(" File not found, will use an empty Jobs store.")
 # ------------------------------------------------------------------------------------- _formatSeconds ----------------
     def __formatSeconds(self, seconds):
         """  Formats number of seconds into a human readable form i.e. hours:minutes:seconds

@@ -1,7 +1,7 @@
 ###############################################################################################################
-#    friendsViewer   Copyright (C) <2025-26>  <Kevin Scott>                                                   #
+#    jobsViewer   Copyright (C) <2026>  <Kevin Scott>                                                         #
 #                                                                                                             #
-#    Display friends in a table.                                                                              #
+#    Display jobs in a table.                                                                                 #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -24,24 +24,24 @@
 from PyQt6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout, QMainWindow, QFrame, QTableWidget,
                              QTableWidgetItem, QMessageBox, QApplication)
 
-import src.classes.friendsStore as fs
-import src.windows.friendsAdd as af
+import src.windows.eventsAdd as ae
 
-class FriendsViewer(QMainWindow):
+class JobsViewer(QMainWindow):
     """  Display friends in a table in a separate window.
     """
-    def __init__(self, myLogger):
+    def __init__(self, myLogger, myConfig, jobsStore):
         super().__init__()
 
-        self.logger        = myLogger
-        self.friendsStore  = fs.friendsStore(self.logger)
-        self.friends       = self.friendsStore.getFriends()
-        self.friendsTitles = self.friendsStore.getTitles
-        self.tableHeaders  = self.friendsStore.getHeaders
-        self.noHeaders     = len(self.tableHeaders)
-        self.friendsAdd    = None
+        self.logger           = myLogger
+        self.config           = myConfig
+        self.jobsStore        = jobsStore
+        self.jobs             = self.jobsStore.getJobs()
+        self.eventsCategories = self.jobsStore.getCategories
+        self.tableHeaders     = self.jobsStore.getHeaders
+        self.noHeaders        = len(self.tableHeaders)
+        self.eventsAdd        = None
 
-        self.height      = 800
+        self.height      = 600
         self.width       = 200
         self.screenSize  = QApplication.primaryScreen().availableGeometry()
         self.xPos        = int((self.screenSize.width() / 2)  - (self.width / 2))
@@ -49,7 +49,7 @@ class FriendsViewer(QMainWindow):
 
         self.setGeometry(self.xPos, self.yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
-        self.setWindowTitle("Friends")
+        self.setWindowTitle("Jobs")
 
         self.buildGUI()
         self.loadTable()
@@ -67,17 +67,17 @@ class FriendsViewer(QMainWindow):
         self.tableView.setColumnCount(self.noHeaders)
         self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
 
-        btnAdd = QPushButton(text="Add a Friend", parent=self)
-        btnAdd.clicked.connect(self.addFriend)
+        btnAdd = QPushButton(text="Add an Event", parent=self)
+        btnAdd.clicked.connect(self.addEvent)
 
-        btnEdit = QPushButton(text="Edit a Friend", parent=self)
-        btnEdit.clicked.connect(self.editFriend)
+        btnEdit = QPushButton(text="Edit an Event", parent=self)
+        btnEdit.clicked.connect(self.editEvent)
 
-        btnDelete = QPushButton(text="Delete a Friend", parent=self)
-        btnDelete.clicked.connect(self.deleteFriend)
+        btnDelete = QPushButton(text="Delete an Event", parent=self)
+        btnDelete.clicked.connect(self.deleteEvent)
 
-        btnRefresh = QPushButton(text="Refresh Friends", parent=self)
-        btnRefresh.clicked.connect(self.refreshFriends)
+        btnRefresh = QPushButton(text="Refresh Events", parent=self)
+        btnRefresh.clicked.connect(self.refreshEvents)
 
         btnClose = QPushButton(text="Close", parent=self)
         btnClose.clicked.connect(self.close)
@@ -92,10 +92,9 @@ class FriendsViewer(QMainWindow):
         self.centralLayout.addLayout(self.ButtonLayout)
 
         self.centralWidget.setLayout(self.centralLayout)
-
     # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
     def loadTable(self, refresh=False):
-        """  Populate the table with friends data.
+        """  Populate the table with jobs data.
              The finds data is a list of lists.
 
              If table being drawn for the first time, either after an add or initially - Do not add width offset.
@@ -107,60 +106,61 @@ class FriendsViewer(QMainWindow):
         self.tableView.setColumnCount(self.noHeaders)
         self.tableView.setHorizontalHeaderLabels(self.tableHeaders)
 
-        for friend in self.friends:
+        for job in self.jobs:
             self.tableView.insertRow(row)
             col = 0
-            for item in friend:
+            for item in job:
                 self.tableView.setItem(row, col, QTableWidgetItem(item))
                 col += 1
 
             row += 1
-            
+
         for head in range(self.noHeaders):
             self.tableView.resizeColumnToContents(head)
 
         if not refresh:
-            self.width = self.tableView.width() + 800
-
+            self.width = self.tableView.width() + 120
+            
         self.xPos = int((self.screenSize.width() / 2)  - (self.width / 2))
         self.yPos = int((self.screenSize.height() / 2) - (self.height / 2))
         self.setGeometry(self.xPos, self.yPos, self.width, self.height)
         self.setFixedSize(self.width, self.height)
-    # ----------------------------------------------------------------------------------------------------------------------- loadTable() -----------
-    def addFriend(self):
-        """   Open the Add Friends windows.
+    # ----------------------------------------------------------------------------------------------------------------------- addEvent() ------------
+    def addEvent(self):
+        """   Open the Add Events windows.
         """
-        if self.friendsAdd is None:
-            self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles, self.tableHeaders)         #  Needs to be self. - to keep window alive.
-            self.friendsAdd.show()
-            self.friendsAdd.addNewFriend.connect(self.addNewFriend)                                     #  Signal is fired when a friend is to be added.
-            self.friendsAdd.closeNewFriend.connect(self.closeNewFriend)                                 #  Signal is fired when the addFriend window is closed.
+        if self.eventsAdd is None:
+            self.eventsAdd = ae.AddEvents(self.logger, self.eventsCategories, self.tableHeaders)     #  Needs to be self. - to keep window alive.
+            self.eventsAdd.show()
+            self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                      #  Signal is fired when a friend is to be added.
+            self.eventsAdd.closeNewEvent.connect(self.closeNewEvent)                                  #  Signal is fired when the addFriend window is closed.
     # ----------------------------------------------------------------------------------------------------------------------- addNewFriend() --------
-    def addNewFriend(self, friend):
-        """  Adds a new Friend to the friends store.
-             The friends store is then re-loaded, this ensures the data is sorted.
+    def addNewEvent(self,event):
+        """  Adds a new Event to the events store.
+             The events store is then re-loaded, this ensures the data is sorted.
              LoadTable is called to refresh the displayed data.
         """
-        key  = f"{friend[1]} : {friend[2]}"
-        item = friend
-        self.friendsStore.addFriend(key, item)
-        self.refreshFriends()
-    # ----------------------------------------------------------------------------------------------------------------------- editFriend() ----------
-    def editFriend(self):
+        key  = event[0]
+        item = event
+        self.eventsStore.addEvent(key, item)
+        self.refreshEvents()
+    # ----------------------------------------------------------------------------------------------------------------------- editEvent() -----------
+    def editEvent(self):
         row = self.tableView.currentRow()
 
         if row == -1:
             QMessageBox.information(self, "Error.", "No row selected.")
             return
 
-        key    = f"{self.tableView.item(row, 1).text()} : {self.tableView.item(row, 2).text()}"
-        friend = self.friendsStore.getFriend(key)
-        self.friendsAdd = af.AddFriends(self.logger, self.friendsTitles, self.tableHeaders, friend)         #  Needs to be self. - to keep window alive.
-        self.friendsAdd.show()
-        self.friendsAdd.addNewFriend.connect(self.addNewFriend)                                             #  Signal is fired when a friend is to be added.
-        self.friendsAdd.closeNewFriend.connect(self.closeNewFriend)   
+        key    = self.tableView.item(row, 0).text()
+        event = self.eventsStore.getEvent(key)
+
+        self.eventsAdd = ae.AddEvents(self.logger, self.eventsCategories, self.tableHeaders, event)         #  Needs to be self. - to keep window alive.
+        self.eventsAdd.show()
+        self.eventsAdd.addNewEvent.connect(self.addNewEvent)                                          #  Signal is fired when a friend is to be added.
+        self.eventsAdd.closeNewEvent.connect(self.closeNewEvent) 
     # ----------------------------------------------------------------------------------------------------------------------- deleteFriend() --------
-    def deleteFriend(self):
+    def deleteEvent(self):
         """  Deletes an event from the table.
              Displays an error if no row selected.
              Prompts user for confirmation.
@@ -171,36 +171,38 @@ class FriendsViewer(QMainWindow):
             confirmation = QMessageBox.information(self, "Error.", "No row selected.")
             return
 
-        name         = f"{self.tableView.item(row, 2).text()} {self.tableView.item(row, 1).text()}"
-        confirmation = QMessageBox.question(self, "Confirmation", f"Delete a friend {name}")
+        event        = self.tableView.item(row, 0).text()
+        confirmation = QMessageBox.question(self, "Confirmation", f"Delete an Event {event}")
 
         if confirmation == QMessageBox.StandardButton.Yes:
-            key = f"{self.tableView.item(row, 1).text()} : {self.tableView.item(row, 2).text()}"
-            self.friendsStore.deleteFriend(key)             #  Delete friend
-            self.refreshFriends()
-    # ----------------------------------------------------------------------------------------------------------------------- refreshFriends() ------
-    def refreshFriends(self):
+            key = f"{self.tableView.item(row, 0).text()}"
+            self.eventsStore.deleteEvent(key)             #  Delete event
+            self.refreshEvents()
+    # ----------------------------------------------------------------------------------------------------------------------- refreshEvents() -------
+    def refreshEvents(self):
         """  Save the table to the friends store, the friends store is then re-loaded into the table.
              Called when a friend has been added, deleted or edited.
         """
-        self.friendsStore.saveFriends()
-        self.friends = self.friendsStore.getFriends()
+        self.eventsStore.saveEvents()
+        self.events = self.eventsStore.getEvents()
         self.loadTable(True)
     # ----------------------------------------------------------------------------------------------------------------------- closeNewFriend() ------
-    def closeNewFriend(self):
-        """  When the newFriends window is closed, it signals here so the reference can be set to null.
+    def closeNewEvent(self):
+        """  When the newEvents window is closed, it signals here so the reference can be set to null.
         """
-        self.friendsAdd = None
-    # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
+        self.eventsAdd = None
+   # ----------------------------------------------------------------------------------------------------------------------- closeEvent() ----------
     def closeEvent(self, event):
         """  When the viewer is closed, checks if any child windows are still open.
         """
-        if self.friendsAdd:
-            confirmation = QMessageBox.question(self, "Confirmation", "The Add Friend's Windows is still open - Continue?")
+        if self.eventsAdd:
+            confirmation = QMessageBox.question(self, "Confirmation", "The Add Event's Windows is still open - Continue?")
 
             if confirmation == QMessageBox.StandardButton.Yes:
                 event.accept()      #  Close the app.
-                self.friendsAdd.close()
+                self.eventsAdd.close()
             else:
                 event.ignore()      #  Continue the app.
 
+
+ 

@@ -24,6 +24,7 @@ import datetime
 import zoneinfo
 import win32api
 import win32con
+import socket
 import ctypes
 import re
 
@@ -190,5 +191,18 @@ def getTimezone():
     nw = datetime.datetime.now()
     print(nw)
     return nw.tzinfo
+
+def check_server_status(host, port, timeout=3):
+    """  Created by Gemini AI - which says
+
+         This is the most efficient method because it uses Python’s built-in socket library 
+         and does not require external installations. It works for any server type (SSH, database, game server, etc.).
+    """
+    try:
+        # Create a TCP socket and attempt to connect
+        with socket.create_connection((host, port), timeout=timeout):
+            return (f"🟢 Server {host}:{port} is UP and accepting connections.")
+    except (socket.timeout, ConnectionRefusedError, OSError):
+        return (f"🔴 Server {host}:{port} is DOWN or unreachable.")
 
 

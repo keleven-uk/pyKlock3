@@ -27,11 +27,13 @@ from PyQt6.QtCore    import QSize
 import src.classes.styles as styles
 import src.classes.selectTime as st
 
+import src.windows.jobsViewer as js
+import src.windows.eventsViewer as ev
+import src.windows.friendsViewer as fv
+
+import src.windows.infoViewer as info
 import src.windows.stopWatchViewer as sw
 import src.windows.countDownViewer as cd
-import src.windows.friendsViewer as fv
-import src.windows.eventsViewer as ev
-import src.windows.infoViewer as info
 
 import src.klocks.textKlock as tk
 
@@ -50,13 +52,14 @@ class Menu(QMenuBar):
 
     """
 
-    def __init__(self, myConfig, myLogger, eventsStore, parent=None):
+    def __init__(self, myConfig, myLogger, eventsStore, jobsStore, parent=None):
         super().__init__(parent)
 
         self.config      = myConfig
         self.logger      = myLogger
         self.parent      = parent
         self.eventsStore = eventsStore
+        self.jobsStore   = jobsStore
 
         self.context_menu = QMenu(self)
         self.selectTime   = st.SelectTime()
@@ -120,6 +123,8 @@ class Menu(QMenuBar):
         self.actViewFriends.triggered.connect(self.openFriendsViewer)
         self.actViewEvents = QAction("Events", self)
         self.actViewEvents.triggered.connect(self.openEventsViewer)
+        self.actViewJobs = QAction("Jobs", self)
+        self.actViewJobs.triggered.connect(self.openJobsViewer)
         self.actStopWatch = QAction("Stop Watch", self)
         self.actStopWatch.triggered.connect(self.openStopWatchViewer)
         self.actCountDown = QAction("Count Down", self)
@@ -195,6 +200,7 @@ class Menu(QMenuBar):
 
         mnuThings.addAction(self.actViewFriends)
         mnuThings.addAction(self.actViewEvents)
+        mnuThings.addAction(self.actViewJobs)
         mnuThings.addAction(self.actStopWatch)
         mnuThings.addAction(self.actCountDown)
 
@@ -271,10 +277,17 @@ class Menu(QMenuBar):
         self.friendsViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openEventsViewer() ----
     def openEventsViewer(self):
-        """   Open the event viewer.
+        """   Open the events viewer.
         """
         self.eventsViewer = ev.EventsViewer(self.logger, self.config, self.eventsStore)
         self.eventsViewer.show()
+    # ----------------------------------------------------------------------------------------------------------------------- openJobsViewer() ------
+    def openJobsViewer(self):
+        """   Open the jobs viewer.
+        """
+        pass
+        self.jobsViewer = js.JobsViewer(self.logger, self.config, self.jobsStore)
+        self.jobsViewer.show()
     # ----------------------------------------------------------------------------------------------------------------------- openStopWatchViewer() -
     def openStopWatchViewer(self):
         """   Open the Stop Watch viewer.

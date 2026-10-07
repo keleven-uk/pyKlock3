@@ -38,6 +38,7 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):   #  Running as a
     HELP_PATH     = "help"
     FR_DATA_PATH  = "data/friends.txt"
     EV_DATA_PATH  = "data/events.txt"
+    JB_DATA_PATH  = "data/jobs.txt"
     STYLE_PATH    = "resources/style"
 else:
      CONFIG_PATH   = MAIN_PATH / "config.toml"
@@ -46,4 +47,5 @@ else:
      HELP_PATH     = MAIN_PATH / "help"
      FR_DATA_PATH  = MAIN_PATH / "data/friends.txt"
      EV_DATA_PATH  = MAIN_PATH / "data/events.txt"
+     JB_DATA_PATH  = MAIN_PATH / "data/jobs.txt"
      STYLE_PATH    = MAIN_PATH / "resources/style"

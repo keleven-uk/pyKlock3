@@ -32,6 +32,7 @@ import src.utils.klock_utils as utils                                 #  Need to
 
 import src.classes.menu as mu
 import src.classes.sounds as snds
+import src.classes.jobsStore as js
 import src.classes.styles as styles
 import src.classes.selectTime as st
 import src.classes.systemInfo as si
@@ -49,6 +50,7 @@ class KlockWindow(QMainWindow):
         self.config = myConfig
         self.logger = myLogger
 
+        self.jobsStore   = js.jobsStore(self, self.logger, self.config)
         self.eventsStore = es.eventsStore(self, self.logger, self.config)
 
         self.updateValues()
@@ -76,7 +78,7 @@ class KlockWindow(QMainWindow):
         self.newTime                = time.time()
         self.lastTime               = self.newTime
 
-        self.menu   = mu.Menu(self.config, self.logger, self.eventsStore, self)
+        self.menu   = mu.Menu(self.config, self.logger, self.eventsStore, self.jobsStore, self)
         self.myMenu = self.menu.buildMenu()
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
@@ -543,6 +545,10 @@ class KlockWindow(QMainWindow):
         self.config.FOREGROUND  = self.foregroundColour
         self.config.BACKGROUND  = self.backgroundColour
         self.config.writeConfig()
+
+        #  Just in case, they need to be saved.
+        self.eventsStore.saveEvents()
+        self.jobsStore.savejobs()
     # ----------------------------------------------------------------------------------------------------------------------- contextMenuEvent() ----
     def contextMenuEvent(self, event):
         """  ** NEEDED for the context menu to work **

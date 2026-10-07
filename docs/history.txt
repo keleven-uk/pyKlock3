@@ -35,6 +35,16 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.68		[7 October 2026]
+
+	Started on a job scheduler.
+		This is based on the friends / events stuff.
+		Created the basic jobs store and viewer.
+
+	Using python 3.14.8 and QT 6.11.2.
+		updated all modules and requirements.txt  [Cannot use latest version of flatbuffers, because of openmeteo_sdk]
+
+
 V2026.68		[2 October 2026]
 
 	Added the first attempt at a 7 day weather forecast.
