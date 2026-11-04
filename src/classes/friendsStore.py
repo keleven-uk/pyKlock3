@@ -108,7 +108,7 @@ class friendsStore():
         """  Saves the friend store to a text file in csv format.
         """
         with open (self.storeName, "w", newline="", encoding="utf-8") as csvFile:
-            writer =csv.writer(csvFile, quoting=csv.QUOTE_ALL)
+            writer = csv.writer(csvFile, quoting=csv.QUOTE_ALL)
             for key in sorted(self.store):
                 writer.writerow(self.store[key])
 

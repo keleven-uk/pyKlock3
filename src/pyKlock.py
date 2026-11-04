@@ -548,7 +548,7 @@ class KlockWindow(QMainWindow):
 
         #  Just in case, they need to be saved.
         self.eventsStore.saveEvents()
-        self.jobsStore.savejobs()
+        self.jobsStore.saveJobs()
     # ----------------------------------------------------------------------------------------------------------------------- contextMenuEvent() ----
     def contextMenuEvent(self, event):
         """  ** NEEDED for the context menu to work **

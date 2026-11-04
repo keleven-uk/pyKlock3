@@ -36,15 +36,13 @@
 #                                                                                                             #
 ###############################################################################################################
 
-import datetime
 import csv
 
 import src.projectPaths as pp
-from pyqttoast import Toast, ToastPreset
 
 
 class jobsStore():
-    """  A class that implements a store for friends.
+    """  A class that implements a store for jobs.
          The store is implemented as a dictionary - [key, item].
          The key is a string - Job Name.
          The item is a list  - Name, Time Period, job.
@@ -73,148 +71,23 @@ class jobsStore():
         """  Returns a list of accepted event Categories i.e. Birthday, Anniversary, Moto etc.
         """
         return self.Categories
-# ------------------------------------------------------------------------------------- addEvent ----------------------
-    def addEvent(self, key, item):
-        """   Stores event data into the store.
-        """
-        self.store[key] = item
-# ------------------------------------------------------------------------------------- deleteEvent -------------------
-    def deleteEvent(self, key):
-        """   Deletes a event from the store if it exist, if not ignore.
-              If deleted, save the events store.
-        """
-        if key in self.store:
-            del self.store[key]
-            self.saveEvents()
-# ------------------------------------------------------------------------------------- numberOfEvents ----------------
-    @property
-    def numberOfEvents(self):
-        """  Returns the number of events in the store.
-        """
-        return len(self.store)
-# ------------------------------------------------------------------------------------- getEvent ----------------------
-    def getEvent(self, key):
-        """  Retrieves a single event in list format.
-             If the key doesn't exist, return error massage in the Notes filed.'
-        """
-        try:
-            return self.store[key]
-        except KeyError:
-            return ["", "", "", "", "", "Record not found", ""]             #  May need to extend for extra fields,
-                                                                             #  so the error message is always in the notes field.
 # ------------------------------------------------------------------------------------- getEvents ---------------------
     def getJobs(self):
-        """  Retrieves jobss in list format.
+        """  Retrieves jobs in list format.
         """
         lstJobs = []
         for key in sorted(self.store):
             lstJobs.append(self.store[key]) 
 
         return lstJobs
-# ------------------------------------------------------------------------------------- updateEvents ------------------
-    def updateEvents(self):
-        """  For each event in the store, calculate the time between the due date and now.
-             The time interval, in seconds, is stored to the end of the event data,
-             to be investigated later.
-        """
-        now = datetime.datetime.now()
-        #print(f" Running updateEvents {now}")
-        for key in self.store.copy():
-            dateDue = self.store[key][1]
-            dateDue = self.checkYear(dateDue, now)
-            timeDue = self.store[key][2]
-            dtDue   = datetime.datetime.strptime(f"{dateDue} {timeDue}", "%d/%m/%Y %H:%M")  #  Now a dateTime
-            dtLeft  = int((dtDue - now).total_seconds())                                    #  Convert timedelta to seconds.
-
-            self.store[key][6] = self.__formatSeconds(dtLeft)      #  Time left in seconds.
-            self.__checkEvent(key, dtLeft)
-# ------------------------------------------------------------------------------------- checkYear ---------------------
-    def checkYear(self, dateDue, now):
-        """  Rule 1 : If the year if before the current year [i.e. original birthday year] use current year.
-             Rule 2 : If the month is before the current month [i.e. original birthday month] add 1 to year.
-             Rule 3 : If the day is before the current day [i.e. original birthday day] add 1 to year.
-
-             for example - if now if 27/11/2024 and date due is 02/04/1958.
-                           Should return 02/04/2025.
-
-             Both dateDue input and output are in string format.
-             now is input in datetime format.
-
-              Made the method callable, is a means of determining the actual due date.
-        """
-        curDay   = now.day
-        curMonth = now.month
-        curYear  = now.year
-        dueDate  = datetime.datetime.strptime(dateDue, "%d %B %Y")  #  Convert string to Python dateTime.
-        dueDay   = dueDate.day
-        dueMonth = dueDate.month
-        dueYear  = dueDate.year
-
-        if dueYear < curYear:
-            dueYear = curYear
-        if dueMonth < curMonth:
-            dueYear = curYear + 1
-        if dueYear == curYear and dueMonth == curMonth and dueDay < curDay:  #  Event has just passed this month.
-            dueYear = curYear + 1
-
-        return f"{dueDay}/{dueMonth}/{dueYear}"
-# ------------------------------------------------------------------------------------- _checkEvent -------------------
-    def __checkEvent(self, key, secondsLeft):
-        """  For each event, calculate the time left in seconds.
-             Store that on the event, formatted into days, minutes and seconds for display.
-             If the time left falls into the stages the process event.
-
-                Stage 3 becomes active after 30 days.
-                Stage 2 becomes active after 10 days.
-                stage 1 becomes active after 1 day.
-                Now becomes active with 1 minute to go - mainly intended for event with a time.
-        """
-        match secondsLeft:
-            case secondsLeft if (secondsLeft <= 60 and self.store[key][10] == "False"):
-                self.__eventDue(key, "Now")
-            case secondsLeft if (secondsLeft <= self.stage3 and self.store[key][9] == "False"):
-                self.__eventDue(key, "Stage 3")
-            case secondsLeft if (secondsLeft <= self.stage2 and self.store[key][8] == "False"):
-                self.__eventDue(key, "Stage 2")
-            case secondsLeft if (secondsLeft <= self.stage1 and self.store[key][7] == "False"):
-                self.__eventDue(key, "Stage 1")
-# ------------------------------------------------------------------------------------- _eventDue ---------------------
-    def __eventDue(self, key, stage):
-        """  Called when an event is found to be due.
-             An appropriate notification is displayed for the event.
-        """
-        event     = self.store[key]
-        eventDue  = event[6]
-        eventName = event[0]
-        toast = Toast(self.parent)
-        toast.setDuration(0)        #  Do not timeout.
-        toast.applyPreset(ToastPreset.INFORMATION_DARK)
-        toast.setTitle("Event Reminder")
-        toast.setText(f" {eventName} in {eventDue}")
-
-        match stage:
-            case "Stage 3":
-                self.store[key][9] = "True"
-
-            case "Stage 2":
-                self.store[key][8] = "True"
-
-            case "Stage 1":
-                self.store[key][7] = "True"
-
-            case "Now":
-                self.store[key][10] = "True"
-                toast.setText(f" {eventName}  NOW")
-        
-        toast.show()
-        self.saveEvents()
 # ------------------------------------------------------------------------------------- saveEvents --------------------
-    def savejobs(self):
+    def saveJobs(self):
         """  Saves the jobs store to a text file in csv format.
         """
         with open (self.storeName, "w", newline="", encoding="utf-8") as csvFile:
             writer = csv.writer(csvFile, quoting=csv.QUOTE_ALL)
             for key in sorted(self.store):
+                print(self.store[key])
                 writer.writerow(self.store[key])
 # ------------------------------------------------------------------------------------- loadEvents --------------------
     def loadJobs(self):
@@ -223,29 +96,14 @@ class jobsStore():
         try:
             with open (self.storeName, "r", encoding="utf-8") as csvFile:
                 csvFile = csv.reader(csvFile)
-                for rows in csvFile:
-                    key = f"{rows[0]}"
-                    item = rows
-                    self.store[key] = item
+                for row in csvFile:
+                    key = f"{row[0]}"
+                    print(row)
+                    self.store[key] = row
 
         except FileNotFoundError:
             self.myLogger.info(" File not found, will use an empty Jobs store.")
-# ------------------------------------------------------------------------------------- _formatSeconds ----------------
-    def __formatSeconds(self, seconds):
-        """  Formats number of seconds into a human readable form i.e. hours:minutes:seconds
 
-            Based from klock_utils.py, to make the class self accessing.
-        """
-        (days, remainder)  = divmod(seconds, 86400)
-        (hours, remainder) = divmod(remainder, 3600)
-        (minutes, seconds) = divmod(remainder, 60)
-
-        if days:
-            return f"{days:.0f}d {hours:.0f}h:{minutes:.0f}m"
-        elif hours:
-            return f"{hours:.0f}h {minutes:.0f}m"
-        else:
-            return f"{minutes:.0f}m"
 
 
 

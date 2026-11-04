@@ -35,6 +35,18 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.70		[4 November 2026]
+
+	Using python 3.15.2 and QT 6.12.0.
+		updated all modules and requirements.txt [Including flatbuffers.].
+		Note PyQt6-PDF is a separate install.
+
+
+V2026.69		[7 October 2026]
+
+	Using python 3.15.0 and QT 6.11.2.
+
+
 V2026.68		[7 October 2026]
 
 	Started on a job scheduler.
