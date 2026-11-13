@@ -35,6 +35,13 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.72		[12 November 2026]
+
+	Created a new branch to explore a scheduler.
+	Discovered apsSceduler - see https://apscheduler.com/
+		This is going to be used for the Job scheduler, might be a good fit for the events as well.
+
+
 V2026.71		[12 November 2026]
 
 	Tried to correct the readme.dm file.
