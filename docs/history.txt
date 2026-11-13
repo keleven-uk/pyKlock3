@@ -35,6 +35,12 @@ Note : pySimpleGUI is licensed software product, but free for hobbyist [but need
 Note : I use the correct spelling of colour on my side of the code.  :-)
 
 
+V2026.71		[12 November 2026]
+
+	Tried to correct the readme.dm file.
+	git commit to make source tree clean, to enable a branch create.
+
+
 V2026.70		[4 November 2026]
 
 	Using python 3.15.2 and QT 6.12.0.

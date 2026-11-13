@@ -4,7 +4,7 @@
 #   true and false are lower case 
 #
 [INFO]
-myVERSION = "2026.70"
+myVERSION = "2026.71"
 myNAME = "pyKlock"
 
 [APPLICATION]
